@@ -3,6 +3,8 @@
   * It's because I was using activationCommand.  If it's absent, atom will
     activate your package by default.
   * [TODO] Request a change to the flight manual to point this out more explicitly
+* [COMPLETED] Remove toggle, it's not being used.
+* [COMPLETED] Extract the star finding logic -- it's going to be reused somewhat heavily
 * [TODO] Figure out why styles do not work consistently
 * [TODO] Highlighting / link following for Urls
 * [TODO] Support org-mode style links

@@ -1,6 +1,3 @@
-'atom-workspace':
-    'ctrl-alt-o': 'organized:toggle'
-
 'atom-text-editor[data-grammar="source organized"]':
     'tab': 'organized:indent',
     'shift-tab': 'organized:unindent',

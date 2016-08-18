@@ -19,7 +19,6 @@ module.exports =
     @subscriptions = new CompositeDisposable()
 
     # Register command that toggles this view
-    @subscriptions.add(atom.commands.add('atom-workspace', { 'organized:toggle': () => @toggle() }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:indent': (event) => @indent(event) }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:unindent': (event) => @unindent(event) }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:toggleTodo': (event) => @toggleTodo(event) }))
@@ -35,13 +34,6 @@ module.exports =
       organizedViewState: @organizedView.serialize()
     }
 
-  toggle: () ->
-    console.log('Organized was toggled!')
-    if @modalPanel.isVisible()
-      return @modalPanel.hide()
-    else
-      return @modalPanel.show()
-
   indent: (event) ->
     console.log('indent')
     editor = atom.workspace.getActiveTextEditor()
@@ -55,14 +47,8 @@ module.exports =
     editor = atom.workspace.getActiveTextEditor()
     if editor
       position = editor.getCursorBufferPosition()
-      row = position.row
+      [row, col] = @_findStar(editor, position)
       line = editor.lineTextForBufferRow(row)
-      while !line.match("\\s*\\*")
-        row -= 1
-        if (row < 0)
-          return
-        else
-          line = editor.lineTextForBufferRow(row)
 
       currentPosition = editor.getCursorBufferPosition()
       if (line.match("\\s*\\* \\[TODO\\] "))
@@ -77,3 +63,24 @@ module.exports =
         insertCol = line.indexOf("*")
         editor.setTextInBufferRange([[row, insertCol+1], [row, insertCol+1]], " [TODO]")
         editor.setCursorBufferPosition([currentPosition.row, currentPosition.column+7])
+
+  # Find the current star in terms in buffer coordinates
+  # returns [row, column] or
+  _findStar: (editor, position) ->
+    row = position.row
+    line = editor.lineTextForBufferRow(row)
+    while !line.match("\\s*\\*")
+      row -= 1
+      if (row < 0)
+        return
+      else
+        line = editor.lineTextForBufferRow(row)
+
+    col = -1
+    if line
+      col = line.indexOf("*")
+
+    if col != -1
+      return [row, col]
+    else
+      return null
