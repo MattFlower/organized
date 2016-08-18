@@ -6,16 +6,16 @@
 * [COMPLETED] Remove toggle, it's not being used.
 * [COMPLETED] Extract the star finding logic -- it's going to be reused somewhat heavily
 * Initial commit
-  * [TODO] Create github repository for organized project
-  * [TODO] Set version number in project.json
+  * [COMPLETED] Create github repository for organized project
+  * [COMPLETED] Set version number in project.json
 * [COMPLETED] Figure out why styles do not work consistently
 
 * Page Organization
   * [COMPLETED] Add support for atx/markdown-style headings (#, ##, ###, etc)
 * Outlining
   * [COMPLETED] Implement indent
-  * [COMPLETED] Implement unindent
-  * [TODO] Figure out how to group undos for indent and unindent
+  * [COMPLETED] Implement1 unindent
+  * [COMPLETED] Figure out how to group undos for indent and unindent
   * [TODO] Expand / Collapse stars written like '**' as opposed to '  *'
   * [TODO] Setting of whether you want different depth levels to be shown
     as multiple stars or as whitespace and stars

@@ -66,8 +66,9 @@ module.exports =
 
         #We found the lines, now indent
         indent = if @_newLevelStyle == 'whitespace' then " ".repeat(@indentSpaces) else "\t"
-        for row in [firstRow..lastRow]
-          editor.setTextInBufferRange([[row, 0], [row, 0]], indent)
+        editor.transact 1000, () ->
+          for row in [firstRow..lastRow]
+            editor.setTextInBufferRange([[row, 0], [row, 0]], indent)
 
   unindent: (event) ->
     console.log('unindent!')
@@ -79,12 +80,13 @@ module.exports =
 
         #Unindent
         indent = if @_newLevelStyle == 'whitespace' then " ".repeat(@indentSpaces) else "\t"
-        for row in [firstRow..lastRow]
-          line = editor.lineTextForBufferRow(row)
-          if line.match("^  ")
-            editor.setTextInBufferRange([[row, 0], [row, 2]], "")
-          else if line.match("^\\t")
-            editor.setTextInBufferRange([[row, 0], [row, 1]], "")
+        editor.transact 1000, () ->
+          for row in [firstRow..lastRow]
+            line = editor.lineTextForBufferRow(row)
+            if line.match("^  ")
+              editor.setTextInBufferRange([[row, 0], [row, 2]], "")
+            else if line.match("^\\t")
+              editor.setTextInBufferRange([[row, 0], [row, 1]], "")
 
 
   toggleTodo: (event) ->
