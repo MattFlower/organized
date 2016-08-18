@@ -2,16 +2,26 @@
 * [COMPLETED] Figure out why I have to toggle to get keybindings to work
   * It's because I was using activationCommand.  If it's absent, atom will
     activate your package by default.
-  * [TODO] Request a change to the flight manual to point this out more explicitly
+  * [COMPLETED] Request a change to the flight manual to point this out more explicitly
 * [COMPLETED] Remove toggle, it's not being used.
 * [COMPLETED] Extract the star finding logic -- it's going to be reused somewhat heavily
+* Improve return key Support
+  * [TODO] If you press return on a line that has a star, you should have a star
+    at the same level
+  * [TODO] If you press return on a line that doesn't have a star, you should
+    get a new line without a star
+  * [TODO] If you press ctrl-enter on a starred line, you should get a new line
+    without a star
+  * [TODO] If you press ctrl-enter on a non-starred line, you should get a new
+    line with a star
 * [TODO] Figure out why styles do not work consistently
 * [TODO] Highlighting / link following for Urls
 * [TODO] Support org-mode style links
 * [TODO] Expand / Collapse stars written like '**' as opposed to '  *'
 * [TODO] Different coloring depending on the number of stars in a star block
 * [TODO] Source block highlighting
-* [TODO] Syntax highlighting for tables
+* Tables
+  * [TODO] Syntax highlighting
 * [TODO] Execute commands in a source block
 * [TODO] Tags
 * [TODO] Visibility cycling

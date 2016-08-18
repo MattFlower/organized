@@ -2,8 +2,8 @@
   "context-menu": {
     "atom-text-editor": [
       {
-        "label": "Toggle organized",
-        "command": "organized:toggle"
+        "label": "Todo Item Toggle (todo/completed/unmarked)",
+        "command": "organized:toggleTodo"
       },
       {
         "label": "Indent",
