@@ -1,0 +1,34 @@
+{
+  "name": "organized",
+  "main": "./lib/organized",
+  "version": "0.0.0",
+  "description": "A short description of your package",
+  "keywords": [
+  ],
+  "repository": "https://github.com/atom/organized",
+  "license": "MIT",
+  "engines": {
+    "atom": ">=1.0.0 <2.0.0"
+  },
+  "dependencies": {
+    "language-hyperlink": "^0.16.0",
+    "link": "^0.31.1"
+  },
+  "extensions": {
+    ".coffee": [
+      "lib/organized.coffee"
+    ],
+    ".json": [
+      "package.json"
+    ]
+  },
+  "folders": [
+    {
+      "paths": [
+          "",
+          "lib",
+          "grammars"
+      ]
+    }
+  ]
+}

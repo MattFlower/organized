@@ -1,0 +1,42 @@
+{
+  "context-menu": {
+    "atom-text-editor": [
+      {
+        "label": "Toggle organized",
+        "command": "organized:toggle"
+      },
+      {
+        "label": "Indent",
+        "command": "organized-mode:indent"
+      },
+      {
+        "label": "Unindent",
+        "command": "organized-mode:unindent"
+      }
+    ]
+  },
+  "menu": [
+    {
+      "label": "Packages",
+      "submenu": [
+        {
+          "label": "organized",
+          "submenu": [
+            {
+              "label": "Toggle",
+              "command": "organized:toggle"
+            },
+            {
+              "label": "Indent",
+              "command": "organized-mode:indent"
+            },
+            {
+              "label": "Unindent",
+              "command": "organized-mode:unindent"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

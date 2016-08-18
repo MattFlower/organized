@@ -1,0 +1,51 @@
+scopeName: 'source.organized'
+name: 'organized'
+fileTypes: [
+  'org'
+  'organized'
+]
+
+patterns: [
+    { include: "#headers" }
+    { include: "#starlines" }
+]
+
+repository:
+  headers:
+    patterns: [
+      {
+        name: 'constant.headername.organized'
+        match: '^#+[^:]+:'
+      }
+    ]
+  starlines:
+    patterns: [
+      {
+        name: 'meta.starline.organized'
+        match: '^(\\s*)([-+\\*]+)( )(.*)$'
+        captures: {
+          1:
+              name: 'whitespace.starline.organized'
+          2:
+              name: 'constant.star.starline.organized'
+          3:
+              name: 'whitespace.starline.organized'
+          4:
+              patterns: [
+                { include: "#textcontent" }
+              ]
+        }
+      }
+    ]
+  textcontent:
+    patterns: [
+      {
+        name: 'link.url.organized'
+        #       protocol       host   port   path     Query params                          Link
+        match: "(http|https)://[^?/]+(:\\d+)?(/[^?]+)?(\\?[A-Za-z0-9-._~:/?@!$&'*+,;=%]+)"
+      },
+      {
+        name: 'todo.organized'
+        match: "\\[TODO\\]"
+      }
+    ]

@@ -1,0 +1,15 @@
+'.source.organized':
+  'Title Header':
+    'prefix': '#+TI'
+    'body': '#+TITLE: $1\n'
+    'description': 'Title header'
+  'Date Header':
+    'prefix': '#+DA'
+    'body': '#+DATE: $1\n'
+    'description': 'Date Header'
+  'Source Code Block':
+    'prefix': '#+BEGIN'
+    'body': '#+BEGIN_SRC\n$0\n#+END_SRC'
+  'Shell Source Code Block':
+    'prefix': '#+BEGIN'
+    'body': '#+BEGIN_SRC sh :results verbatim\n$0\n#+END_SRC'

@@ -1,0 +1,27 @@
+* [COMPLETED] Convert to CoffeeScript
+* [COMPLETED] Figure out why I have to toggle to get keybindings to work
+  * It's because I was using activationCommand.  If it's absent, atom will
+    activate your package by default.
+  * [TODO] Request a change to the flight manual to point this out more explicitly
+* [TODO] Figure out why styles do not work consistently
+* [TODO] Highlighting / link following for Urls
+* [TODO] Support org-mode style links
+* [TODO] Expand / Collapse stars written like '**' as opposed to '  *'
+* [TODO] Different coloring depending on the number of stars in a star block
+* [TODO] Source block highlighting
+* [TODO] Syntax highlighting for tables
+* [TODO] Execute commands in a source block
+* [TODO] Tags
+* [TODO] Visibility cycling
+* [TODO] Export as HTML
+* Todo items
+  * [COMPLETED] Key command to toggle "TODO", "CLOSED", remove todo
+  * [TODO] Option to mark closed todo's with current time
+  * [TODO] Priorities for TODO items
+  * [TODO] Key-command to increase / decrease priority of items
+  * [TODO] Support multiple cursors for TODO toggling.
+  * [TODO] Command to remove completed todos from current file
+  * [TODO] UI for all TODO's in directory
+  * Configuration to show what directories we'll scan for TODO items
+* [TODO] UI to explore subject headers
+* [TODO] Add ability to encrypt notes
