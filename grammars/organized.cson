@@ -15,30 +15,225 @@ repository:
     patterns: [
       {
         name: 'constant.headername.organized'
-        match: '^#+[^:]+:'
+        match: '^#\\+[^:]+:'
       }
     ]
   starlines:
     patterns: [
       {
         name: 'meta.starline.organized'
-        match: '^(\\s*)([-+\\*]+)( )(.*)$'
+        match: '^(\\s*)([-+\\*]+ .*)$'
         captures: {
           1:
               name: 'whitespace.starline.organized'
           2:
-              name: 'constant.star.starline.organized'
-          3:
-              name: 'whitespace.starline.organized'
-          4:
               patterns: [
-                { include: "#textcontent" }
+                { include: "#startextcontent" }
               ]
+        }
+      },
+      {
+        name: 'othertext.organized'
+        match: '^([^-+\\*#].*)'
+        captures: {
+          1:
+              patterns: [
+                { include: "#othertextcontent"}
+              ]
+        }
+      },
+      {
+        name: 'header.level1'
+        match: '^\s*(#)([^#].*)(\s*#\s*)?$'
+        captures:
+          1:
+            name: 'header.level1.symbol'
+          2:
+            name: 'header.level1.line'
+          3:
+            name: 'header.level1.symbol'
+      },
+      {
+        name: 'header.level2'
+        match: '^\s*(##)([^#].*)(\s*##\s*)?$'
+        captures:
+          1:
+            name: 'header.level2.symbol'
+          2:
+            name: 'header.level2.line'
+          3:
+            name: 'header.level2.symbol'
+      },
+      {
+        name: 'header.level3'
+        match: '^\s*(###)([^#].*)(\s*###\s*)?$'
+        captures:
+          1:
+            name: 'header.level3.symbol'
+          2:
+            name: 'header.level3.line'
+          3:
+            name: 'header.level3.symbol'
+      },
+      {
+        name: 'header.level4'
+        match: '^\s*(####)([^#].*)(\s*####\s*)?$'
+        captures:
+          1:
+            name: 'header.level4.symbol'
+          2:
+            name: 'header.level4.line'
+          3:
+            name: 'header.level4.symbol'
+      },
+      {
+        name: 'header.level5'
+        match: '^\s*(#####)([^#].*)(\s*#####\s*)?$'
+        captures:
+          1:
+            name: 'header.level5.symbol'
+          2:
+            name: 'header.level5.line'
+          3:
+            name: 'header.level5.symbol'
+      },
+      {
+        name: 'header.level6'
+        match: '^\s*(######)([^#].*)(\s*######\s*)?$'
+        captures:
+          1:
+            name: 'header.level6.symbol'
+          2:
+            name: 'header.level6.line'
+          3:
+            name: 'header.level6.symbol'
+      },
+    ]
+  starpatterns:
+    patterns: [
+      {
+        name: 'level1'
+        match: '([-+\\*])(.*)'
+        captures: {
+          1:
+            name: 'level1.star'
+          2:
+            patterns: [
+              { include: "#textcontent"}
+            ]
+        }
+      },
+      {
+        name: 'level2'
+        match: '([-+\\*]{2})(.*)'
+        captures: {
+          1:
+            name: 'level2.star'
+          2:
+            patterns: [
+              { include: "#textcontent"}
+            ]
+        }
+      },
+      {
+        name: 'level3'
+        match: '([-+\\*]{3})(.*)'
+        captures: {
+          1:
+            name: 'level3.star'
+          2:
+            patterns: [
+              { include: "#textcontent"}
+            ]
+        }
+      },
+      {
+        name: 'level4'
+        match: '([-+\\*]{4})(.*)'
+        captures: {
+          1:
+            name: 'level4.star'
+          2:
+            patterns: [
+              { include: "#textcontent"}
+            ]
+        }
+      },
+      {
+        name: 'level5'
+        match: '([-+\\*]{5})(.*)'
+        captures: {
+          1:
+            name: 'level5.star'
+          2:
+            patterns: [
+              { include: "#textcontent"}
+            ]
+        }
+      },
+      {
+        name: 'level6'
+        match: '([-+\\*]{6})(.*)'
+        captures: {
+          1:
+            name: 'level6.star'
+          2:
+            patterns: [
+              { include: "#textcontent"}
+            ]
+        }
+      },
+      {
+        name: 'level7'
+        match: '([-+\\*]{7})(.*)'
+        captures: {
+          1:
+            name: 'level7.star'
+          2:
+            patterns: [
+              { include: "#textcontent"}
+            ]
+        }
+      },
+      {
+        name: 'level8'
+        match: '([-+\\*]{8})(.*)'
+        captures: {
+          1:
+            name: 'level8.star'
+          2:
+            patterns: [
+              { include: "#textcontent"}
+            ]
+        }
+      },
+      {
+        name: 'level9'
+        match: '([-+\\*]{9})(.*)'
+        captures: {
+          1:
+            name: 'level9.star'
+          2:
+            patterns: [
+              { include: "#textcontent"}
+            ]
+        }
+      },
+      {
+        name: 'deeplevel'
+        match: '([-+\\*]{10,})(.*)'
+        captures: {
+          1:
+            name: 'deep.star'
+          2:
+            patterns: [
+              { include: "#textcontent"}
+            ]
         }
       }
     ]
-  textcontent:
-    patterns: [
+  startextcontent:
+    patterns:[
       {
         name: 'link.url.organized'
         #       protocol       host   port   path     Query params                          Link
@@ -47,5 +242,28 @@ repository:
       {
         name: 'todo.organized'
         match: "\\[TODO\\]"
+      },
+      {
+        name: 'completed.organized'
+        match: "\\[COMPLETED\\]"
+      },
+    ]
+  othertextcontent:
+    patterns: [
+      {
+        name: 'scheduled.meta'
+        match: "\s*(SCHEDULED)(:)( )(\\<)([^\\>]+)(\\>)"
+        captures: {
+          1:
+            name: 'tag'
+          2:
+            name: 'colon'
+          3:
+            name: 'begintimeblock'
+          4:
+            name: 'timeblock'
+          5:
+            name: 'endtimeblock'
+        }
       }
     ]

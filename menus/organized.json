@@ -23,8 +23,8 @@
           "label": "organized",
           "submenu": [
             {
-              "label": "Toggle",
-              "command": "organized:toggle"
+              "label": "Todo Item Toggle (todo/completed/unmarked)",
+              "command": "organized:toggleTodo"
             },
             {
               "label": "Indent",

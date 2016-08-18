@@ -5,11 +5,52 @@
 @import "ui-variables";
 
 atom-text-editor, atom-text-editor::shadow {
-  .star .organized {
-    color: white;
-  }
+  .organized {
+    .header.level1.symbol, .header.level1.line {
+      font-weight: bolder;
+      color: @text-color-selected;
+    }
 
-  .todo .organized {
-    color: blue;
+    .header.level2.symbol, .header.level2.line {
+      font-weight: underline;
+      color: @text-color-selected;
+    }
+
+    .header.level3.symbol, .header.level3.line {
+      color: @text-color-selected;
+    }
+
+    .starline {
+      .star {
+        .level1 {
+          color: @text-color-selected;
+        }
+      }
+
+      .todo {
+        color: @text-color-info;
+      }
+
+      .completed {
+        color: @text-color-subtle
+      }
+    }
+
+    .otherline {
+      .scheduled {
+        .tag {
+          color: @text-color-selected;
+        }
+        .colon {
+        }
+        .begintimeblock {
+        }
+        .timeblock {
+          color: @text-color-info
+        }
+        .endtimeblock {
+        }
+      }
+    }
   }
 }
