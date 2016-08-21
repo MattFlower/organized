@@ -9,85 +9,90 @@
   * [COMPLETED] Create github repository for organized project
   * [COMPLETED] Set version number in project.json
 * [COMPLETED] Figure out why styles do not work consistently
-
 * Page Organization
   * [COMPLETED] Add support for atx/markdown-style headings (#, ##, ###, etc)
 * Outlining
   * [COMPLETED] Implement indent
-  * [COMPLETED] Implement1 unindent
+  * [COMPLETED] Implement unindent
   * [COMPLETED] Figure out how to group undos for indent and unindent
   * [TODO] Expand / Collapse stars written like '**' as opposed to '  *'
-  * [TODO] Setting of whether you want different depth levels to be shown
+  * [COMPLETED] Setting of whether you want different depth levels to be shown
     as multiple stars or as whitespace and stars
-  * [TODO] Visibility cycling
-  * Improve return key Support
-    * [TODO] If you press return on a line that has a star, you should have a star
-      at the same level
-    * [TODO] If you press return on a line that doesn't have a star, you should
-      get a new line without a star
-    * [TODO] If you press ctrl-enter on a starred line, you should get a new line
-      without a star
-    * [TODO] If you press ctrl-enter on a non-starred line, you should get a new
-      line with a star
-    * [TODO] Make this behavior configurable so users can turn it off if they
-      don't like it.
-  * [TODO] Add setting to autowrap at gutter
-  * [TODO] Different coloring depending on the number of stars in a star block
-  * [TODO] Properly support soft-tabs settings
-  * [TODO] Support Atom's tab-length seting
-  * [TODO] Support Atom's tab type settings (soft and hard)
-  * [TODO] Support Atom's auto tab type setting
-    * Perhaps look at the first 1000 lines of a file -- see if we have more
-      tab intentations or whitespace indentations.
-    * Whichever line has the highest number wins
-    * Ignore lines that have both
-    * If sample size is too low, use more lines.
-  * [TODO] Auto-tab to correct level on paste
-  * [TODO] Command to unify indent as all tabs or all spaces.
-* Links
-  * [TODO] Highlighting / link following for Urls
-  * [TODO] Support org-mode style links
-* Todos
-  * [COMPLETED] Key command to toggle "TODO", "CLOSED", remove todo
-  * [TODO] Option to mark closed todo's with current time
-  * [TODO] Priorities for TODO items
-  * [TODO] Key-command to increase / decrease priority of items
-  * [TODO] Support multiple cursors for TODO toggling.
-  * [TODO] Command to remove completed todos from current file
-  * [TODO] UI for all TODO's in directory
-  * [TODO] Configuration to show what directories we'll scan for TODO items
-  * [TODO] Setting to auto-hide completed todo items
-* Promotion
-  * [TODO] Improve the readme file to work on some of Organized's best features.
-  * [TODO] Write a roadmap of the next few versions to show what I'm planning
-  * [COMPLETED] Add license and contribution policy
-* Tables
-  * [TODO] Syntax highlighting
-  * [TODO] Automatic calculation like a spreadsheet
-  * [TODO] Call atom / nodejs functions in a node
-  * [TODO] Call shell scripts from a node
-* Schedules
-  * [TODO] Support "SCHEDULED" tags inside of organized files
-  * [TODO] Add key command to add current date in ISO-8601 format
-  * [TODO] Add key command to add a schedule date
-  * [TODO] Create agenda view to show what's coming up
-    * Maybe this should be accordian style with both todos and agenda on a
-      single page
-  * [TODO] Support creating or changing a meeting in your calendar according to
-    changes in an organized file
-* Source blocks
-  * [TODO] Source block highlighting
-  * [TODO] Execute commands in a source block
-* Search / Exploration
-  * [TODO] Add command to search for a note
-    * Maybe https://github.com/fergiemcdowall/search-index
-    * Maybe grep
-    * Make sure to render whole line
-  * [TODO] UI to explore subject headers
-* Export
-  * [TODO] Export as HTML
-  * [TODO] Export as PDF
-* Safety
-  * [TODO] Add ability to encrypt notes
-* Tags
-  * [TODO] Syntax highlighting for tags
+  * [TODO] Support numbers as outline levels
+* Visibility cycling
+  * [TODO] Add folding to menus to raise visibility
+  * [TODO] Start supporting folding for '**' style stars (space-indented ones already work)
+* Improve return key Support
+  * [COMPLETED] If you press ctrl-return you should have a star at the same level on
+    a new line.
+  * [COMPLETED] If you press return you should get a new line without a star
+  * [COMPLETED] Make this behavior configurable so users can turn it off if they
+    don't like it.
+  * [COMPLETED] If you hit enter on a level created with multiple stars, the new line should also be multi-star
+  * [TODO] Figure out why I can't bind shift-enter correctly.
+    * This might be due to peculiarity in chromium css specificity.
+* [TODO] Add setting to autowrap at gutter
+* [TODO] Different coloring depending on the number of stars in a star block
+* [TODO] Properly support soft-tabs settings
+* [TODO] Support Atom's tab-length setting
+* [TODO] Support Atom's tab type settings (soft and hard)
+* [TODO] Support Atom's auto tab type setting
+  * Perhaps look at the first 1000 lines of a file -- see if we have more
+    tab intentations or whitespace indentations.
+  * Whichever line has the highest number wins
+  * Ignore lines that have both
+  * If sample size is too low, use more lines.
+* [TODO] Auto-tab to correct level on paste
+* [TODO] Command to unify indent as all tabs or all spaces.
+ Tests
+* I'm already getting to the point where it is difficult to retest everything and I only have 250 line CoffeeScript
+  file.  We need some spec tests.
+* [COMPLETED] Learn how to write spec tests
+* [COMPLETED] Write tests for all existing functionality
+ Links
+* [TODO] Highlighting / link following for Urls
+* [TODO] Support org-mode style links
+ Todos
+* [COMPLETED] Key command to toggle "TODO", "CLOSED", remove todo
+* [TODO] Option to mark closed todo's with current time
+* [TODO] Priorities for TODO items
+* [TODO] Key-command to increase / decrease priority of items
+* [TODO] Support multiple cursors for TODO toggling.
+* [TODO] Command to remove completed todos from current file
+* [TODO] UI for all TODO's in directory
+* [TODO] Configuration to show what directories we'll scan for TODO items
+* [TODO] Setting to auto-hide completed todo items
+ Promotion
+* [TODO] Improve the readme file to work on some of Organized's best features.
+* [TODO] Write a roadmap of the next few versions to show what I'm planning
+* [COMPLETED] Add license and contribution policy
+ Tables
+* [TODO] Syntax highlighting
+* [TODO] Automatic calculation like a spreadsheet
+* [TODO] Call atom / nodejs functions in a node
+* [TODO] Call shell scripts from a node
+ Schedules
+* [TODO] Support "SCHEDULED" tags inside of organized files
+* [TODO] Add key command to add current date in ISO-8601 format
+* [TODO] Add key command to add a schedule date
+* [TODO] Create agenda view to show what's coming up
+  * Maybe this should be accordian style with both todos and agenda on a
+    single page
+* [TODO] Support creating or changing a meeting in your calendar according to
+  changes in an organized file
+ Source blocks
+* [TODO] Source block highlighting
+* [TODO] Execute commands in a source block
+ Search / Exploration
+* [TODO] Add command to search for a note
+  * Maybe https://github.com/fergiemcdowall/search-index
+  * Maybe grep
+  * Make sure to render whole line
+* [TODO] UI to explore subject headers
+ Export
+* [TODO] Export as HTML
+* [TODO] Export as PDF
+ Safety
+* [TODO] Add ability to encrypt notes
+ Tags
+* [TODO] Syntax highlighting for tags

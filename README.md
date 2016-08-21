@@ -4,9 +4,15 @@ Organized is designed to allow you to keep notes, a schedule, and todo list
 inside of Atom.
 
 # Features
-* Highlighting of Metadata headers
-* Highlighting of [TODO]/[COMPLETED] tags
-* Ctrl-Shift-T for toggling todo items from [TODO] to [COMPLETED] to blank.
+* Outlining
+  * Indent or Unindent with tab and shift-tab
+  * Automatically create stars if you've been outlining and you press enter.
+  * Write more text for the same star on a new line if you press shift-enter
+  * "*", "-", and "+" characters supported for outlining
+* Support todo items
+  * Highlighting of [TODO]/[COMPLETED] tags
+  * Ctrl-Shift-T for toggling todo items from [TODO] to [COMPLETED] to blank.
+* Highlighting of org-mode style Metadata headers
 
 # What Do I Want to Build
 * Complete compatibility with existing org-mode documents
@@ -102,9 +108,11 @@ regard.  Really!
 ![A screenshot of your package](https://f.cloud.github.com/assets/69169/2290250/c35d867a-a017-11e3-86be-cd7c5bf3ff9b.gif)
 
 # Roadmap
-* 0.0.2
+* 0.0.2 (Coming Soon)
+  * Support for numbers as Outline bullets
   * Support for clickable url links
   * Support for org-mode style links
+  * Support for tables
 
 # Contributions
 Contributions of source code or bugs are welcome!  Please use Github to submit

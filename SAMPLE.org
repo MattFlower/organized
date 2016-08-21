@@ -1,0 +1,46 @@
+# Outline samples
+This page contains a variety of outline types to use for manual testing
+
+## Outline indented with spaces
+* Todo level 1
+  * Todo level 2a
+    with some text on the next line
+  * Todo level 2b
+    * Todo level 3a
+	    * Todo level 4a
+    * Todo level 3b
+        * Todo level 4b
+	      * Todo level 5
+          * Todo level 6
+
+- Todo level 1
+  - Todo level 2a
+    with some text on the next line
+  - Todo level 2b
+    - Todo level 3a
+      - Todo level 4b
+        - Todo level 5
+        - Todo level 6
+
++ Todo level 1
+  + Todo level 2a
+    with some text on the next line
+  + Todo level 2b
+    + Todo level 3a
+    + Todo level 4b
+      + Todo level 5
+      + Todo level 6
+
+## Outline indented with stacks
+* Todo level 1
+** Todo level 2a
+*** Todo level 3a
+**** Todo level 4a
+*** Todo level 3b
+**** Todo level 4b
+***** Todo level 5
+****** Todo level 6
+
+## TODO items
+* [TODO] One todo
+* [COMPLETED] Already completed todo

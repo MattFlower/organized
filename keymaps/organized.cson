@@ -2,3 +2,6 @@
     'tab': 'organized:indent',
     'shift-tab': 'organized:unindent',
     'ctrl-shift-t': 'organized:toggleTodo'
+    'ctrl-enter': 'organized:newLine'
+    'shift-enter': 'organized:newLine'
+    'enter': 'organized:newStarLine'

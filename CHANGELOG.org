@@ -1,8 +1,9 @@
 # Roadmap
-* 0.0.1
+* 0.0.1 (Released 2016-08-09)
   * Highlighting of stars
   * Toggle for todo items
   * Support for markdown-style headers
   * Auto-create asterisk on new line when you hit return (configurable)
+  * Don't create a star on a new line if you hit ctrl-enter and line up indent with text (configurable)
   * Support indent (tab) and unindent (shift-tab) commands with autodetection
     of which style you have been using.

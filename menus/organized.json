@@ -20,7 +20,7 @@
       "label": "Packages",
       "submenu": [
         {
-          "label": "organized",
+          "label": "Organized",
           "submenu": [
             {
               "label": "Todo Item Toggle (todo/completed/unmarked)",
