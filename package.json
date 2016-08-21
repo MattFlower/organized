@@ -1,7 +1,7 @@
 {
   "name": "organized",
   "main": "./lib/organized",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Outlining and todo lists in Atom (similar to org-mode)",
   "keywords": [
     "organized",
@@ -14,8 +14,7 @@
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "extensions": {
     ".coffee": [
       "lib/organized.coffee"
@@ -27,9 +26,9 @@
   "folders": [
     {
       "paths": [
-          "",
-          "lib",
-          "grammars"
+        "",
+        "lib",
+        "grammars"
       ]
     }
   ]
