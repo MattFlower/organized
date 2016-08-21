@@ -65,12 +65,12 @@ module.exports =
   indent: (event) ->
     if editor = atom.workspace.getActiveTextEditor()
       position = editor.getCursorBufferPosition()
-      console.log("Position: #{position}")
+      # console.log("Position: #{position}")
       if first = @_findPrevStar(editor, position)
-        console.log("First: #{first}")
+        # console.log("First: #{first}")
         [firstRow, ...] = first
         lastRow = @_findLastRowOfStar(editor, position)
-        console.log("Last: #{lastRow}")
+        # console.log("Last: #{lastRow}")
 
         if @levelStyle is "stacked"
           indent = @_starType(editor, position)
@@ -193,7 +193,7 @@ module.exports =
     row = position.row
     line = editor.lineTextForBufferRow(row)
     while !@_starOnLine(line)
-      console.log("No star on #{row}")
+      # console.log("No star on #{row}")
       row -= 1
       if (row < 0)
         return null
@@ -213,7 +213,7 @@ module.exports =
     lastGoodRow = position.row
     row = position.row + 1
     line = editor.lineTextForBufferRow(row)
-    while row < editor.getLastBufferRow() and not line.match(/s*[#\-\+\*]/)
+    while row < editor.getLastBufferRow() and not line.match(/(s*[#\-\+\*])|(^$)/)
       row += 1
       line = editor.lineTextForBufferRow(row)
 
@@ -227,7 +227,7 @@ module.exports =
     else if @levelStyle is "stacked"
       [starRow, ...] = @_findPrevStar(editor, position)
       indent = @_starType(starRow)
-    console.log("levelStyle is #{@levelStyle}, returning #{indent}")
+    # console.log("levelStyle is #{@levelStyle}, returning #{indent}")
     return indent
 
   _starIndexOf: (line) ->
@@ -244,9 +244,8 @@ module.exports =
     return line.match(/^\s*[\*\-\+]/)
 
   _starLevel: (editor, position) ->
-    console.log("starLevel")
     if prevStar = @_findPrevStar(editor, position)
-      console.log("Found prevStar: #{prevStar}")
+      # console.log("Found prevStar: #{prevStar}")
       [starRow, starIndex] = prevStar
       line = editor.lineTextForBufferRow(starRow)
 

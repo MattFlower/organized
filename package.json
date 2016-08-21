@@ -1,18 +1,20 @@
 {
   "name": "organized",
   "main": "./lib/organized",
-  "version": "0.0.1",
-  "description": "A short description of your package",
+  "version": "0.0.0",
+  "description": "Outlining and todo lists in Atom (similar to org-mode)",
   "keywords": [
+    "organized",
+    "org-mode",
+    "todo",
+    "outline"
   ],
-  "repository": "https://github.com/atom/organized",
+  "repository": "https://github.com/MattFlower/organized",
   "license": "MIT",
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
   },
   "dependencies": {
-    "language-hyperlink": "^0.16.0",
-    "link": "^0.31.1"
   },
   "extensions": {
     ".coffee": [

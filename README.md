@@ -3,6 +3,12 @@
 Organized is designed to allow you to keep notes, a schedule, and todo list
 inside of Atom.
 
+![Organized Screenshot](https://raw.githubusercontent.com/MattFlower/organized/master/screenshots/0_0_1.gif)
+
+Right now, we're in the early stages of Organized, but join us now and watch
+us get better.  I think we've already have a pretty functional outliner and
+todo lists.  
+
 # Features
 * Outlining
   * Indent or Unindent with tab and shift-tab
@@ -18,6 +24,8 @@ inside of Atom.
 * Complete compatibility with existing org-mode documents
 * Syntax coloring for code blocks
 * Ability to execute code blocks inline
+* Nice looking panes that can show you your todos and agendas across multiple organized documents
+* Export to pdf, html, etc
 
 # Learning the Basics of Organized
 At the most basic level, Organized is an outlining / note taking tool.  You can
@@ -65,9 +73,6 @@ You might want to organize your notes a bit.  You can do that with markdown-styl
     ## A subheading
     * With some more notes
 
-# Customizing Organized
-TODO
-
 # Why Did I Write Organized?
 I designed Organized in response to a personal itch.  I've long been a user
 of note taking software (plain text, notebooks, Evernote, OneNote, etc) and
@@ -105,17 +110,8 @@ I've been told that immitation is flattery.  If you have contributed on org-mode
 and you are fuming at my suggestions, please know I hold you in the highest
 regard.  Really!
 
-![A screenshot of your package](https://f.cloud.github.com/assets/69169/2290250/c35d867a-a017-11e3-86be-cd7c5bf3ff9b.gif)
-
-# Roadmap
-* 0.0.2 (Coming Soon)
-  * Support for numbers as Outline bullets
-  * Support for clickable url links
-  * Support for org-mode style links
-  * Support for tables
-
 # Contributions
-Contributions of source code or bugs are welcome!  Please use Github to submit
+Contributions of source code or bugs are welcome!  Please use [Github](https://github.com/MattFlower/organized) to submit
 issues or pull requests.
 
 # License
