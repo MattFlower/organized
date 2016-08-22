@@ -8,7 +8,7 @@
   * Support indent (tab) and unindent (shift-tab) commands with autodetection
     of which style you have been using.
 
-* 0.1.3 (Released 2016-08-21)
+* 0.1.0 (Released 2016-08-21)
   * Added support for using numbers as bullets
   * More test cases and bug fixes.
   * Fixed console error on startup
