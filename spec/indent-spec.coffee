@@ -1,5 +1,7 @@
 describe "organized:indent", ->
   beforeEach ->
+    console.log("-".repeat(40))
+
     waitsForPromise ->
       atom.workspace.open('test.org')
 
@@ -54,8 +56,6 @@ describe "organized:indent", ->
     textEditorView = atom.views.getView(editor)
     atom.commands.dispatch(textEditorView, "organized:indent")
     expect(editor.getText()).toBe("- A\n  - \n\n* B")
-
-
 
 #   it "should add tabs if the default indent type is tabs", ->
 #     expect("").toEqual("")

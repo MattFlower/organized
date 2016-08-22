@@ -1,5 +1,6 @@
 describe "when organized:toggleTodo is used", ->
   beforeEach ->
+    console.log("-".repeat(40))
     waitsForPromise ->
       atom.workspace.open('test.org')
 
@@ -20,15 +21,18 @@ describe "when organized:toggleTodo is used", ->
         expect(newLine).toBe(after)
 
 
-  parameterized([0, 0], "* One",             "* [TODO] One")
-  parameterized([0, 0], "* [TODO] One",      "* [COMPLETED] One")
-  parameterized([0, 0], "* [COMPLETED] One", "* One")
-  parameterized([0, 0], "- One",             "- [TODO] One")
-  parameterized([0, 0], "- [TODO] One",      "- [COMPLETED] One")
-  parameterized([0, 0], "- [COMPLETED] One", "- One")
-  parameterized([0, 0], "+ One",             "+ [TODO] One")
-  parameterized([0, 0], "+ [TODO] One",      "+ [COMPLETED] One")
-  parameterized([0, 0], "+ [COMPLETED] One", "+ One")
+  parameterized([0, 0], "* One",              "* [TODO] One")
+  parameterized([0, 0], "* [TODO] One",       "* [COMPLETED] One")
+  parameterized([0, 0], "* [COMPLETED] One",  "* One")
+  parameterized([0, 0], "- One",              "- [TODO] One")
+  parameterized([0, 0], "- [TODO] One",       "- [COMPLETED] One")
+  parameterized([0, 0], "- [COMPLETED] One",  "- One")
+  parameterized([0, 0], "+ One",              "+ [TODO] One")
+  parameterized([0, 0], "+ [TODO] One",       "+ [COMPLETED] One")
+  parameterized([0, 0], "+ [COMPLETED] One",  "+ One")
+  parameterized([0, 0], "1. One",             "1. [TODO] One")
+  parameterized([0, 0], "1. [TODO] One",      "1. [COMPLETED] One")
+  parameterized([0, 0], "1. [COMPLETED] One", "1. One")
   parameterized([1, 0], "* One\n  * Two",             "* One\n  * [TODO] Two")
   parameterized([1, 0], "* One\n  * [TODO] Two",      "* One\n  * [COMPLETED] Two")
   parameterized([1, 0], "* One\n  * [COMPLETED] Two", "* One\n  * Two")

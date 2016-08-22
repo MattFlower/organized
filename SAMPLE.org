@@ -41,6 +41,11 @@ This page contains a variety of outline types to use for manual testing
 ***** Todo level 5
 ****** Todo level 6
 
+## Outline with numbers
+1. Level 1
+2. Also Level 1
+
+
 ## TODO items
 * [TODO] One todo
 * [COMPLETED] Already completed todo

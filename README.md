@@ -7,7 +7,7 @@ inside of Atom.
 
 Right now, we're in the early stages of Organized, but join us now and watch
 us get better.  I think we've already have a pretty functional outliner and
-todo lists.  
+todo lists.
 
 # Features
 * Outlining
@@ -15,6 +15,7 @@ todo lists.
   * Automatically create stars if you've been outlining and you press enter.
   * Write more text for the same star on a new line if you press shift-enter
   * "*", "-", and "+" characters supported for outlining
+  * Support numbered bullets
 * Support todo items
   * Highlighting of [TODO]/[COMPLETED] tags
   * Ctrl-Shift-T for toggling todo items from [TODO] to [COMPLETED] to blank.

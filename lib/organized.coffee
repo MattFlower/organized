@@ -1,5 +1,6 @@
-{CompositeDisposable, Directory} = require 'atom'
+{CompositeDisposable, Directory, Point} = require 'atom'
 OrganizedView = require './organized-view'
+Star = require './star'
 
 module.exports =
   organizedView: null
@@ -55,7 +56,7 @@ module.exports =
     @subscriptions.add atom.config.observe 'editor.tabLength', (newValue) => @indentSpaces = newValue
 
     #Not sure why I have so much trouble with this particular keymap
-    atom.keymaps.add("/Users/mflower/.atom/packages/organized/keymaps/organized.cson", "shift-enter", 100)
+    # atom.keymaps.add("/Users/mflower/.atom/packages/organized/keymaps/organized.cson", "shift-enter", 100)
 
   deactivate: () ->
     @modalPanel.destroy()
@@ -63,36 +64,23 @@ module.exports =
     @organizedView.destroy()
 
   indent: (event) ->
-    if editor = atom.workspace.getActiveTextEditor()
-      position = editor.getCursorBufferPosition()
-      # console.log("Position: #{position}")
-      if first = @_findPrevStar(editor, position)
-        # console.log("First: #{first}")
-        [firstRow, ...] = first
-        lastRow = @_findLastRowOfStar(editor, position)
-        # console.log("Last: #{lastRow}")
+    if star = @_starInfo()
+      editor = atom.workspace.getActiveTextEditor()
+      indent = if @levelStyle is "stacked" then star.starType else @_indentChars()
 
-        if @levelStyle is "stacked"
-          indent = @_starType(editor, position)
-        else
-          indent = @_indentChars(editor, position)
-
-        #We found the lines, now indent
-        editor.transact 1000, () =>
-          for row in [firstRow..lastRow]
-            editor.setTextInBufferRange([[row, 0], [row, 0]], indent)
+      editor.transact 1000, () =>
+        for row in [star.startRow..star.endRow]
+          editor.setTextInBufferRange([[row, 0], [row, 0]], indent)
 
   # Respond to someone pressing enter.
   # There's some special handling here.  The auto-intent that's built into atom does a good job, but I want the
   # new text to be even with the start of the text, not the start of the star.
   newLine: (event) ->
     if editor = atom.workspace.getActiveTextEditor()
-      oldPosition = editor.getCursorBufferPosition()
-      if star = @_findPrevStar(editor, oldPosition)
+      if star = @_starInfo()
         editor.transact 1000, () =>
-          lastRowLevel = @_starLevel(editor, oldPosition)
           editor.insertNewline()
-          indent = @_indentChars().repeat(lastRowLevel) + "  "
+          indent = @_indentChars().repeat(star.indentLevel) + "  "
           newPosition = editor.getCursorBufferPosition()
           editor.setTextInBufferRange([[newPosition.row, 0], [newPosition.row, Infinity]], indent)
       else
@@ -123,20 +111,34 @@ module.exports =
       # and what kind of star to use
       # Really hit return now
       editor.transact 1000, () =>
-        lastRowLevel = @_starLevel(editor, oldPosition)
-        if lastRowLevel >= 0
-          starType = @_starType(editor, oldPosition)
-          # console.log("starType: #{starType}")
+        star = @_starInfo()
+        #console.log(star)
+        if star and star.indentLevel >= 0
           editor.insertNewline()
 
           #Create our new text to insert
-          if @levelStyle is "stacked"
-            indent = starType.repeat(lastRowLevel) + " "
-          else
-            indent = @_indentChars(editor, oldPosition).repeat(lastRowLevel) + starType + " "
-          # console.log("Indent: '#{indent}'")
           newPosition = editor.getCursorBufferPosition()
-          editor.setTextInBufferRange([[newPosition.row, 0], [newPosition.row, Infinity]], indent)
+          if star.starType is 'numbers'
+            indent = @_indentChars(star, editor, oldPosition).repeat(star.indentLevel) + star.nextNumber + '. '
+            editor.setTextInBufferRange([[newPosition.row, 0], [newPosition.row, Infinity]], indent)
+
+            position = new Point(newPosition.row+1, 0)
+            #console.log("newPosition+1: #{position}, last buffer row: #{editor.getLastBufferRow()}")
+            while position.row <= editor.getLastBufferRow() and nextStar = @_starInfo(editor, position)
+              if nextStar.starType isnt 'numbers' or nextStar.indentLevel isnt star.indentLevel
+                break
+              #console.log("Position: #{position}, nextStar.startRow: #{nextStar.startRow}, nextStar.endRow: #{nextStar.endRow}")
+              #console.log("Replacing #{nextStar.currentNumber} with #{nextStar.nextNumber}")
+              editor.setTextInBufferRange([[nextStar.startRow, nextStar.starCol],
+                                          [nextStar.startRow, nextStar.starCol+(""+nextStar.currentNumber).length]],
+                                          "" + nextStar.nextNumber)
+              position = new Point(nextStar.endRow+1, 0)
+          else if @levelStyle is "stacked"
+            indent = star.starType.repeat(star.indentLevel) + " "
+            editor.setTextInBufferRange([[newPosition.row, 0], [newPosition.row, Infinity]], indent)
+          else
+            indent = @_indentChars(star, editor, oldPosition).repeat(star.indentLevel) + star.starType + " "
+            editor.setTextInBufferRange([[newPosition.row, 0], [newPosition.row, Infinity]], indent)
         else
           editor.insertNewline()
 
@@ -149,30 +151,28 @@ module.exports =
     editor = atom.workspace.getActiveTextEditor()
     if editor
       position = editor.getCursorBufferPosition()
-      if prevStar = @_findPrevStar(editor, position)
-        [row, col] = prevStar
-        line = editor.lineTextForBufferRow(row)
+      if star = @_starInfo()
+        line = editor.lineTextForBufferRow(star.startRow)
 
         currentPosition = editor.getCursorBufferPosition()
-        if (line.match(/\s*[\-\+\*]+ \[TODO\] /))
+        if (line.match(/\s*([\-\+\*]+|\d+.) \[TODO\] /))
           deleteStart = line.indexOf("[TODO] ")
-          editor.setTextInBufferRange([[row, deleteStart], [row, deleteStart+7]], "[COMPLETED] ")
+          editor.setTextInBufferRange([[star.startRow, deleteStart], [star.startRow, deleteStart+7]], "[COMPLETED] ")
           editor.setCursorBufferPosition([currentPosition.row, currentPosition.column+5])
-        else if (line.match(/\s*[\-\+\*]+ \[COMPLETED\] /))
+        else if (line.match(/\s*([\-\+\*]+|\d+.) \[COMPLETED\] /))
           deleteStart = line.indexOf("[COMPLETED] ")
-          editor.setTextInBufferRange([[row, deleteStart], [row, deleteStart+12]], "")
+          editor.setTextInBufferRange([[star.startRow, deleteStart], [star.startRow, deleteStart+12]], "")
           editor.setCursorBufferPosition([currentPosition.row, currentPosition.column-12])
         else
-          insertCol = @_starIndexOf(line)
-          editor.setTextInBufferRange([[row, insertCol+1], [row, insertCol+1]], " [TODO]")
+          editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.whitespaceCol]], " [TODO]")
           editor.setCursorBufferPosition([currentPosition.row, currentPosition.column+7])
 
   unindent: (event) ->
     if editor = atom.workspace.getActiveTextEditor()
       position = editor.getCursorBufferPosition()
-      if first = @_findPrevStar(editor, position)
-        [firstRow, ...] = first
-        lastRow = @_findLastRowOfStar(editor, position)
+      if star = @_starInfo()
+        firstRow = star.startRow
+        lastRow = star.endRow
 
         #Unindent
         editor.transact 1000, () ->
@@ -182,107 +182,45 @@ module.exports =
               editor.setTextInBufferRange([[row, 0], [row, 2]], "")
             else if line.match("^\\t")
               editor.setTextInBufferRange([[row, 0], [row, 1]], "")
+            else if line.match(/^[\\*\\+\\-] /)
+              editor.setTextInBufferRange([[row, 0], [row, 2]], "")
             else if line.match(/^[\\*\\+\\-]/)
+              #Stacked
               editor.setTextInBufferRange([[row, 0], [row, 1]], "")
             else
               #cannot unindent - not sure how to do so
 
-  # Find the current star in terms in buffer coordinates
-  # returns [row, column] or
-  _findPrevStar: (editor, position) ->
-    row = position.row
-    line = editor.lineTextForBufferRow(row)
-    while !@_starOnLine(line)
-      # console.log("No star on #{row}")
-      row -= 1
-      if (row < 0)
-        return null
-      else
-        line = editor.lineTextForBufferRow(row)
+  _starInfo: (editor=atom.workspace.getActiveTextEditor(), position=editor.getCursorBufferPosition()) ->
+    # Returns the following info
+    # * Start Position of last star
+    # * Last line of star
+    # * Type of star (*, -, +, number)
+    # * Type of whitespace (tabs, spaces, stacked, mixed)
+    if not editor
+      console.error("Editor is required")
+      return
+    if not position
+      console.error("Position is required")
+      return
 
-    col = -1
-    if line
-      col = @_starIndexOf(line)
-
-    if col != -1
-      return [row, col]
+    # Find the line with the last star.  If you find blank lines or a header, there probably isn't a
+    # star for this position
+    currentLine = position.row
+    star = new Star(currentLine, @indentSpaces)
+    if star.startRow >= 0
+      return star
     else
       return null
 
-  _findLastRowOfStar: (editor, position) ->
-    lastGoodRow = position.row
-    row = position.row + 1
-    line = editor.lineTextForBufferRow(row)
-    while row < editor.getLastBufferRow() and not line.match(/(s*[#\-\+\*])|(^$)/)
-      row += 1
-      line = editor.lineTextForBufferRow(row)
-
-    return row - 1
-
-  _indentChars: (editor, position) ->
+  _indentChars: (star=null, editor=atom.workspace.getActiveTextEditor(), position=editor.getCursorBufferPosition()) ->
+    #console.log("Editor: #{editor}, Position: #{position}")
     if @levelStyle is "spaces"
       indent = " ".repeat(@indentSpaces)
     else if @levelStyle is "tabs"
       indent = "\t"
     else if @levelStyle is "stacked"
-      [starRow, ...] = @_findPrevStar(editor, position)
-      indent = @_starType(starRow)
-    # console.log("levelStyle is #{@levelStyle}, returning #{indent}")
+      if not star
+        star = @_starInfo()
+      indent = star.starType
+
     return indent
-
-  _starIndexOf: (line) ->
-    if (starIndex = line.indexOf('*')) > -1
-      return starIndex
-    else if (starIndex = line.indexOf('-')) > -1
-      return starIndex
-    else if (starIndex = line.indexOf('+')) > -1
-      return starIndex
-    else
-      return -1
-
-  _starOnLine: (line) ->
-    return line.match(/^\s*[\*\-\+]/)
-
-  _starLevel: (editor, position) ->
-    if prevStar = @_findPrevStar(editor, position)
-      # console.log("Found prevStar: #{prevStar}")
-      [starRow, starIndex] = prevStar
-      line = editor.lineTextForBufferRow(starRow)
-
-      levelCount = 0
-      if stars = line.match(/([\*\-\+]+)/)
-          if stars[1].length > 1
-            levelCount = stars[1].length
-          else
-            levelCount = 0
-            index = 0
-            indentBySpaceString = " ".repeat(@indentSpaces)
-            # console.log("indentSpaces: #{@indentSpaces}")
-            while index < starIndex
-              # console.log("Index: #{index}")
-              if line[index] is '\t'
-                # console.log("Found tab character")
-                levelCount += 1
-                index += 1
-              else if line[index..index+@indentSpaces-1] is indentBySpaceString
-                # console.log("Found '#{line[index..index+@indentSpaces-1]}'")
-                levelCount += 1
-                index += @indentSpaces
-              else
-                # console.log("Found unknown: '#{line[index..index+@indentSpaces-1]}', '#{line[index]}'")
-                #Not really sure what to do with this.
-                index += 1
-            return levelCount
-        else
-          console.warn("Unexpected result, couldn't find star")
-    else
-      # console.log("No Prev Star")
-      return -1
-
-  _starType: (editor, position) ->
-    [starRow, ...] = @_findPrevStar(editor, position)
-    line = editor.lineTextForBufferRow(starRow)
-    if match = line.match(/^\s*([\*\-\+])/)
-      return match[1]
-    else
-      return ""

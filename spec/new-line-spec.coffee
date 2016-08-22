@@ -1,6 +1,7 @@
 describe "Pressing ctrl-enter creates a new line indented to the text", ->
 
   beforeEach ->
+    console.log("-".repeat(40))
     waitsForPromise ->
       atom.workspace.open('test.org')
 

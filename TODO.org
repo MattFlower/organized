@@ -44,55 +44,57 @@
   * If sample size is too low, use more lines.
 * [TODO] Auto-tab to correct level on paste
 * [TODO] Command to unify indent as all tabs or all spaces.
- Tests
-* I'm already getting to the point where it is difficult to retest everything and I only have 250 line CoffeeScript
-  file.  We need some spec tests.
-* [COMPLETED] Learn how to write spec tests
-* [COMPLETED] Write tests for all existing functionality
- Links
-* [TODO] Highlighting / link following for Urls
-* [TODO] Support org-mode style links
- Todos
-* [COMPLETED] Key command to toggle "TODO", "CLOSED", remove todo
-* [TODO] Option to mark closed todo's with current time
-* [TODO] Priorities for TODO items
-* [TODO] Key-command to increase / decrease priority of items
-* [TODO] Support multiple cursors for TODO toggling.
-* [TODO] Command to remove completed todos from current file
-* [TODO] UI for all TODO's in directory
-* [TODO] Configuration to show what directories we'll scan for TODO items
-* [TODO] Setting to auto-hide completed todo items
- Promotion
-* [TODO] Improve the readme file to work on some of Organized's best features.
-* [TODO] Write a roadmap of the next few versions to show what I'm planning
-* [COMPLETED] Add license and contribution policy
- Tables
-* [TODO] Syntax highlighting
-* [TODO] Automatic calculation like a spreadsheet
-* [TODO] Call atom / nodejs functions in a node
-* [TODO] Call shell scripts from a node
- Schedules
-* [TODO] Support "SCHEDULED" tags inside of organized files
-* [TODO] Add key command to add current date in ISO-8601 format
-* [TODO] Add key command to add a schedule date
-* [TODO] Create agenda view to show what's coming up
-  * Maybe this should be accordian style with both todos and agenda on a
-    single page
-* [TODO] Support creating or changing a meeting in your calendar according to
-  changes in an organized file
- Source blocks
-* [TODO] Source block highlighting
-* [TODO] Execute commands in a source block
- Search / Exploration
-* [TODO] Add command to search for a note
-  * Maybe https://github.com/fergiemcdowall/search-index
-  * Maybe grep
-  * Make sure to render whole line
-* [TODO] UI to explore subject headers
- Export
-* [TODO] Export as HTML
-* [TODO] Export as PDF
- Safety
-* [TODO] Add ability to encrypt notes
- Tags
-* [TODO] Syntax highlighting for tags
+* Tests
+  * I'm already getting to the point where it is difficult to retest everything and I only have 250 line CoffeeScript
+    file.  We need some spec tests.
+  * [COMPLETED] Learn how to write spec tests
+  * [COMPLETED] Write tests for all existing functionality
+* Links
+  * [TODO] Highlighting / link following for Urls
+  * [TODO] Support org-mode style links
+* Todos
+  * [COMPLETED] Key command to toggle "TODO", "CLOSED", remove todo
+  * [TODO] Option to mark closed todo's with current time
+  * [TODO] Priorities for TODO items
+  * [TODO] Key-command to increase / decrease priority of items
+  * [TODO] Support multiple cursors for TODO toggling.
+  * [TODO] Command to remove completed todos from current file
+  * [TODO] UI for all TODO's in directory
+  * [TODO] Configuration to show what directories we'll scan for TODO items
+  * [TODO] Setting to auto-hide completed todo items
+* Promotion
+  * [COMPLETED] Improve the readme file to work on some of Organized's best features.
+  * [TODO] Write a roadmap of the next few versions to show what I'm planning
+  * [COMPLETED] Add license and contribution policy
+* Tables
+  * [TODO] Syntax highlighting
+  * [TODO] Automatic calculation like a spreadsheet
+  * [TODO] Call atom / nodejs functions in a node
+  * [TODO] Call shell scripts from a node
+* Schedules
+  * [TODO] Support "SCHEDULED" tags inside of organized files
+  * [TODO] Add key command to add current date in ISO-8601 format
+  * [TODO] Add key command to add a schedule date
+  * [TODO] Create agenda view to show what's coming up
+    * Maybe this should be accordian style with both todos and agenda on a
+      single page
+  * [TODO] Support creating or changing a meeting in your calendar according to
+    changes in an organized file
+* Source blocks
+  * [TODO] Source block highlighting
+  * [TODO] Execute commands in a source block
+* Search / Exploration
+  * [TODO] Add command to search for a note
+    * Maybe https://github.com/fergiemcdowall/search-index
+    * Maybe grep
+    * Make sure to render whole line
+  * [TODO] UI to explore subject headers
+* Export
+  * [TODO] Export as HTML
+  * [TODO] Export as PDF
+* Safety
+  * [TODO] Add ability to encrypt notes
+* Tags
+  * [TODO] Syntax highlighting for tags
+* Code structure
+  * [COMPLETED] Replace endless star methods with a single method that collects all the info
