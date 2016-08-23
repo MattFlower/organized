@@ -5,3 +5,5 @@
     'ctrl-enter': 'organized:newLine'
     'shift-enter': 'organized:newLine'
     'enter': 'organized:newStarLine'
+    'ctrl-i t': 'organized:insertDateTime'
+    'ctrl-i d': 'organized:insertDate'

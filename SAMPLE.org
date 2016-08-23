@@ -49,3 +49,63 @@ This page contains a variety of outline types to use for manual testing
 ## TODO items
 * [TODO] One todo
 * [COMPLETED] Already completed todo
+
+## Code Highlighting
+* Highlighting is available in several languages
+  * Coffeescript
+    * Jira-style
+      ```coffee
+      test: (a, b) ->
+        console.log("hi")
+      ```
+  * CSS
+    * Jira-style
+      ```css
+      a.href {
+          color: red
+      }
+      ```
+  * Java
+    * Jira-style
+    ```java
+    public class Test {
+      public static void main(String[] args) {
+        System.out.println("Test");
+      }
+    }
+    ```
+  * Javascript
+    * Jira-style
+    ```javascript
+    Test.prototype.test = function(keystroke) {
+      console.log("Test");
+    };
+    ```
+  * Less
+    * Jira-style
+    ```less
+    atom-text-editor, atom-text-editor::shadow {
+      .organized {
+        .header.level1.symbol, .header.level1.line {
+          font-weight: bolder;
+          color: @text-color-selected;
+        }
+    }
+    ```
+  * Python
+    * Jira-style
+      ```python
+      print [i*2 for i in range(1,10)]
+      ```
+  * Shell
+    * Jira-style
+      ```shell
+      for dir in `ls -la *`; do
+        echo "Some dir: $dir"
+      done
+      ```
+  * SQL
+    * Jira-style
+      ```sql
+      SELECT * FROM DUAL
+      ```

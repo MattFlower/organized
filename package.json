@@ -11,6 +11,9 @@
   ],
   "repository": "https://github.com/MattFlower/organized",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MattFlower/organized/issues"
+  },
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
   },

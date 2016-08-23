@@ -1,4 +1,20 @@
-# Already out
+* 0.2.0 (Released 2016-08-22)
+  * Added support for inserting current ISO-8601 date / datetime (ctrl-i d or ctrl-i t respectively)
+  * Added support for embedded codeblocks using jira style code blocks
+    ```shell
+    <some shell commands>
+    ```
+  * Syntax highlighting for SCHEDULED tags on outline items.
+  * Syntax highlighting for tags
+  * Fixed bugs
+    * If you weren't at the end of the line when you pressed return, the text after your cursor was deleted.
+    * If your cursor was before the star, the behavior would be incorrect.
+
+* 0.1.0 (Released 2016-08-21)
+  * Added support for using numbers as bullets
+  * More test cases and bug fixes.
+  * Fixed console error on startup
+
 * 0.0.2 (Released 2016-08-20)
   * Highlighting of stars
   * Toggle for todo items
@@ -7,8 +23,3 @@
   * Don't create a star on a new line if you hit ctrl-enter and line up indent with text (configurable)
   * Support indent (tab) and unindent (shift-tab) commands with autodetection
     of which style you have been using.
-
-* 0.1.0 (Released 2016-08-21)
-  * Added support for using numbers as bullets
-  * More test cases and bug fixes.
-  * Fixed console error on startup

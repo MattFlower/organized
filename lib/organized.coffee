@@ -49,6 +49,8 @@ module.exports =
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:toggleTodo': (event) => @toggleTodo(event) }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:newLine': (event) => @newLine(event) }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:newStarLine': (event) => @newStarLine(event) }))
+    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:insertDate': (event) => @insert8601Date(event) }))
+    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:insertDateTime': (event) => @insert8601DateTime(event) }))
 
     @subscriptions.add atom.config.observe 'organized.autoCreateStarsOnEnter', (newValue) => @createStarsOnEnter = newValue
     @subscriptions.add atom.config.observe 'organized.lineUpNewTextLinesUnderTextNotStar', (newValue) => @lineUpNewTextLinesUnderTextNotStar = newValue
@@ -72,6 +74,18 @@ module.exports =
         for row in [star.startRow..star.endRow]
           editor.setTextInBufferRange([[row, 0], [row, 0]], indent)
 
+  insert8601Date: (event) ->
+    d = new Date()
+
+    editor = atom.workspace.getActiveTextEditor()
+    editor.insertText(@_getISO8601Date(d))
+
+  insert8601DateTime: (event) ->
+    d = new Date()
+
+    editor = atom.workspace.getActiveTextEditor()
+    editor.insertText(@_getISO8601Date(d) + "T" + @_getISO8601Time(d))
+
   # Respond to someone pressing enter.
   # There's some special handling here.  The auto-intent that's built into atom does a good job, but I want the
   # new text to be even with the start of the text, not the start of the star.
@@ -82,7 +96,9 @@ module.exports =
           editor.insertNewline()
           indent = @_indentChars().repeat(star.indentLevel) + "  "
           newPosition = editor.getCursorBufferPosition()
-          editor.setTextInBufferRange([[newPosition.row, 0], [newPosition.row, Infinity]], indent)
+          editor.transact 1000, () =>
+            editor.setTextInBufferRange([[newPosition.row, 0],[newPosition.row, newPosition.column]], indent)
+            editor.setCursorBufferPosition([newPosition.row, indent.length])
       else
         editor.insertNewline()
 
@@ -97,7 +113,7 @@ module.exports =
       # treat it like an unindent.  It seems awkward to add another empty one.
       oldPosition = editor.getCursorBufferPosition()
       line = editor.lineTextForBufferRow(oldPosition.row)
-      if line.match(/[\*\-\+] $/)
+      if line.match(/([\*\-\+]|\d+\.) $/)
         @unindent()
         return
 
@@ -107,14 +123,31 @@ module.exports =
         editor.insertNewline()
         return
 
+      star = @_starInfo()
+
+      # Make sure we aren't in the middle of a codeblock
+      row = oldPosition.row
+      line = editor.lineTextForBufferRow(row)
+
+      while row > star.startRow and not line.match(/^\s*```[a-zA-Z]/)
+        row -= 1
+        line = editor.lineTextForBufferRow(row)
+
+      if row > star.startRow
+        # Just add a newline, we're in the middle of a code block
+        editor.insertNewline()
+        return
+
       # Figure out where we were so we can use it to figure out where to put the star
       # and what kind of star to use
       # Really hit return now
       editor.transact 1000, () =>
-        star = @_starInfo()
-        #console.log(star)
         if star and star.indentLevel >= 0
           editor.insertNewline()
+
+          if oldPosition.column <= star.starCol
+            # If the cursor on a column before the star on the line, just insert a newline
+            return
 
           #Create our new text to insert
           newPosition = editor.getCursorBufferPosition()
@@ -135,10 +168,14 @@ module.exports =
               position = new Point(nextStar.endRow+1, 0)
           else if @levelStyle is "stacked"
             indent = star.starType.repeat(star.indentLevel) + " "
-            editor.setTextInBufferRange([[newPosition.row, 0], [newPosition.row, Infinity]], indent)
+            editor.transact 1000, () =>
+              editor.setTextInBufferRange([[newPosition.row, 0],[newPosition.row, newPosition.column]], indent)
+              editor.setCursorBufferPosition([newPosition.row, indent.length])
           else
             indent = @_indentChars(star, editor, oldPosition).repeat(star.indentLevel) + star.starType + " "
-            editor.setTextInBufferRange([[newPosition.row, 0], [newPosition.row, Infinity]], indent)
+            editor.transact 1000, () =>
+              editor.setTextInBufferRange([[newPosition.row, 0],[newPosition.row, newPosition.column]], indent)
+              editor.setCursorBufferPosition([newPosition.row, indent.length])
         else
           editor.insertNewline()
 
@@ -182,13 +219,51 @@ module.exports =
               editor.setTextInBufferRange([[row, 0], [row, 2]], "")
             else if line.match("^\\t")
               editor.setTextInBufferRange([[row, 0], [row, 1]], "")
-            else if line.match(/^[\\*\\+\\-] /)
-              editor.setTextInBufferRange([[row, 0], [row, 2]], "")
-            else if line.match(/^[\\*\\+\\-]/)
+            else if match = line.match(/^([\*\-\+]|\d+\.) /)
+              console.log("Removing through #{match.length}")
+              editor.setTextInBufferRange([[row, 0], [row, match[0].length]], "")
+            else if line.match(/^[\*\-\+]/)
               #Stacked
               editor.setTextInBufferRange([[row, 0], [row, 1]], "")
             else
               #cannot unindent - not sure how to do so
+
+  _getISO8601Date: (date) ->
+    year = ("0000" + date.getFullYear()).substr(-4, 4)
+    month = ("00" + (date.getMonth() + 1)).substr(-2, 2)
+    date = ("00" + date.getDate()).substr(-2, 2)
+
+    "" + year + "-" + month + "-" + date
+
+  _getISO8601Time: (date) ->
+    offset = date.getTimezoneOffset()
+    if offset is 0
+      offsetString = "Z"
+    else
+      negative = offset < 0;
+      offsetHours = ("00" + Math.floor(offset/60)).substr(-2, 2)
+      offsetMinutes = ("00" + (offset % 60)).substr(-2, 2)
+      offsetString = if negative then "-" else "+"
+      offsetString += offsetHours + ":" + offsetMinutes
+
+    hours = ("00" + date.getHours()).substr(-2, 2)
+    minutes = ("00" + date.getMinutes()).substr(-2, 2)
+    seconds = ("00" + date.getSeconds()).substr(-2, 2)
+
+    "" + hours + ":" + minutes + ":" + seconds + offsetString
+
+  _indentChars: (star=null, editor=atom.workspace.getActiveTextEditor(), position=editor.getCursorBufferPosition()) ->
+    #console.log("Editor: #{editor}, Position: #{position}")
+    if @levelStyle is "spaces"
+      indent = " ".repeat(@indentSpaces)
+    else if @levelStyle is "tabs"
+      indent = "\t"
+    else if @levelStyle is "stacked"
+      if not star
+        star = @_starInfo()
+      indent = star.starType
+
+    return indent
 
   _starInfo: (editor=atom.workspace.getActiveTextEditor(), position=editor.getCursorBufferPosition()) ->
     # Returns the following info
@@ -211,16 +286,3 @@ module.exports =
       return star
     else
       return null
-
-  _indentChars: (star=null, editor=atom.workspace.getActiveTextEditor(), position=editor.getCursorBufferPosition()) ->
-    #console.log("Editor: #{editor}, Position: #{position}")
-    if @levelStyle is "spaces"
-      indent = " ".repeat(@indentSpaces)
-    else if @levelStyle is "tabs"
-      indent = "\t"
-    else if @levelStyle is "stacked"
-      if not star
-        star = @_starInfo()
-      indent = star.starType
-
-    return indent

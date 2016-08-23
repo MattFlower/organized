@@ -34,22 +34,34 @@ atom-text-editor, atom-text-editor::shadow {
       .completed {
         color: @text-color-subtle
       }
+
+      .tags {
+        color: @text-color-info;
+      }
     }
 
-    .otherline {
+    .othertext.organized {
       .scheduled {
         .tag {
-          color: @text-color-selected;
+          color: @text-color-highlight;
         }
         .colon {
         }
         .begintimeblock {
+          color: @text-color-highlight;
         }
         .timeblock {
-          color: @text-color-info
+          color: @text-color-subtle
         }
         .endtimeblock {
+          color: @text-color-highlight;
         }
+      }
+      .code.block.tag.completed {
+        color: red;
+      }
+      .code.block.language.completed {
+        color: red;
       }
     }
   }

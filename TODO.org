@@ -18,7 +18,9 @@
   * [TODO] Expand / Collapse stars written like '**' as opposed to '  *'
   * [COMPLETED] Setting of whether you want different depth levels to be shown
     as multiple stars or as whitespace and stars
-  * [TODO] Support numbers as outline levels
+  * [COMPLETED] Support numbers as outline levels
+  * [COMPLETED] Hitting enter at the beginning of a line shouldn't delete the content of the line
+  * [TODO] Highlighting multiple lines and indenting should indent all of the lines
 * Visibility cycling
   * [TODO] Add folding to menus to raise visibility
   * [TODO] Start supporting folding for '**' style stars (space-indented ones already work)
@@ -43,7 +45,7 @@
   * Ignore lines that have both
   * If sample size is too low, use more lines.
 * [TODO] Auto-tab to correct level on paste
-* [TODO] Command to unify indent as all tabs or all spaces.
+* [TODO] Command to transform existing indent as all tabs or all spaces.
 * Tests
   * I'm already getting to the point where it is difficult to retest everything and I only have 250 line CoffeeScript
     file.  We need some spec tests.
@@ -62,9 +64,14 @@
   * [TODO] UI for all TODO's in directory
   * [TODO] Configuration to show what directories we'll scan for TODO items
   * [TODO] Setting to auto-hide completed todo items
+  * Figure out how to model the storage of TODO items
+    * We should probably model parent-child relationship (parent outline node is a todo and it has children
+      that also have todo items).
+      * This would allow us to show todo items in search results with the children rolled up by default.  If we unrolled
+        then all the items below would show up as well.
 * Promotion
   * [COMPLETED] Improve the readme file to work on some of Organized's best features.
-  * [TODO] Write a roadmap of the next few versions to show what I'm planning
+  * [COMPLETED] Write a roadmap of the next few versions to show what I'm planning
   * [COMPLETED] Add license and contribution policy
 * Tables
   * [TODO] Syntax highlighting
@@ -72,7 +79,7 @@
   * [TODO] Call atom / nodejs functions in a node
   * [TODO] Call shell scripts from a node
 * Schedules
-  * [TODO] Support "SCHEDULED" tags inside of organized files
+  * [COMPLETED] Support "SCHEDULED" tags inside of organized files
   * [TODO] Add key command to add current date in ISO-8601 format
   * [TODO] Add key command to add a schedule date
   * [TODO] Create agenda view to show what's coming up
@@ -80,15 +87,52 @@
       single page
   * [TODO] Support creating or changing a meeting in your calendar according to
     changes in an organized file
-* Source blocks
-  * [TODO] Source block highlighting
-  * [TODO] Execute commands in a source block
+* Embedded Content
+  * [TODO] Embedded Equation
+  * [TODO] Embedded UML Diagrams
+    * [PlantUML](http://plantuml.com/)
+  * [TODO] Embedded Gantt charts
+  * Source blocks
+    * [TODO] Source block code highlighting
+      * Start with languages that I use regularly
+        * [COMPLETED] CoffeeScript
+        * [TODO] Curl
+        * [COMPLETED] CSS
+        * [COMPLETED] Java
+        * [COMPLETED] Javascript
+        * [COMPLETED] Less
+        * [COMPLETED] Python
+        * [COMPLETED] Shell
+        * [COMPLETED] SQL
+      * Then let's add other popular languages
+        * [TODO] C
+        * [TODO] C#
+        * [TODO] Golang
+        * [TODO] Objective C
+        * [TODO] PHP
+        * [TODO] Ruby
+        * [TODO] Perl
+      * This will depend a bit on how well those language grammars support embedding
+    * [TODO] Execute commands in a source block
 * Search / Exploration
   * [TODO] Add command to search for a note
     * Maybe https://github.com/fergiemcdowall/search-index
     * Maybe grep
     * Make sure to render whole line
-  * [TODO] UI to explore subject headers
+  * [TODO] UI for search / exploration
+    * [TODO] With tag browsing
+    * [TODO] With subject browsing?
+    * [TODO] With last modified browsing?
+    * [TODO] With creation date browsing?
+    * [TODO] With search
+    * [TODO] Include a count of how many todo items or agenda items are included
+  * [TODO] Allow todo lists by tags
+  * [TODO] Saved filters for todo lists
+  * [TODO] Saved filters for search / exploration
+  * [TODO] Recent searches
+    * Need to learn a bit more about serialization here - how much can I reasonably
+      store via serialization?  It seems like this will cause a problem at some point
+      depending on how much control there is.
 * Export
   * [TODO] Export as HTML
   * [TODO] Export as PDF
@@ -98,3 +142,14 @@
   * [TODO] Syntax highlighting for tags
 * Code structure
   * [COMPLETED] Replace endless star methods with a single method that collects all the info
+  * [TODO] Break up main parsing function in star.coffee into separate methods
+  * [TODO] Break out codeblocks into separate class
+  * [TODO] Introduce static method (are there static methods in coffeescript?) to ask if a line
+    has a star.
+* Coding templates / helpful keystrokes
+  * [COMPLETED] Insert ISO-8601 Date
+  * [COMPLETED] Insert ISO-8601 Datetime
+  * [TODO] Allow user to set default ISO-8601 timezone
+  * [TODO] Use a library for ISO-8601 dates -- seems odd to do that myself
+  * [TODO] organized:newStarLine plus organized:indent in one command
+  * [TODO] organized:newStarLine plus organized:unindent in one command

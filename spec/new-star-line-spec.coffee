@@ -29,6 +29,7 @@ describe "Pressing enter creates a new star", ->
   parameterized([0,5], [1,2], "* One", "* One\n* ")
   parameterized([0,5], [1,2], "- One", "- One\n- ")
   parameterized([0,5], [1,2], "+ One", "+ One\n+ ")
+  # parameterized([0,2], [1,0], "* One\n* ", "* One\n")
   # parameterized([0,6], [1,3], "1. One", "1. One\n2. ")
 
   # Second level, indented with spaces multiple styles
@@ -103,3 +104,39 @@ describe "Pressing enter creates a new star", ->
     newCursorPosition = editor.getCursorBufferPosition()
     expect(newCursorPosition.row).toBe(1)
     expect(newCursorPosition.column).toBe(3)
+
+  it "can handle text after the cursor", ->
+    editor = atom.workspace.getActiveTextEditor()
+    editor.setText("* Hello World")
+    editor.setCursorBufferPosition([0, 8])
+    textEditorView = atom.views.getView(editor)
+    atom.commands.dispatch(textEditorView, "organized:newStarLine")
+    expect(editor.getText()).toBe("* Hello \n* World")
+    newCursorPosition = editor.getCursorBufferPosition()
+    expect(newCursorPosition.row).toBe(1)
+    expect(newCursorPosition.column).toBe(2)
+
+  it "can handle all of the text after the cursor", ->
+    editor = atom.workspace.getActiveTextEditor()
+    editor.setText("* Hello World")
+    editor.setCursorBufferPosition([0, 0])
+    textEditorView = atom.views.getView(editor)
+    atom.commands.dispatch(textEditorView, "organized:newStarLine")
+    expect(editor.getText()).toBe("\n* Hello World")
+    newCursorPosition = editor.getCursorBufferPosition()
+    expect(newCursorPosition.row).toBe(1)
+    expect(newCursorPosition.column).toBe(0)
+
+  it "wont create stars in the middle of a code block", ->
+    editor = atom.workspace.getActiveTextEditor()
+    editor.setText("* One\n  ```python\n  print('hello')\n  ```")
+    editor.setCursorBufferPosition([2, 16])
+    textEditorView = atom.views.getView(editor)
+    atom.commands.dispatch(textEditorView, "organized:newStarLine")
+    #console.log("BABABABA: \n#{editor.getText()}")
+    expect(editor.getText()).toBe("* One\n  ```python\n  print('hello')\n\n  ```")
+    newCursorPosition = editor.getCursorBufferPosition()
+    expect(newCursorPosition.row).toBe(3)
+    # Not sure why, but this doesn't quite work the same here as in a live
+    # editor.  In a live editor, I get indent, I don't here.  I suspect
+    # it's due to auto-indent

@@ -8,6 +8,8 @@ fileTypes: [
 patterns: [
     { include: "#headers" }
     { include: "#starlines" }
+    { include: "#othertextcontent"}
+    { include: "#textheaders"}
 ]
 
 repository:
@@ -31,83 +33,7 @@ repository:
                 { include: "#startextcontent" }
               ]
         }
-      },
-      {
-        name: 'othertext.organized'
-        match: '^([^-+\\*#].*)'
-        captures: {
-          1:
-              patterns: [
-                { include: "#othertextcontent"}
-              ]
-        }
-      },
-      {
-        name: 'header.level1'
-        match: '^\s*(#)([^#].*)(\s*#\s*)?$'
-        captures:
-          1:
-            name: 'header.level1.symbol'
-          2:
-            name: 'header.level1.line'
-          3:
-            name: 'header.level1.symbol'
-      },
-      {
-        name: 'header.level2'
-        match: '^\s*(##)([^#].*)(\s*##\s*)?$'
-        captures:
-          1:
-            name: 'header.level2.symbol'
-          2:
-            name: 'header.level2.line'
-          3:
-            name: 'header.level2.symbol'
-      },
-      {
-        name: 'header.level3'
-        match: '^\s*(###)([^#].*)(\s*###\s*)?$'
-        captures:
-          1:
-            name: 'header.level3.symbol'
-          2:
-            name: 'header.level3.line'
-          3:
-            name: 'header.level3.symbol'
-      },
-      {
-        name: 'header.level4'
-        match: '^\s*(####)([^#].*)(\s*####\s*)?$'
-        captures:
-          1:
-            name: 'header.level4.symbol'
-          2:
-            name: 'header.level4.line'
-          3:
-            name: 'header.level4.symbol'
-      },
-      {
-        name: 'header.level5'
-        match: '^\s*(#####)([^#].*)(\s*#####\s*)?$'
-        captures:
-          1:
-            name: 'header.level5.symbol'
-          2:
-            name: 'header.level5.line'
-          3:
-            name: 'header.level5.symbol'
-      },
-      {
-        name: 'header.level6'
-        match: '^\s*(######)([^#].*)(\s*######\s*)?$'
-        captures:
-          1:
-            name: 'header.level6.symbol'
-          2:
-            name: 'header.level6.line'
-          3:
-            name: 'header.level6.symbol'
-      },
+      }
     ]
   starpatterns:
     patterns: [
@@ -247,12 +173,85 @@ repository:
         name: 'completed.organized'
         match: "\\[COMPLETED\\]"
       },
+      {
+        name: 'tags.organized'
+        match: ":([^:]+:){1,}"
+      }
+    ]
+  textheaders:
+    patterns: [
+      {
+        name: 'header.level1'
+        match: '^\s*(#)([^#].*)(\s*#\s*)?$'
+        captures:
+          1:
+            name: 'header.level1.symbol'
+          2:
+            name: 'header.level1.line'
+          3:
+            name: 'header.level1.symbol'
+      },
+      {
+        name: 'header.level2'
+        match: '^\s*(##)([^#].*)(\s*##\s*)?$'
+        captures:
+          1:
+            name: 'header.level2.symbol'
+          2:
+            name: 'header.level2.line'
+          3:
+            name: 'header.level2.symbol'
+      },
+      {
+        name: 'header.level3'
+        match: '^\s*(###)([^#].*)(\s*###\s*)?$'
+        captures:
+          1:
+            name: 'header.level3.symbol'
+          2:
+            name: 'header.level3.line'
+          3:
+            name: 'header.level3.symbol'
+      },
+      {
+        name: 'header.level4'
+        match: '^\s*(####)([^#].*)(\s*####\s*)?$'
+        captures:
+          1:
+            name: 'header.level4.symbol'
+          2:
+            name: 'header.level4.line'
+          3:
+            name: 'header.level4.symbol'
+      },
+      {
+        name: 'header.level5'
+        match: '^\s*(#####)([^#].*)(\s*#####\s*)?$'
+        captures:
+          1:
+            name: 'header.level5.symbol'
+          2:
+            name: 'header.level5.line'
+          3:
+            name: 'header.level5.symbol'
+      },
+      {
+        name: 'header.level6'
+        match: '^\s*(######)([^#].*)(\s*######\s*)?$'
+        captures:
+          1:
+            name: 'header.level6.symbol'
+          2:
+            name: 'header.level6.line'
+          3:
+            name: 'header.level6.symbol'
+      }
     ]
   othertextcontent:
     patterns: [
       {
         name: 'scheduled.meta'
-        match: "\s*(SCHEDULED)(:)( )(\\<)([^\\>]+)(\\>)"
+        match: "\s*(SCHEDULED)(:) (\\<)([^\\>]+)(\\>)"
         captures: {
           1:
             name: 'tag'
@@ -265,5 +264,185 @@ repository:
           5:
             name: 'endtimeblock'
         }
+      },
+      {
+        name: 'coffee.code.block.completed'
+        begin: '(```)(coffee|coffeescript)'
+        captures: [
+          0:
+            name: 'code.block.tag.completed'
+          1:
+            name: 'code.block.language.completed'
+        ]
+        contentName: "source.coffee"
+        patterns: [
+          {
+            include: '#embedded-code'
+          }
+          {
+            include: 'source.coffee'
+          }
+        ]
+        end: '```'
+      },
+      {
+        name: 'css.code.block.completed'
+        begin: '(```)(css)'
+        captures: [
+          0:
+            name: 'code.block.tag.completed'
+          1:
+            name: 'code.block.language.completed'
+        ]
+        contentName: "source.css"
+        patterns: [
+          {
+            include: '#embedded-code'
+          }
+          {
+            include: 'source.css'
+          }
+        ]
+        end: '```'
+      },
+      {
+        name: 'html.code.block.completed'
+        begin: '(```)(html)'
+        captures: [
+          0:
+            name: 'code.block.tag.completed'
+          1:
+            name: 'code.block.language.completed'
+        ]
+        contentName: "source.html"
+        patterns: [
+          {
+            include: '#embedded-code'
+          }
+          {
+            include: 'source.html'
+          }
+        ]
+        end: '```'
+      },
+      {
+        name: 'java.code.block.completed'
+        begin: '(```)(java)'
+        captures: [
+          0:
+            name: 'code.block.tag.completed'
+          1:
+            name: 'code.block.language.completed'
+        ]
+        contentName: "source.java"
+        patterns: [
+          {
+            include: '#embedded-code'
+          }
+          {
+            include: 'source.java'
+          }
+        ]
+        end: '(```)'
+      },
+      {
+        name: 'javascript.code.block.completed'
+        begin: '(```)(js|javascript)'
+        captures: [
+          0:
+            name: 'code.block.tag.completed'
+          1:
+            name: 'code.block.language.completed'
+        ]
+        contentName: "source.js"
+        patterns: [
+          {
+            include: '#embedded-code'
+          }
+          {
+            include: 'source.js'
+          }
+        ]
+        end: '(```)'
+      },
+      {
+        name: 'less.code.block.completed'
+        begin: '(```)(less)'
+        captures: [
+          0:
+            name: 'code.block.tag.completed'
+          1:
+            name: 'code.block.language.completed'
+        ]
+        contentName: "source.css.less"
+        patterns: [
+          {
+            include: '#embedded-code'
+          }
+          {
+            include: 'source.css.less'
+          }
+        ]
+        end: '(```)'
+      },
+      {
+        name: 'python.code.block.completed'
+        begin: '(```)(python)'
+        captures: [
+          0:
+            name: 'code.block.tag.completed'
+          1:
+            name: 'code.block.language.completed'
+        ]
+        contentName: "source.python"
+        patterns: [
+          {
+            include: '#embedded-code'
+          }
+          {
+            include: 'source.python'
+          }
+        ]
+        end: '(```)'
+      }
+      {
+        name: 'shell.code.block.completed'
+        begin: '(```)(shell)$'
+        captures: [
+          0:
+            name: 'code.block.tag.completed'
+          1:
+            name: 'code.block.language.completed'
+        ]
+        contentName: "source.shell"
+        patterns: [
+          {
+            include: '#embedded-code'
+          }
+          {
+            include: 'source.shell'
+          }
+        ]
+        end: '(```)'
+      }
+      {
+        name: 'sql.code.block.completed'
+        begin: '(```)(sql|SQL)$'
+        captures: [
+          0:
+            name: 'code.block.tag.completed'
+          1:
+            name: 'code.block.language.completed'
+        ]
+        contentName: "source.sql"
+        patterns: [
+          {
+            include: '#embedded-code'
+          }
+          {
+            include: 'source.sql'
+          }
+        ]
+        end: '(```)'
       }
     ]
