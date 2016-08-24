@@ -17,154 +17,31 @@ repository:
     patterns: [
       {
         name: 'constant.headername.organized'
-        match: '^#\\+[^:]+:'
+        match: '^#\\+(?!BEGIN_SRC)[^:]+:'
       }
     ]
   starlines:
     patterns: [
       {
+        #This pattern includes the entire star line
         name: 'meta.starline.organized'
-        match: '^(\\s*)([-+\\*]+ .*)$'
+        #match: '^(\\s*)([-+\\*]+ .*)$'
+        match: '^(\\s*)([\\-\\+\\*]+|\\d+\\.)( .*)$'
         captures: {
           1:
               name: 'whitespace.starline.organized'
           2:
+              name: 'symbol.starline.organized'
+          3:
               patterns: [
                 { include: "#startextcontent" }
               ]
         }
       }
     ]
-  starpatterns:
-    patterns: [
-      {
-        name: 'level1'
-        match: '([-+\\*])(.*)'
-        captures: {
-          1:
-            name: 'level1.star'
-          2:
-            patterns: [
-              { include: "#textcontent"}
-            ]
-        }
-      },
-      {
-        name: 'level2'
-        match: '([-+\\*]{2})(.*)'
-        captures: {
-          1:
-            name: 'level2.star'
-          2:
-            patterns: [
-              { include: "#textcontent"}
-            ]
-        }
-      },
-      {
-        name: 'level3'
-        match: '([-+\\*]{3})(.*)'
-        captures: {
-          1:
-            name: 'level3.star'
-          2:
-            patterns: [
-              { include: "#textcontent"}
-            ]
-        }
-      },
-      {
-        name: 'level4'
-        match: '([-+\\*]{4})(.*)'
-        captures: {
-          1:
-            name: 'level4.star'
-          2:
-            patterns: [
-              { include: "#textcontent"}
-            ]
-        }
-      },
-      {
-        name: 'level5'
-        match: '([-+\\*]{5})(.*)'
-        captures: {
-          1:
-            name: 'level5.star'
-          2:
-            patterns: [
-              { include: "#textcontent"}
-            ]
-        }
-      },
-      {
-        name: 'level6'
-        match: '([-+\\*]{6})(.*)'
-        captures: {
-          1:
-            name: 'level6.star'
-          2:
-            patterns: [
-              { include: "#textcontent"}
-            ]
-        }
-      },
-      {
-        name: 'level7'
-        match: '([-+\\*]{7})(.*)'
-        captures: {
-          1:
-            name: 'level7.star'
-          2:
-            patterns: [
-              { include: "#textcontent"}
-            ]
-        }
-      },
-      {
-        name: 'level8'
-        match: '([-+\\*]{8})(.*)'
-        captures: {
-          1:
-            name: 'level8.star'
-          2:
-            patterns: [
-              { include: "#textcontent"}
-            ]
-        }
-      },
-      {
-        name: 'level9'
-        match: '([-+\\*]{9})(.*)'
-        captures: {
-          1:
-            name: 'level9.star'
-          2:
-            patterns: [
-              { include: "#textcontent"}
-            ]
-        }
-      },
-      {
-        name: 'deeplevel'
-        match: '([-+\\*]{10,})(.*)'
-        captures: {
-          1:
-            name: 'deep.star'
-          2:
-            patterns: [
-              { include: "#textcontent"}
-            ]
-        }
-      }
-    ]
   startextcontent:
+    name: 'startextcontent.organized'
     patterns:[
-      {
-        name: 'link.url.organized'
-        #       protocol       host   port   path     Query params                          Link
-        match: "(http|https)://[^?/]+(:\\d+)?(/[^?]+)?(\\?[A-Za-z0-9-._~:/?@!$&'*+,;=%]+)"
-      },
       {
         name: 'todo.organized'
         match: "\\[TODO\\]"
@@ -176,7 +53,8 @@ repository:
       {
         name: 'tags.organized'
         match: ":([^:]+:){1,}"
-      }
+      },
+      { include: "#textcontent" }
     ]
   textheaders:
     patterns: [
@@ -249,10 +127,11 @@ repository:
     ]
   othertextcontent:
     patterns: [
+      { include: '#textcontent' },
       {
         name: 'scheduled.meta'
         match: "\s*(SCHEDULED)(:) (\\<)([^\\>]+)(\\>)"
-        captures: {
+        captures:
           1:
             name: 'tag'
           2:
@@ -263,186 +142,161 @@ repository:
             name: 'timeblock'
           5:
             name: 'endtimeblock'
-        }
       },
       {
-        name: 'coffee.code.block.completed'
-        begin: '(```)(coffee|coffeescript)'
-        captures: [
-          0:
-            name: 'code.block.tag.completed'
+        name: 'coffee.code.block.organized'
+        begin: '(```|#\\+BEGIN_SRC )(coffee|coffeescript)'
+        captures:
           1:
-            name: 'code.block.language.completed'
-        ]
+            name: 'code.block.tag.organized'
+          2:
+            name: 'code.block.language.organized'
         contentName: "source.coffee"
         patterns: [
-          {
-            include: '#embedded-code'
-          }
-          {
-            include: 'source.coffee'
-          }
+          { include: '#embedded-code' }
+          { include: 'source.coffee' }
         ]
-        end: '```'
+        end: '```|#\\+END_SRC'
       },
       {
-        name: 'css.code.block.completed'
-        begin: '(```)(css)'
-        captures: [
-          0:
-            name: 'code.block.tag.completed'
+        name: 'css.code.block.organized'
+        begin: '(```|#\\+BEGIN_SRC )(css)'
+        captures:
           1:
-            name: 'code.block.language.completed'
-        ]
+            name: 'code.block.tag.organized'
+          2:
+            name: 'code.block.language.organized'
+
         contentName: "source.css"
         patterns: [
-          {
-            include: '#embedded-code'
-          }
-          {
-            include: 'source.css'
-          }
+          { include: '#embedded-code' }
+          { include: 'source.css' }
         ]
-        end: '```'
+        end: '```|#\\+END_SRC'
       },
       {
-        name: 'html.code.block.completed'
-        begin: '(```)(html)'
-        captures: [
-          0:
-            name: 'code.block.tag.completed'
+        name: 'html.code.block.organized'
+        begin: '(```|#\\+BEGIN_SRC )(html)'
+        captures:
           1:
-            name: 'code.block.language.completed'
-        ]
+            name: 'code.block.tag.organized'
+          2:
+            name: 'code.block.language.organized'
         contentName: "source.html"
         patterns: [
-          {
-            include: '#embedded-code'
-          }
-          {
-            include: 'source.html'
-          }
+          { include: '#embedded-code' }
+          { include: 'source.html' }
         ]
-        end: '```'
+        end: '```|#\\+END_SRC'
       },
       {
-        name: 'java.code.block.completed'
-        begin: '(```)(java)'
-        captures: [
-          0:
-            name: 'code.block.tag.completed'
+        name: 'java.code.block.organized'
+        begin: '(```|#\\+BEGIN_SRC )(java)'
+        captures:
           1:
-            name: 'code.block.language.completed'
-        ]
+            name: 'code.block.tag.organized'
+          2:
+            name: 'code.block.language.organized'
         contentName: "source.java"
         patterns: [
-          {
-            include: '#embedded-code'
-          }
-          {
-            include: 'source.java'
-          }
+          { include: '#embedded-code' }
+          { include: 'source.java' }
         ]
-        end: '(```)'
+        end: '```|#\\+END_SRC'
       },
       {
-        name: 'javascript.code.block.completed'
-        begin: '(```)(js|javascript)'
-        captures: [
-          0:
-            name: 'code.block.tag.completed'
+        name: 'javascript.code.block.organized'
+        begin: '(```|#\\+BEGIN_SRC )(js|javascript)'
+        captures:
           1:
-            name: 'code.block.language.completed'
-        ]
+            name: 'code.block.tag.organized'
+          2:
+            name: 'code.block.language.organized'
         contentName: "source.js"
         patterns: [
-          {
-            include: '#embedded-code'
-          }
-          {
-            include: 'source.js'
-          }
+          { include: '#embedded-code' }
+          { include: 'source.js' }
         ]
-        end: '(```)'
+        end: '```|#\\+END_SRC'
       },
       {
-        name: 'less.code.block.completed'
-        begin: '(```)(less)'
-        captures: [
-          0:
-            name: 'code.block.tag.completed'
+        name: 'less.code.block.organized'
+        begin: '(```|#\\+BEGIN_SRC )(less)'
+        captures:
           1:
-            name: 'code.block.language.completed'
-        ]
+            name: 'code.block.tag.organized'
+          2:
+            name: 'code.block.language.organized'
         contentName: "source.css.less"
         patterns: [
-          {
-            include: '#embedded-code'
-          }
-          {
-            include: 'source.css.less'
-          }
+          { include: '#embedded-code' }
+          { include: 'source.css.less' }
         ]
-        end: '(```)'
+        end: '```|#\\+END_SRC'
       },
       {
-        name: 'python.code.block.completed'
-        begin: '(```)(python)'
-        captures: [
-          0:
-            name: 'code.block.tag.completed'
+        name: 'python.code.block.organized'
+        begin: '(```|#\\+BEGIN_SRC )(python)'
+        captures:
           1:
-            name: 'code.block.language.completed'
-        ]
+            name: 'code.block.tag.organized'
+          2:
+            name: 'code.block.language.organized'
         contentName: "source.python"
         patterns: [
-          {
-            include: '#embedded-code'
-          }
-          {
-            include: 'source.python'
-          }
+          { include: '#embedded-code' }
+          { include: 'source.python' }
         ]
-        end: '(```)'
+        end: '```|#\\+END_SRC'
       }
       {
-        name: 'shell.code.block.completed'
-        begin: '(```)(shell)$'
-        captures: [
-          0:
-            name: 'code.block.tag.completed'
+        name: 'shell.code.block.organized'
+        begin: '(```|#\\+BEGIN_SRC )(shell)$'
+        captures:
           1:
-            name: 'code.block.language.completed'
-        ]
+            name: 'code.block.tag.organized'
+          2:
+            name: 'code.block.language.organized'
         contentName: "source.shell"
         patterns: [
-          {
-            include: '#embedded-code'
-          }
-          {
-            include: 'source.shell'
-          }
+          { include: '#embedded-code' }
+          { include: 'source.shell' }
         ]
-        end: '(```)'
+        end: '```|#\\+END_SRC'
       }
       {
-        name: 'sql.code.block.completed'
-        begin: '(```)(sql|SQL)$'
-        captures: [
-          0:
-            name: 'code.block.tag.completed'
+        name: 'sql.code.block.organized'
+        begin: '(```|#\\+BEGIN_SRC )(sql|SQL)$'
+        captures:
           1:
-            name: 'code.block.language.completed'
-        ]
+            name: 'code.block.tag.organized'
+          2:
+            name: 'code.block.language.organized'
         contentName: "source.sql"
         patterns: [
-          {
-            include: '#embedded-code'
-          }
-          {
-            include: 'source.sql'
-          }
+          { include: '#embedded-code' }
+          { include: 'source.sql' }
         ]
-        end: '(```)'
+        end: '```|#\\+END_SRC'
+      }
+    ]
+  textcontent:
+    patterns: [
+      {
+        name: 'link.organized'
+        match: '(\\[)(?!(TODO|COMPLETED))([^\\[\\]]+)(\\])(\\()([^\\)]+)(\\))'
+        captures:
+          1:
+              name: 'link.brackets.organized'
+          3:
+              name: 'link.title.organized'
+          4:
+              name: 'link.brackets.organized'
+          5:
+              name: 'link.parens.organized'
+          6:
+              name: 'underline.link.url.organized'
+          7:
+              name: 'link.parens.organized'
       }
     ]

@@ -19,34 +19,19 @@ todo lists.
 * Support todo items
   * Highlighting of [TODO]/[COMPLETED] tags
   * Ctrl-Shift-T for toggling todo items from [TODO] to [COMPLETED] to blank.
-* Highlighting of org-mode style Metadata headers, SCHEDULED properties, and Org-mode-style tags (:tagname:)
+* Highlighting for code blocks
+* Highlighting of org-mode style Metadata headers, SCHEDULED properties, links, and
+  Org-mode-style tags (:tagname:)
 
 
-# What's New?  (Version 0.2.0)
-* Added support for inserting current ISO-8601 date / datetime (ctrl-i d or ctrl-i t respectively)
-* Added support for embedded codeblocks using jira style code blocks
-  ```shell
-  <some shell commands>
-  ```
-  * This supports:
-    * CoffeeScript
-    * CSS
-    * HTML
-    * Java
-    * JavaScript
-    * Less
-    * Python
-    * Shell Scripts
-    * SQL
-
-    If you really want a new language and there is an atom grammar for it, let me know -- it's usually
-    pretty easy to add them.
-
-* Syntax highlighting for SCHEDULED tags on outline items.
-* Syntax highlighting for tags
+# What's New?  (Version 0.2.1)
+* Highlighting for links
+* Support org-mode style BEGIN_SRC/END_SRC code tags for source code
 * Bug Fixes
-  * If you weren't at the end of the line when you pressed return, the text after your cursor was deleted.
-  * If your cursor was before the star, the behavior would be incorrect.
+  * Can't hit return when I'm on a header row
+
+Please see the [CHANGELOG.org](https://raw.githubusercontent.com/MattFlower/organized/master/CHANGELOG.org)
+for full details of recent changes.
 
 
 # What Do I Want to Build
@@ -101,6 +86,14 @@ You might want to organize your notes a bit.  You can do that with markdown-styl
 
     ## A subheading
     * With some more notes
+
+If you need to write some source code, you can do that too:
+
+    ```java
+    public static void main(String[] args) {
+      System.out.println("Hello, World");
+    }
+    ```
 
 # Why Did I Write Organized?
 I designed Organized in response to a personal itch.  I've long been a user

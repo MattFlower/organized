@@ -1,3 +1,10 @@
+* 0.2.1 (Released 2016-08-24)
+  * Highlighting for links
+  * Support org-mode style BEGIN_SRC/END_SRC code tags for source code
+  * Bug Fixes
+    * Can't hit return when I'm on a header row
+
+
 * 0.2.0 (Released 2016-08-22)
   * Added support for inserting current ISO-8601 date / datetime (ctrl-i d or ctrl-i t respectively)
   * Added support for embedded codeblocks using jira style code blocks

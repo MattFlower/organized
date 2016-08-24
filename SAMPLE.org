@@ -45,6 +45,9 @@ This page contains a variety of outline types to use for manual testing
 1. Level 1
 2. Also Level 1
 
+## Links
+* [Organized Github Account](https://github.com/MattFlower/organized)
+* abc
 
 ## TODO items
 * [TODO] One todo
@@ -65,38 +68,62 @@ This page contains a variety of outline types to use for manual testing
           color: red
       }
       ```
+    * Org-mode style
+      #+BEGIN_SRC css
+      a.href {
+          color:read
+      }
+      #+END_SRC
   * Java
     * Jira-style
-    ```java
-    public class Test {
-      public static void main(String[] args) {
-        System.out.println("Test");
+      ```java
+      public class Test {
+        public static void main(String[] args) {
+          System.out.println("Test");
+        }
       }
-    }
-    ```
+      ```
+    * Org-mode style
+      #+BEGIN_SRC java
+      public class Test {
+        public static void main(String[] args) {
+          System.out.println("Test");
+        }
+      }
+      #+END_SRC
   * Javascript
     * Jira-style
-    ```javascript
-    Test.prototype.test = function(keystroke) {
-      console.log("Test");
-    };
-    ```
+      ```javascript
+      Test.prototype.test = function(keystroke) {
+        console.log("Test");
+      };
+      ```
+    * Org-mode style
+      #+BEGIN_SRC javascript
+      Test.prototype.test = function(keystroke) {
+        console.log("Test");
+      };
+      #+END_SRC
   * Less
-    * Jira-style
-    ```less
-    atom-text-editor, atom-text-editor::shadow {
-      .organized {
-        .header.level1.symbol, .header.level1.line {
-          font-weight: bolder;
-          color: @text-color-selected;
-        }
-    }
-    ```
+    * Org-mode style
+      #+BEGIN_SRC less
+      atom-text-editor, atom-text-editor::shadow {
+        .organized {
+          .header.level1.symbol, .header.level1.line {
+            font-weight: bolder;
+            color: @text-color-selected;
+          }
+      }
+      #+END_SRC
   * Python
     * Jira-style
       ```python
       print [i*2 for i in range(1,10)]
       ```
+    * Org-mode style
+      #+BEGIN_SRC python
+      print [i*2 for i in range(1,10)]
+      #+END_SRC
   * Shell
     * Jira-style
       ```shell
@@ -104,8 +131,18 @@ This page contains a variety of outline types to use for manual testing
         echo "Some dir: $dir"
       done
       ```
+    * Org-mode Style
+      #+BEGIN_SRC shell
+      for dir in `ls -la *`; do
+        echo "Some dir: $dir"
+      done
+      #+END_SRC
   * SQL
     * Jira-style
       ```sql
       SELECT * FROM DUAL
       ```
+    * Org-mode style
+      #+BEGIN_SRC sql
+      SELECT * FROM DUAL
+      #+END_SRC

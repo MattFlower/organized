@@ -1,6 +1,6 @@
 'atom-text-editor[data-grammar="source organized"]':
     'tab': 'organized:indent',
-    'shift-tab': 'organized:unindent',
+    'shift-tab': 'organized:unindent'
     'ctrl-shift-t': 'organized:toggleTodo'
     'ctrl-enter': 'organized:newLine'
     'shift-enter': 'organized:newLine'

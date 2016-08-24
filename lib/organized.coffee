@@ -129,11 +129,11 @@ module.exports =
       row = oldPosition.row
       line = editor.lineTextForBufferRow(row)
 
-      while row > star.startRow and not line.match(/^\s*```[a-zA-Z]/)
+      minRow = if star then star.startRow else 0
+      while row > minRow and not line.match(/^\s*```/)
         row -= 1
         line = editor.lineTextForBufferRow(row)
-
-      if row > star.startRow
+      if line.match(/^\s*```/)
         # Just add a newline, we're in the middle of a code block
         editor.insertNewline()
         return
@@ -220,7 +220,6 @@ module.exports =
             else if line.match("^\\t")
               editor.setTextInBufferRange([[row, 0], [row, 1]], "")
             else if match = line.match(/^([\*\-\+]|\d+\.) /)
-              console.log("Removing through #{match.length}")
               editor.setTextInBufferRange([[row, 0], [row, match[0].length]], "")
             else if line.match(/^[\*\-\+]/)
               #Stacked

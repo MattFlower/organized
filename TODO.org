@@ -15,7 +15,6 @@
   * [COMPLETED] Implement indent
   * [COMPLETED] Implement unindent
   * [COMPLETED] Figure out how to group undos for indent and unindent
-  * [TODO] Expand / Collapse stars written like '**' as opposed to '  *'
   * [COMPLETED] Setting of whether you want different depth levels to be shown
     as multiple stars or as whitespace and stars
   * [COMPLETED] Support numbers as outline levels
@@ -52,8 +51,10 @@
   * [COMPLETED] Learn how to write spec tests
   * [COMPLETED] Write tests for all existing functionality
 * Links
-  * [TODO] Highlighting / link following for Urls
+  * [TODO] Highlighting
+  * [TODO] Link following for Urls
   * [TODO] Support org-mode style links
+  * [TODO] Support [markdown-style](https://daringfireball.net/projects/markdown/syntax#link) links
 * Todos
   * [COMPLETED] Key command to toggle "TODO", "CLOSED", remove todo
   * [TODO] Option to mark closed todo's with current time
@@ -153,3 +154,5 @@
   * [TODO] Use a library for ISO-8601 dates -- seems odd to do that myself
   * [TODO] organized:newStarLine plus organized:indent in one command
   * [TODO] organized:newStarLine plus organized:unindent in one command
+* [TODO] Capture system for webpages
+  * This seems like it should be somehow easier here because we are already in Chromium

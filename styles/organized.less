@@ -64,5 +64,17 @@ atom-text-editor, atom-text-editor::shadow {
         color: red;
       }
     }
+
+    .link.organized {
+      .link.brackets.organized, .link.parens.organized {
+        color: @text-color;
+      }
+      .link.url.organized {
+        text-decoration: underline;
+      }
+      .link.title.organized {
+        color: @text-color-subtle;
+      }
+    }
   }
 }
