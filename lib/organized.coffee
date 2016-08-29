@@ -1,6 +1,8 @@
 {CompositeDisposable, Directory, Point} = require 'atom'
 OrganizedView = require './organized-view'
 Star = require './star'
+Table = require './table'
+CodeBlock = require './codeblock'
 
 module.exports =
   organizedView: null
@@ -10,6 +12,7 @@ module.exports =
   indentSpaces: 2
   createStarsOnEnter: true
   lineUpNewTextLinesUnderTextNotStar: true
+  autoSizeTables: true
 
   config:
     levelStyle:
@@ -32,6 +35,11 @@ module.exports =
       type: 'boolean'
       default: true
 
+    autoSizeTables:
+      type: 'boolean'
+      default: false
+      description: "If you are typing in a table, automatically resize the columns so your text fits."
+
   activate: (state) ->
     atom.themes.requireStylesheet(require.resolve('../styles/organized.less'));
 
@@ -43,36 +51,84 @@ module.exports =
 
     @subscriptions = new CompositeDisposable()
 
+    # Set up text editors
+    @subscriptions.add atom.workspace.observeTextEditors (editor) =>
+      @handleEvents(editor)
+
     # Register command that toggles this view
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:indent': (event) => @indent(event) }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:unindent': (event) => @unindent(event) }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:toggleTodo': (event) => @toggleTodo(event) }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:newLine': (event) => @newLine(event) }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:newStarLine': (event) => @newStarLine(event) }))
+    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:newTableRow': (event) => @newTableRow(event) }))
+    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:closeTable': (event) => @closeTable(event) }))
+    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:openTable': (event) => @openTable(event) }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:insertDate': (event) => @insert8601Date(event) }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:insertDateTime': (event) => @insert8601DateTime(event) }))
+    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:executeCodeBlock': (event) => @executeCodeBlock(event) }))
+    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:encryptBuffer': (event) => @encryptBuffer(event) }))
 
     @subscriptions.add atom.config.observe 'organized.autoCreateStarsOnEnter', (newValue) => @createStarsOnEnter = newValue
     @subscriptions.add atom.config.observe 'organized.lineUpNewTextLinesUnderTextNotStar', (newValue) => @lineUpNewTextLinesUnderTextNotStar = newValue
     @subscriptions.add atom.config.observe 'organized.levelStyle', (newValue) => @levelStyle = newValue
     @subscriptions.add atom.config.observe 'editor.tabLength', (newValue) => @indentSpaces = newValue
+    @subscriptions.add atom.config.observe 'organized.autoSizeTables', (newValue) => @autoSizeTables = newValue
 
-    #Not sure why I have so much trouble with this particular keymap
-    # atom.keymaps.add("/Users/mflower/.atom/packages/organized/keymaps/organized.cson", "shift-enter", 100)
+  closeTable: (event) ->
+    if editor = atom.workspace.getActiveTextEditor()
+      position = editor.getCursorBufferPosition()
+
+      editor.transact 1000, () ->
+        # See if we are on an editor line.  If so, the close will be on the next line
+        line = editor.lineTextForBufferRow(position.row)
+        if 'border.table.organized' in editor.scopeDescriptorForBufferPosition(position).getScopesArray()
+          editor.insertNewline()
+        else
+          line = editor.lineTextForBufferRow(position.row-1)
+          editor.setTextInBufferRange([[position.row, 0], [position.row, position.column]], "")
+
+        startMatch = /^(?<=\s*)[\|\+]/.exec(line)
+        endMatch = /[\|\+](?=\s*$)/.exec(line)
+        if startMatch and endMatch
+          # console.log("startMatch: #{startMatch}, endMatch: #{endMatch}")
+          editor.insertText("+#{'-'.repeat(endMatch.index-startMatch.index-1)}+")
 
   deactivate: () ->
     @modalPanel.destroy()
     @subscriptions.dispose()
     @organizedView.destroy()
 
+  executeCodeBlock: () ->
+    if editor = atom.workspace.getActiveTextEditor()
+      if position = editor.getCursorBufferPosition()
+        codeblock = new CodeBlock(position.row)
+        codeblock.execute()
+      else
+        console.error("Unable to find position of code block")
+
+  handleEvents: (editor) ->
+    # tableChangeSubscription = editor.onDidChange (event) =>
+    #   @tableChange(event)
+    tableStoppedChangingSub = editor.onDidStopChanging (event) =>
+      @tableStoppedChanging(event)
+    editorDestroySubscription = editor.onDidDestroy =>
+      tableStoppedChangingSub.dispose()
+
+    # @subscriptions.add(tableChangeSubscription)
+    @subscriptions.add(tableStoppedChangingSub)
+    @subscriptions.add(editorDestroySubscription)
+
   indent: (event) ->
+    editor = atom.workspace.getActiveTextEditor()
     if star = @_starInfo()
-      editor = atom.workspace.getActiveTextEditor()
       indent = if @levelStyle is "stacked" then star.starType else @_indentChars()
 
       editor.transact 1000, () =>
         for row in [star.startRow..star.endRow]
           editor.setTextInBufferRange([[row, 0], [row, 0]], indent)
+    else
+      editor.indentSelectedRows()
 
   insert8601Date: (event) ->
     d = new Date()
@@ -152,8 +208,7 @@ module.exports =
           #Create our new text to insert
           newPosition = editor.getCursorBufferPosition()
           if star.starType is 'numbers'
-            indent = @_indentChars(star, editor, oldPosition).repeat(star.indentLevel) + star.nextNumber + '. '
-            editor.setTextInBufferRange([[newPosition.row, 0], [newPosition.row, Infinity]], indent)
+            editor.setTextInBufferRange([[newPosition.row, 0], [newPosition.row, Infinity]], star.newStarLine())
 
             position = new Point(newPosition.row+1, 0)
             #console.log("newPosition+1: #{position}, last buffer row: #{editor.getLastBufferRow()}")
@@ -166,23 +221,73 @@ module.exports =
                                           [nextStar.startRow, nextStar.starCol+(""+nextStar.currentNumber).length]],
                                           "" + nextStar.nextNumber)
               position = new Point(nextStar.endRow+1, 0)
-          else if @levelStyle is "stacked"
-            indent = star.starType.repeat(star.indentLevel) + " "
-            editor.transact 1000, () =>
-              editor.setTextInBufferRange([[newPosition.row, 0],[newPosition.row, newPosition.column]], indent)
-              editor.setCursorBufferPosition([newPosition.row, indent.length])
           else
-            indent = @_indentChars(star, editor, oldPosition).repeat(star.indentLevel) + star.starType + " "
+            indent = star.newStarLine()
             editor.transact 1000, () =>
               editor.setTextInBufferRange([[newPosition.row, 0],[newPosition.row, newPosition.column]], indent)
               editor.setCursorBufferPosition([newPosition.row, indent.length])
         else
           editor.insertNewline()
 
+  newTableRow: () ->
+    if editor = atom.workspace.getActiveTextEditor()
+      oldPosition = editor.getCursorBufferPosition()
+      line = editor.lineTextForBufferRow(oldPosition.row)
+      if match = line.match(/^\s*(\|[ ]?)/)
+        editor.transact 1000, () ->
+          editor.insertNewline()
+          editor.insertText(match[0])
+      else
+        editor.insertNewline()
+
+  openTable: (event) ->
+    if editor = atom.workspace.getActiveTextEditor()
+      currentPosition = editor.getCursorBufferPosition()
+      line = editor.lineTextForBufferRow(currentPosition.row)
+      if match = line.match(/^(\s*)/)
+        editor.insertText("+----+\n#{match[0]}| ")
+
   serialize: () ->
     return {
       organizedViewState: @organizedView.serialize()
     }
+
+  tableChange: (event) ->
+    if not @autoSizeTables
+      return
+
+    if editor = atom.workspace.getActiveTextEditor()
+      if 'row.table.organized' in editor.getLastCursor().getScopeDescriptor().getScopesArray()
+        table = new Table(editor)
+        return unless table.found?
+        columns = table.findRowColumns()
+        return unless columns?
+
+        column = table.currentColumnIndex(columns)
+        #Add to end of column so spaces in a table column don't look weird
+        indentColumn = columns[column+1]-1
+        position = editor.getCursorBufferPosition()
+        for row in [table.firstRow..table.lastRow]
+          console.log("Row: #{row}, position.row: #{position.row}")
+          if row is position.row
+            continue
+          position = [row, indentColumn]
+          scopes = editor.scopeDescriptorForBufferPosition(position).getScopesArray()
+          console.log(scopes)
+          if 'border.table.organized' in scopes
+            editor.setTextInBufferRange([[row, indentColumn],[row, indentColumn]], "-")
+          else if 'row.table.organized' in scopes
+            editor.setTextInBufferRange([[row, indentColumn],[row, indentColumn]], " ")
+
+  tableStoppedChanging: (event) ->
+    console.log("aaa")
+    return unless @autoSizeTables
+    console.log("bbb")
+    if editor = atom.workspace.getActiveTextEditor()
+      scopes = editor.getLastCursor().getScopeDescriptor().getScopesArray()
+      console.log(scopes)
+      if 'row.table.organized' in scopes or 'border.table.organized' in scopes
+        console.log(event)
 
   toggleTodo: (event) ->
     editor = atom.workspace.getActiveTextEditor()
@@ -226,6 +331,8 @@ module.exports =
               editor.setTextInBufferRange([[row, 0], [row, 1]], "")
             else
               #cannot unindent - not sure how to do so
+      else
+        editor.outdentSelectedRows()
 
   _getISO8601Date: (date) ->
     year = ("0000" + date.getFullYear()).substr(-4, 4)
@@ -252,12 +359,16 @@ module.exports =
     "" + hours + ":" + minutes + ":" + seconds + offsetString
 
   _indentChars: (star=null, editor=atom.workspace.getActiveTextEditor(), position=editor.getCursorBufferPosition()) ->
-    #console.log("Editor: #{editor}, Position: #{position}")
-    if @levelStyle is "spaces"
+    if star and star.indentType isnt "mixed"
+      indentStyle = star.indentType
+    else
+      indentStyle = @levelStyle
+
+    if indentStyle is "spaces"
       indent = " ".repeat(@indentSpaces)
-    else if @levelStyle is "tabs"
+    else if indentStyle is "tabs"
       indent = "\t"
-    else if @levelStyle is "stacked"
+    else if indentStyle is "stacked"
       if not star
         star = @_starInfo()
       indent = star.starType
@@ -280,7 +391,7 @@ module.exports =
     # Find the line with the last star.  If you find blank lines or a header, there probably isn't a
     # star for this position
     currentLine = position.row
-    star = new Star(currentLine, @indentSpaces)
+    star = new Star(currentLine, @indentSpaces, @levelStyle)
     if star.startRow >= 0
       return star
     else

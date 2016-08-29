@@ -52,7 +52,7 @@ repository:
       },
       {
         name: 'tags.organized'
-        match: ":([^:]+:){1,}"
+        match: ":([^: ]+:){1,}"
       },
       { include: "#textcontent" }
     ]
@@ -144,8 +144,23 @@ repository:
             name: 'endtimeblock'
       },
       {
+        name: 'c.code.block.organized'
+        begin: '(```|#\\+BEGIN_SRC )(c)(\s|$)'
+        captures:
+          1:
+            name: 'code.block.tag.organized'
+          2:
+            name: 'code.block.language.organized'
+        contentName: "source.c"
+        patterns: [
+          { include: '#embedded-code' }
+          { include: 'source.c' }
+        ]
+        end: '(```|#\\+END_SRC)'
+      },
+      {
         name: 'coffee.code.block.organized'
-        begin: '(```|#\\+BEGIN_SRC )(coffee|coffeescript)'
+        begin: '(```|#\\+BEGIN_SRC )(coffee|coffeescript)(\s|$)'
         captures:
           1:
             name: 'code.block.tag.organized'
@@ -156,11 +171,26 @@ repository:
           { include: '#embedded-code' }
           { include: 'source.coffee' }
         ]
-        end: '```|#\\+END_SRC'
+        end: '(```|#\\+END_SRC)'
+      },
+      {
+        name: 'cpp.code.block.organized'
+        begin: '(```|#\\+BEGIN_SRC )(cpp)(\s|$)'
+        captures:
+          1:
+            name: 'code.block.tag.organized'
+          2:
+            name: 'code.block.language.organized'
+        contentName: "source.cpp"
+        patterns: [
+          { include: '#embedded-code' }
+          { include: 'source.cpp' }
+        ]
+        end: '(```|#\\+END_SRC)'
       },
       {
         name: 'css.code.block.organized'
-        begin: '(```|#\\+BEGIN_SRC )(css)'
+        begin: '(```|#\\+BEGIN_SRC )(css)(\s|$)'
         captures:
           1:
             name: 'code.block.tag.organized'
@@ -172,11 +202,27 @@ repository:
           { include: '#embedded-code' }
           { include: 'source.css' }
         ]
+        end: '(```|#\\+END_SRC)'
+      },
+      {
+        name: 'go.code.block.organized'
+        begin: '(```|#\\+BEGIN_SRC )(go|golang)(\s|$)'
+        captures:
+          1:
+            name: 'code.block.tag.organized'
+          2:
+            name: 'code.block.language.organized'
+
+        contentName: "source.go"
+        patterns: [
+          { include: '#embedded-code' }
+          { include: 'source.go' }
+        ]
         end: '```|#\\+END_SRC'
       },
       {
         name: 'html.code.block.organized'
-        begin: '(```|#\\+BEGIN_SRC )(html)'
+        begin: '(```|#\\+BEGIN_SRC )(html)(\s|$)'
         captures:
           1:
             name: 'code.block.tag.organized'
@@ -191,7 +237,7 @@ repository:
       },
       {
         name: 'java.code.block.organized'
-        begin: '(```|#\\+BEGIN_SRC )(java)'
+        begin: '(```|#\\+BEGIN_SRC )(java)(\s|$)'
         captures:
           1:
             name: 'code.block.tag.organized'
@@ -206,7 +252,7 @@ repository:
       },
       {
         name: 'javascript.code.block.organized'
-        begin: '(```|#\\+BEGIN_SRC )(js|javascript)'
+        begin: '(```|#\\+BEGIN_SRC )(js|javascript)(\s|$)'
         captures:
           1:
             name: 'code.block.tag.organized'
@@ -221,7 +267,7 @@ repository:
       },
       {
         name: 'less.code.block.organized'
-        begin: '(```|#\\+BEGIN_SRC )(less)'
+        begin: '(```|#\\+BEGIN_SRC )(less)(\s|$)'
         captures:
           1:
             name: 'code.block.tag.organized'
@@ -235,8 +281,38 @@ repository:
         end: '```|#\\+END_SRC'
       },
       {
+        name: 'objc.code.block.organized'
+        begin: '(```|#\\+BEGIN_SRC )(objc)(\s|$)'
+        captures:
+          1:
+            name: 'code.block.tag.organized'
+          2:
+            name: 'code.block.language.organized'
+        contentName: "source.objc"
+        patterns: [
+          { include: '#embedded-code' }
+          { include: 'source.objc' }
+        ]
+        end: '```|#\\+END_SRC'
+      },
+      {
+        name: 'objcpp.code.block.organized'
+        begin: '(```|#\\+BEGIN_SRC )(objcpp)(\s|$)'
+        captures:
+          1:
+            name: 'code.block.tag.organized'
+          2:
+            name: 'code.block.language.organized'
+        contentName: "source.objcpp"
+        patterns: [
+          { include: '#embedded-code' }
+          { include: 'source.objcpp' }
+        ]
+        end: '```|#\\+END_SRC'
+      },
+      {
         name: 'python.code.block.organized'
-        begin: '(```|#\\+BEGIN_SRC )(python)'
+        begin: '(```|#\\+BEGIN_SRC )(python)(\s|$)'
         captures:
           1:
             name: 'code.block.tag.organized'
@@ -248,10 +324,40 @@ repository:
           { include: 'source.python' }
         ]
         end: '```|#\\+END_SRC'
-      }
+      },
+      {
+        name: 'php.code.block.organized'
+        begin: '(```|#\\+BEGIN_SRC )(php)(\s|$)'
+        captures:
+          1:
+            name: 'code.block.tag.organized'
+          2:
+            name: 'code.block.language.organized'
+        contentName: "source.php"
+        patterns: [
+          { include: '#embedded-code' }
+          { include: 'source.php' }
+        ]
+        end: '```|#\\+END_SRC'
+      },
+      {
+        name: 'ruby.code.block.organized'
+        begin: '(```|#\\+BEGIN_SRC )(ruby)(\s|$)'
+        captures:
+          1:
+            name: 'code.block.tag.organized'
+          2:
+            name: 'code.block.language.organized'
+        contentName: "source.ruby"
+        patterns: [
+          { include: '#embedded-code' }
+          { include: 'source.ruby' }
+        ]
+        end: '```|#\\+END_SRC'
+      },
       {
         name: 'shell.code.block.organized'
-        begin: '(```|#\\+BEGIN_SRC )(shell)$'
+        begin: '(```|#\\+BEGIN_SRC )(shell)(\s|$)'
         captures:
           1:
             name: 'code.block.tag.organized'
@@ -266,7 +372,7 @@ repository:
       }
       {
         name: 'sql.code.block.organized'
-        begin: '(```|#\\+BEGIN_SRC )(sql|SQL)$'
+        begin: '(```|#\\+BEGIN_SRC )(sql|SQL)(\s|$)'
         captures:
           1:
             name: 'code.block.tag.organized'
@@ -298,5 +404,62 @@ repository:
               name: 'underline.link.url.organized'
           7:
               name: 'link.parens.organized'
+      }
+      {
+        name: 'border.table.organized'
+        match: '\\s*[\\|\\+](\\-*[\\|\\+])+\\s*'
+      }
+      {
+        #Not quite right, but getting there
+        #          |            |    ....                 |
+        # begin: '(\\|)'
+        # beginCaptures:
+        #   1:
+        #     name: 'border1.table.organized'
+        # end: '([^\\-\\+\\|]+)(\\|)'
+        #
+        # endCaptures:
+        #   1:
+        #     name: 'row2.table.organized'
+        #   2:
+        #     name: 'border2.table.organized'
+
+        match: '(\\|)((?:[^\\-\\+\\|]+\\|)+)'
+        captures:
+          1:
+            name: 'border.table.organized'
+          2:
+            patterns: [
+              { include: '#innerTableRow' }
+            ]
+      }
+      {
+        match: '___([^_]+)___'
+        captures:
+          1:
+            name: 'bold.underlined.text.organized'
+      }
+      {
+        match: '__([^_]+)__'
+        captures:
+          1:
+            name: 'bold.text.organized'
+      }
+      {
+        match: '_([^_]+)_'
+        captures:
+          1:
+            name: 'underlined.text.organized'
+      }
+    ]
+  innerTableRow:
+    patterns: [
+      {
+        match: '([^\\-\\+\\|]+)(\\|)'
+        captures:
+          1:
+            name: 'row.table.organized'
+          2:
+            name: 'border.table.organized'
       }
     ]

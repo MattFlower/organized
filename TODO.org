@@ -20,6 +20,14 @@
   * [COMPLETED] Support numbers as outline levels
   * [COMPLETED] Hitting enter at the beginning of a line shouldn't delete the content of the line
   * [TODO] Highlighting multiple lines and indenting should indent all of the lines
+  * [TODO] Number indents need a new type of numbering on indent (7. becomes 7a. or something)
+  * [TODO] If you have unindented and that unindent level has a different star type, adopt that star type
+  * [COMPLETED] Underlines
+    * [COMPLETED] Add grammar for underlined portion
+    * [COMPLETED] Add styles for underlines
+  * [COMPLETED] bold
+    * [COMPLETED] Add grammar for bold
+    * [COMPLETED] Add style for bold
 * Visibility cycling
   * [TODO] Add folding to menus to raise visibility
   * [TODO] Start supporting folding for '**' style stars (space-indented ones already work)
@@ -50,11 +58,12 @@
     file.  We need some spec tests.
   * [COMPLETED] Learn how to write spec tests
   * [COMPLETED] Write tests for all existing functionality
+  * [TODO] Write unit tests for grammar
 * Links
-  * [TODO] Highlighting
+  * [COMPLETED] Highlighting
   * [TODO] Link following for Urls
   * [TODO] Support org-mode style links
-  * [TODO] Support [markdown-style](https://daringfireball.net/projects/markdown/syntax#link) links
+  * [COMPLETED] Support [markdown-style](https://daringfireball.net/projects/markdown/syntax#link) links
 * Todos
   * [COMPLETED] Key command to toggle "TODO", "CLOSED", remove todo
   * [TODO] Option to mark closed todo's with current time
@@ -76,9 +85,20 @@
   * [COMPLETED] Add license and contribution policy
 * Tables
   * [TODO] Syntax highlighting
+    * [TODO] Header row is highlighted
+    * [TODO] Header column is highlighted
+      * How do we get a header column?
+    * [COMPLETED] Border have special color
+  * [TODO] Automatic resizing of table columns while you type
+  * [TODO] Ctrl-enter to add a new table row
+  * [COMPLETED] Command to open a table
+  * [COMPLETED] Command to close a table
+  * [TODO] Popup menu options to add or delete a row
+  * [TODO] Popup menu options to add or delete a column
   * [TODO] Automatic calculation like a spreadsheet
   * [TODO] Call atom / nodejs functions in a node
   * [TODO] Call shell scripts from a node
+  * [TODO] How do we differentiate "rows" in a column from wrapping text.  Maybe we don't?
 * Schedules
   * [COMPLETED] Support "SCHEDULED" tags inside of organized files
   * [TODO] Add key command to add current date in ISO-8601 format
@@ -97,7 +117,6 @@
     * [TODO] Source block code highlighting
       * Start with languages that I use regularly
         * [COMPLETED] CoffeeScript
-        * [TODO] Curl
         * [COMPLETED] CSS
         * [COMPLETED] Java
         * [COMPLETED] Javascript
@@ -106,15 +125,22 @@
         * [COMPLETED] Shell
         * [COMPLETED] SQL
       * Then let's add other popular languages
-        * [TODO] C
-        * [TODO] C#
-        * [TODO] Golang
-        * [TODO] Objective C
-        * [TODO] PHP
-        * [TODO] Ruby
+        * [COMPLETED] C
+        * [COMPLETED] C#
+        * [COMPLETED] Golang
+        * [COMPLETED] Objective C
+        * [COMPLETED] PHP
+        * [COMPLETED] Ruby
         * [TODO] Perl
       * This will depend a bit on how well those language grammars support embedding
-    * [TODO] Execute commands in a source block
+    * [TODO] Execute commands in a source block (except Java)
+    * An execution support for:
+      * [TODO] Java
+      * [TODO] C
+      * [TODO] C#
+      * [TODO] Golang
+      * [TODO] Objective C
+      * [TODO] PHP
 * Search / Exploration
   * [TODO] Add command to search for a note
     * Maybe https://github.com/fergiemcdowall/search-index
@@ -135,18 +161,21 @@
       store via serialization?  It seems like this will cause a problem at some point
       depending on how much control there is.
 * Export
+  * [TODO] Figure out how to make a new pane for export, similar to markdown preview
   * [TODO] Export as HTML
   * [TODO] Export as PDF
 * Safety
   * [TODO] Add ability to encrypt notes
 * Tags
   * [TODO] Syntax highlighting for tags
-* Code structure
+* Code structure / Technical debt
   * [COMPLETED] Replace endless star methods with a single method that collects all the info
   * [TODO] Break up main parsing function in star.coffee into separate methods
-  * [TODO] Break out codeblocks into separate class
+  * [COMPLETED] Break out codeblocks into separate class
   * [TODO] Introduce static method (are there static methods in coffeescript?) to ask if a line
     has a star.
+  * [TODO] Replace newStarLine detection of codeblocks by only binding enter in the correct context.
+  * [TODO] Add some comments
 * Coding templates / helpful keystrokes
   * [COMPLETED] Insert ISO-8601 Date
   * [COMPLETED] Insert ISO-8601 Datetime
@@ -156,3 +185,16 @@
   * [TODO] organized:newStarLine plus organized:unindent in one command
 * [TODO] Capture system for webpages
   * This seems like it should be somehow easier here because we are already in Chromium
+* Toolbar
+  * [TODO] Create a toolbar
+  * [TODO] Button to create a new table with X rows and Y columns
+  * [TODO] Button to create a new link or make existing string into a link
+  * [TODO] Button to bold
+  * [TODO] Button to underline
+  * [TODO] Button to strikethrough
+* [TODO] Migration System
+  * [TODO] Migration from OneNote
+  * [TODO] Migration from Evernote
+* [TODO] Road to 0.3.0
+  * [TODO] Resize table while typing
+  * [TODO] Handle enter key inside of a table column

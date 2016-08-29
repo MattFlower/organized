@@ -1,9 +1,22 @@
+* 0.3.0 (Released 2016-08-__)
+  * Early support for tables
+    * Syntax highlighting for the borders of tables
+    * Commands to automatically open (create the first line of) or close (create the last line of) a table
+  * Text styling
+    * __Bold__ Text
+    * _Underlined_ Text
+  * Bug fixes
+    * Fixed tab and shift-tab if you aren't in the context of a star.  They'll perform editor.indentSelectedRows() and
+      editor.outdentSelectedRows() respectively.
+    * Tags were able to include spaces, which made some rather unusual things being matched.
+    * When you are using stacked stars (like *** for a third level star), when you press enter, it should
+      continue to use that outline type.
+
 * 0.2.1 (Released 2016-08-24)
   * Highlighting for links
   * Support org-mode style BEGIN_SRC/END_SRC code tags for source code
   * Bug Fixes
     * Can't hit return when I'm on a header row
-
 
 * 0.2.0 (Released 2016-08-22)
   * Added support for inserting current ISO-8601 date / datetime (ctrl-i d or ctrl-i t respectively)

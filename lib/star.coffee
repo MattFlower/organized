@@ -1,3 +1,5 @@
+{shell} = require 'electron'
+
 #
 # Centralize all the information about a star into one place so don't repeatedly
 # search for the start of star in the editor.
@@ -10,6 +12,7 @@ class Star
   @starType: null
   @indentLevel: 0
   @indentType: null
+  @defaultIndentType: null
   @currentNumber: 0
   @nextNumber: 0
 
@@ -17,9 +20,10 @@ class Star
   @indentSpaces: -1
   @editor: null
 
-  constructor: (currentRow, indentSpaces, editor = atom.workspace.getActiveTextEditor()) ->
+  constructor: (currentRow, indentSpaces, defaultIndentType, editor = atom.workspace.getActiveTextEditor()) ->
     @latestRowSeen = currentRow
     @indentSpaces = indentSpaces
+    @defaultIndentType = defaultIndentType
     @editor = editor
     @_processStar()
 
@@ -123,7 +127,27 @@ class Star
     match = /(?<=^\s*)([\*\-\+]|\d+\.)/.exec(line)
     return match.index
 
-  nextNewStar: () ->
+  newStarLine: (indentLevel = @indentLevel) ->
+    if @indentType isnt "mixed"
+      indentStyle = @indentType
+    else
+      indentStyle = @defaultIndentType
 
+    if indentStyle is "stacked"
+      indent = @starType.repeat(@indentLevel) + " "
+    else
+      if indentStyle is "spaces"
+        indent = " ".repeat(@indentSpaces*@indentLevel)
+      else if indentStyle is "tabs"
+        indent = "\t".repeat(@indentLevel)
+      else if indentStyle is "none"
+        indent = ""
+
+      if @starType is "numbers"
+        indent += @nextNumber + '. '
+      else
+        indent += @starType + " "
+
+    return indent
 
 module.exports = Star

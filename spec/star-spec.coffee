@@ -137,4 +137,3 @@ describe "When stars are parsed", ->
     expect(star.startRow).toBe(2)
     expect(star.endRow).toBe(2)
     expect(star.starCol).toBe(4)
-    

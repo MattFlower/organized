@@ -3,11 +3,10 @@
 Organized is designed to allow you to keep notes, a schedule, and todo list
 inside of Atom.
 
-![Organized Screenshot](https://raw.githubusercontent.com/MattFlower/organized/master/screenshots/0_0_1.gif)
+![Organized Screenshot](https://raw.githubusercontent.com/MattFlower/organized/master/screenshots/0_3_0.gif)
 
 Right now, we're in the early stages of Organized, but join us now and watch
-us get better.  I think we've already have a pretty functional outliner and
-todo lists.
+us get better.
 
 # Features
 * Outlining
@@ -19,16 +18,40 @@ todo lists.
 * Support todo items
   * Highlighting of [TODO]/[COMPLETED] tags
   * Ctrl-Shift-T for toggling todo items from [TODO] to [COMPLETED] to blank.
-* Highlighting for code blocks
+* Code blocks
+  * Syntax highlighting for code blocks in c, coffeescript, c++, css, golang, html, java,
+    javascript, less, objective c, objective c++, python, php, ruby, shell scripts (generic), and sql.
+  * Execution for coffeescript, javascript, python, and shell scripts.  Put your cursor
+    in your code block and press [Ctrl-` x] to execute code.  Output from code will appear
+    in a notification by default, or create resultblock:
+    <pre>
+    \```result
+    ```
+    </pre>
+    and the output will appear there.
+  * Results can be displayed as an information popup or as a separate section in
+    your notes for future reference.
+* Tables
+  * Create an ascii-based table
+  * Rather than writing closing table blocks, use "Ctrl-- C" to automatically close them.
 * Highlighting of org-mode style Metadata headers, SCHEDULED properties, links, and
   Org-mode-style tags (:tagname:)
 
 
-# What's New?  (Version 0.2.1)
-* Highlighting for links
-* Support org-mode style BEGIN_SRC/END_SRC code tags for source code
-* Bug Fixes
-  * Can't hit return when I'm on a header row
+# What's New?  (Version 0.3.0)
+* Execution of code blocks.  Press [Ctrl-` x] to execute.
+* Early support for tables
+  * Syntax highlighting for the borders of tables
+  * Commands to automatically open (create the first line of) or close (create the last line of) a table
+* Text styling
+  * __Bold__ Text
+  * _Underlined_ Text
+* Bug fixes
+  * Fixed tab and shift-tab if you aren't in the context of a star.  They'll perform editor.indentSelectedRows() and
+    editor.outdentSelectedRows() respectively.
+  * Tags were able to include spaces, which made some rather unusual things being matched.
+  * When you are using stacked stars (like *** for a third level star), when you press enter, it should
+    continue to use that outline type.
 
 Please see the [CHANGELOG.org](https://raw.githubusercontent.com/MattFlower/organized/master/CHANGELOG.org)
 for full details of recent changes.

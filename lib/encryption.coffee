@@ -13,6 +13,44 @@ decrypt = (text, password) ->
   decrypted += decipher.final('utf8');
   return decrypted
 
-test = encrypt("hello world", "password")
-console.log("Encrypted: " + test)
-console.log("Decrypted: " + decrypt(test, "password"))
+class EncryptDialog extends View
+  @content: ({prompt} = {}) ->
+    @div class: 'password-dialog', ->
+      @p warning, class: 'warningtext', outlet: 'warning'
+      @label prompt, class: 'icon', outlet: 'promptText'
+      @input name: 'password', type: 'password', outlet: 'password'
+      @input name: 'confirmPassword', type: 'password', outlet: 'confirmPassword'
+      # @password 'miniEditor', new TextEditorView(mini: true)
+      # @confirmPassword 'miniEditor', new TextEditorView(mini: true)
+      @div class: 'error-message', outlet: 'errorMessage'
+
+  initialize: ({message, iconClass} = {}) ->
+    @promptText.addClass(iconClass) if iconClass
+    atom.commands.add @element,
+      'core:confirm': => @onConfirm(@miniEditor.getText())
+      'core:cancel': => @cancel()
+    @miniEditor.on 'blur', => @close() if document.hasFocus()
+    @miniEditor.getModel().onDidChange => @showError()
+    @warning = "This will encrypt the current file and delete the original.  There is no mechanism to recover this \
+       file without the password"
+
+  attach: ->
+    @panel = atom.workspace.addModalPanel(item: this.element)
+    @miniEditor.focus()
+    @miniEditor.getModel().scrollToCursorPosition()
+
+  close: ->
+    panelToDestroy = @panel
+    @panel = null
+    panelToDestroy?.destroy()
+    atom.workspace.getActivePane().activate()
+
+  cancel: ->
+    @close()
+    $('.organized').focus()
+
+  showError: (message='') ->
+    @errorMessage.text(message)
+    @flashError() if message
+
+module.exports = {encrypt, decrypt}

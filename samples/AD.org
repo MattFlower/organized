@@ -1,0 +1,20 @@
+* Do you take notes or need an engineering notebook?
+* [TODO] Do you have things to do?
+  * [COMPLETED] Some of which might already be done?
+* Maybe you need to store [links](https://github.com/MattFlower/organized)
+* Maybe you want _underlined text_ or __bold text__
+
+# Coding features
+- Maybe you write code in languages like Java, JavaScript, Python,
+  PHP, Objective C, Ruby, or even Shell Scripts?
+  ```javascript
+  console.log("You can execute these")
+  ```
+  ```result
+  : You can execute these
+  ```
+
+# If you have some data to store in your notes, we have you covered
++-----------+
+| Some data |
++-----------+

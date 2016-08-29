@@ -47,6 +47,9 @@ describe "Pressing enter creates a new star", ->
   parameterized([1,7], [2,3], "- One\n-- Two", "- One\n-- Two\n-- ", 'stacked')
   parameterized([1,7], [2,3], "+ One\n++ Two", "+ One\n++ Two\n++ ", 'stacked')
 
+  # Continue to use stacked, even though your default type is spaces
+  parameterized([1,6], [2,3], "* One\n** Two", "* One\n** Two\n** ", "spaces")
+
   describe "organized:newStarLine when autoCreateStarsOnEnter disabled", ->
     it "should not create a new star", ->
       atom.config.set('organized.autoCreateStarsOnEnter', false)

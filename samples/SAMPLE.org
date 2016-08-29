@@ -1,3 +1,12 @@
+# Tables
++-----------------+
+| This is a table |
++-----------------+
+
+|------------|
+|Also a table|
+|------------|
+
 # Outline samples
 This page contains a variety of outline types to use for manual testing
 
@@ -45,6 +54,12 @@ This page contains a variety of outline types to use for manual testing
 1. Level 1
 2. Also Level 1
 
+## Outlines with embedded tables
+* Some
+  * Embedding
+    +-------+
+    | table |
+
 ## Links
 * [Organized Github Account](https://github.com/MattFlower/organized)
 * abc
@@ -58,8 +73,10 @@ This page contains a variety of outline types to use for manual testing
   * Coffeescript
     * Jira-style
       ```coffee
-      test: (a, b) ->
-        console.log("hi")
+      test = (message) ->
+        console.log(message)
+
+      test('Hi')
       ```
   * CSS
     * Jira-style
@@ -74,6 +91,18 @@ This page contains a variety of outline types to use for manual testing
           color:read
       }
       #+END_SRC
+  * Golang
+    * Jira-style
+      ```go
+      package main
+
+      import "fmt"
+
+      func main() {
+      	fmt.Println("Hello, world")
+      }
+      ```
+    *
   * Java
     * Jira-style
       ```java
@@ -94,15 +123,11 @@ This page contains a variety of outline types to use for manual testing
   * Javascript
     * Jira-style
       ```javascript
-      Test.prototype.test = function(keystroke) {
-        console.log("Test");
-      };
+      console.log("Test");
       ```
     * Org-mode style
       #+BEGIN_SRC javascript
-      Test.prototype.test = function(keystroke) {
-        console.log("Test");
-      };
+      console.log("Test");
       #+END_SRC
   * Less
     * Org-mode style
@@ -120,11 +145,13 @@ This page contains a variety of outline types to use for manual testing
       ```python
       print [i*2 for i in range(1,10)]
       ```
+
+      ```result
     * Org-mode style
       #+BEGIN_SRC python
       print [i*2 for i in range(1,10)]
       #+END_SRC
-  * Shell
+  * Shell (Generic)
     * Jira-style
       ```shell
       for dir in `ls -la *`; do
