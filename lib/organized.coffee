@@ -119,16 +119,46 @@ module.exports =
     @subscriptions.add(tableStoppedChangingSub)
     @subscriptions.add(editorDestroySubscription)
 
-  indent: (event) ->
-    editor = atom.workspace.getActiveTextEditor()
-    if star = @_starInfo()
-      indent = if @levelStyle is "stacked" then star.starType else @_indentChars()
+  _withAllSelectedLines: (editor, callback) ->
+    editor = atom.workspace.getActiveTextEditor() unless editor
 
-      editor.transact 1000, () =>
-        for row in [star.startRow..star.endRow]
-          editor.setTextInBufferRange([[row, 0], [row, 0]], indent)
-    else
-      editor.indentSelectedRows()
+    if editor = atom.workspace.getActiveTextEditor()
+      selections = editor.getSelections()
+      for selection in selections
+        range = selection.getBufferRange()
+
+        #Adjust for selections that span the whole line
+        if range.end.column is 0 and range.start isnt range.end
+          range.end = new Point(range.end.row-1, editor.lineTextForBufferRow(range.end.row-1).length-1)
+
+        for i in [range.start.row..range.end.row]
+          # Create a virtual position object from the range object
+          if i is range.end.row
+            position = new Point(i, range.end.col)
+          else if i is range.start.row
+            position = new Point(i, range.start.col)
+          else
+            position = new Point(i, 0)
+
+          callback(position)
+
+  indent: (event) ->
+    if editor = atom.workspace.getActiveTextEditor()
+      visited = {}
+      editor.transact 2000, () =>
+        @_withAllSelectedLines editor, (position) =>
+          if visited[position.row]
+            return
+
+          if star = @_starInfo(editor, position)
+            for i in [star.startRow..star.endRow]
+              visited[i] = true
+
+            indent = if @levelStyle is "stacked" then star.starType else @_indentChars()
+            for row in [star.startRow..star.endRow]
+              editor.setTextInBufferRange([[row, 0], [row, 0]], indent)
+          else
+            editor.indentSelectedRows()
 
   insert8601Date: (event) ->
     d = new Date()
@@ -280,9 +310,7 @@ module.exports =
             editor.setTextInBufferRange([[row, indentColumn],[row, indentColumn]], " ")
 
   tableStoppedChanging: (event) ->
-    console.log("aaa")
     return unless @autoSizeTables
-    console.log("bbb")
     if editor = atom.workspace.getActiveTextEditor()
       scopes = editor.getLastCursor().getScopeDescriptor().getScopesArray()
       console.log(scopes)
@@ -311,28 +339,36 @@ module.exports =
 
   unindent: (event) ->
     if editor = atom.workspace.getActiveTextEditor()
-      position = editor.getCursorBufferPosition()
-      if star = @_starInfo()
-        firstRow = star.startRow
-        lastRow = star.endRow
+      visited = {}
+      editor.transact 2000, () =>
+        @_withAllSelectedLines editor, (position) =>
+          if visited[position.row]
+            return
 
-        #Unindent
-        editor.transact 1000, () ->
-          for row in [firstRow..lastRow]
-            line = editor.lineTextForBufferRow(row)
-            if line.match("^  ")
-              editor.setTextInBufferRange([[row, 0], [row, 2]], "")
-            else if line.match("^\\t")
-              editor.setTextInBufferRange([[row, 0], [row, 1]], "")
-            else if match = line.match(/^([\*\-\+]|\d+\.) /)
-              editor.setTextInBufferRange([[row, 0], [row, match[0].length]], "")
-            else if line.match(/^[\*\-\+]/)
-              #Stacked
-              editor.setTextInBufferRange([[row, 0], [row, 1]], "")
-            else
-              #cannot unindent - not sure how to do so
-      else
-        editor.outdentSelectedRows()
+          if star = @_starInfo(editor, position)
+            for i in [star.startRow..star.endRow]
+              visited[i] = true
+
+            firstRow = star.startRow
+            lastRow = star.endRow
+
+            #Unindent
+            editor.transact 1000, () ->
+              for row in [firstRow..lastRow]
+                line = editor.lineTextForBufferRow(row)
+                if line.match("^  ")
+                  editor.setTextInBufferRange([[row, 0], [row, 2]], "")
+                else if line.match("^\\t")
+                  editor.setTextInBufferRange([[row, 0], [row, 1]], "")
+                else if match = line.match(/^([\*\-\+]|\d+\.) /)
+                  editor.setTextInBufferRange([[row, 0], [row, match[0].length]], "")
+                else if line.match(/^[\*\-\+]/)
+                  #Stacked
+                  editor.setTextInBufferRange([[row, 0], [row, 1]], "")
+                else
+                  #cannot unindent - not sure how to do so
+          else
+            editor.outdentSelectedRows()
 
   _getISO8601Date: (date) ->
     year = ("0000" + date.getFullYear()).substr(-4, 4)

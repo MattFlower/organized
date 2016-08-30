@@ -1,4 +1,8 @@
-* 0.3.0 (Released 2016-08-__)
+* 0.3.1 (Released 2016-08-30)
+  * Bug Fixes
+    * Intend and unindent works correctly with multiple cursors
+
+* 0.3.0 (Released 2016-08-29)
   * Early support for tables
     * Syntax highlighting for the borders of tables
     * Commands to automatically open (create the first line of) or close (create the last line of) a table

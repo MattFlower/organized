@@ -19,7 +19,7 @@
     as multiple stars or as whitespace and stars
   * [COMPLETED] Support numbers as outline levels
   * [COMPLETED] Hitting enter at the beginning of a line shouldn't delete the content of the line
-  * [TODO] Highlighting multiple lines and indenting should indent all of the lines
+  * [COMPLETED] Highlighting multiple lines and indenting should indent all of the lines
   * [TODO] Number indents need a new type of numbering on indent (7. becomes 7a. or something)
   * [TODO] If you have unindented and that unindent level has a different star type, adopt that star type
   * [COMPLETED] Underlines
@@ -28,6 +28,8 @@
   * [COMPLETED] bold
     * [COMPLETED] Add grammar for bold
     * [COMPLETED] Add style for bold
+  * [TODO] If you newline after a level 1 and there are already indented bullets underneath, the new line
+    should be at that new level of depth
 * Visibility cycling
   * [TODO] Add folding to menus to raise visibility
   * [TODO] Start supporting folding for '**' style stars (space-indented ones already work)
@@ -99,9 +101,9 @@
   * [TODO] Call atom / nodejs functions in a node
   * [TODO] Call shell scripts from a node
   * [TODO] How do we differentiate "rows" in a column from wrapping text.  Maybe we don't?
+  * [TODO] Handle enter key inside of a table column
 * Schedules
   * [COMPLETED] Support "SCHEDULED" tags inside of organized files
-  * [TODO] Add key command to add current date in ISO-8601 format
   * [TODO] Add key command to add a schedule date
   * [TODO] Create agenda view to show what's coming up
     * Maybe this should be accordian style with both todos and agenda on a
@@ -133,8 +135,8 @@
         * [COMPLETED] Ruby
         * [TODO] Perl
       * This will depend a bit on how well those language grammars support embedding
-    * [TODO] Execute commands in a source block (except Java)
-    * An execution support for:
+    * [COMPLETED] Execute commands in a source block (except Java)
+    * Add execution support for:
       * [TODO] Java
       * [TODO] C
       * [TODO] C#
@@ -195,6 +197,3 @@
 * [TODO] Migration System
   * [TODO] Migration from OneNote
   * [TODO] Migration from Evernote
-* [TODO] Road to 0.3.0
-  * [TODO] Resize table while typing
-  * [TODO] Handle enter key inside of a table column

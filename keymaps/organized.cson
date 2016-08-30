@@ -1,17 +1,23 @@
 #'atom-text-editor[data-grammar="source organized"]':
 'atom-text-editor[data-grammar="source organized"]':
-    'tab': 'organized:indent',
-    'shift-tab': 'organized:unindent'
-    'ctrl-shift-t': 'organized:toggleTodo'
-    'ctrl-enter': 'organized:newLine'
-    'shift-enter': 'organized:newLine'
-    'enter': 'organized:newStarLine'
-    # 'enter': 'organized:newTableRow'
-    # Keystrokes starting with ctrl-i are general purpose
-    'ctrl-i t': 'organized:insertDateTime'
-    'ctrl-i d': 'organized:insertDate'
-    # Keystrokes starting with ctrl-- refer to tables
-    'ctrl-- c': 'organized:closeTable'
-    'ctrl-- o': 'organized:openTable'
-    # Keystrokes starting with ctrl-` refer to code blocks
-    'ctrl-` x': 'organized:executeCodeBlock'
+  'tab': 'organized:indent',
+  'shift-tab': 'organized:unindent'
+  'ctrl-shift-t': 'organized:toggleTodo'
+  'ctrl-enter': 'organized:newLine'
+  'shift-enter': 'organized:newLine'
+  'enter': 'organized:newStarLine'
+  # 'enter': 'organized:newTableRow'
+  # Keystrokes starting with ctrl-i are general purpose
+  'ctrl-i t': 'organized:insertDateTime'
+  'ctrl-i d': 'organized:insertDate'
+  # Keystrokes starting with ctrl-- refer to tables
+  'ctrl-- c': 'organized:closeTable'
+  'ctrl-- o': 'organized:openTable'
+  # Keystrokes starting with ctrl-` refer to code blocks
+  'ctrl-` x': 'organized:executeCodeBlock'
+
+'atom-workspace atom-text-editor span.border.table.organized':
+  'enter': 'organized:newTableRow'
+
+'atom-workspace atom-text-editor span.row.table.organized':
+  'enter': 'organized:newTableRow'
