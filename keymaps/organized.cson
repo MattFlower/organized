@@ -15,9 +15,3 @@
   'ctrl-- o': 'organized:openTable'
   # Keystrokes starting with ctrl-` refer to code blocks
   'ctrl-` x': 'organized:executeCodeBlock'
-
-'atom-workspace atom-text-editor span.border.table.organized':
-  'enter': 'organized:newTableRow'
-
-'atom-workspace atom-text-editor span.row.table.organized':
-  'enter': 'organized:newTableRow'

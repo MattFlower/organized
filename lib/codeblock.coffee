@@ -1,4 +1,5 @@
 spawn = require('child_process').spawn
+spawnSync = require('child_process').spawnSync
 tmp = require('tmp')
 fs = require('fs')
 
@@ -59,55 +60,132 @@ class CodeBlock
 
     resultBlock = new ResultBlock(this, @editor)
 
-    # Create a temp file to put the code in -- it's easier than trying to deal with
-    # piping multiple lines to some execution engines
-    tmp.file (err, path, fd, cleanupCallback) =>
+    # Java files need a particular name, extract that
+    tmpDir = tmp.dirSync()
+    dirname = tmpDir.name
+    console.log("Dir: #{dirname}")
+    if @language is 'java'
+      if match = code.match(/public\s+class\s+(\S+)/)
+        filename = dirname + "/" + match[1] + ".java"
+      else
+        atom.notifications.addError("Could not public class name for Java snippet")
+        tmpDir.removeCallback()
+        return
+    else if @language is 'c'
+      filename = tmp.tmpNameSync({dir: dirname}) + ".c"
+    else if @language is 'cpp'
+      filename = tmp.tmpNameSync({dir: dirname}) + ".cpp"
+    else if @language is 'objc'
+      filename = tmp.tmpNameSync({dir: dirname}) + ".m"
+    else
+      filename = tmp.tmpNameSync({dir: dirname})
+    console.log("Filename: #{filename}")
+    removeCallback = () =>
+      #spawn("rm", ['-r', dirname])
+
+    # Execute the block
+    fs.open filename, 'wx', (err, fd) =>
       if err
+        removeCallback()
         throw err
 
       fs.write fd, code, (err) =>
         if executor = @executionEngine()
           resultBlock.clearResultBlock()
-          process = executor(path)
-          process.stdout.on 'data', (data) ->
-            resultBlock.addRow(data)
-          process.stderr.on 'data', (data) ->
-            resultBlock.addRow(data)
-          process.on 'close', (code) ->
-            if code isnt 0
-              atom.notifications.addError("Process ended with code #{{code}}")
-            cleanupCallback()
+          if process = executor(filename, resultBlock)
+            process.stdout.on 'data', (data) ->
+              resultBlock.addRow(data)
+            process.stderr.on 'data', (data) ->
+              resultBlock.addError(data)
+            process.on 'close', (code) ->
+              if code isnt 0
+                atom.notifications.addError("Process ended with code #{{code}}")
+              removeCallback()
+          else
+            removeCallback()
         else
           atom.notifications.addError("Language '#{@language}' is not recognized or not supported for code execution")
 
+    # Create a temp file to put the code in -- it's easier than trying to deal with
+    # piping multiple lines to some execution engines
+
   executionEngine: () ->
     switch @language
-      when 'python' then return (pathToFile) ->
-          return spawn('python', [pathToFile])
-
-      when 'shell' then return (pathToFile) ->
-        return spawn('sh', [pathToFile])
-
-      when 'bash' then return (pathToFile) ->
+      when 'bash' then return (pathToFile, resultBlock) ->
         return spawn('bash', [pathToFile])
 
-      when 'coffee' then return (pathToFile) ->
+      when 'c' then return (pathToFile, resultBlock) ->
+        if match = pathToFile.match(/^(.*)\/[^/]+$/)
+          dirName = match[1]
+          outputFile = "#{dirName}/test"
+          ccProcess = spawnSync("cc", [pathToFile, '-o', outputFile])
+          if ccProcess.status
+            resultBlock.addError("Result code is #{ccProcess.signal}")
+            resultBlock.addError(ccProcess.stderr)
+            return null
+          else
+            return spawn(outputFile)
+
+      when 'coffee' then return (pathToFile, resultBlock) ->
         return spawn('coffee', [pathToFile])
 
-      when 'javascript' then return (pathToFile) ->
+      when 'cpp' then return (pathToFile, resultBlock) ->
+        if match = pathToFile.match(/^(.*)\/[^/]+$/)
+          dirName = match[1]
+          outputFile = "#{dirName}/test"
+          cppProcess = spawnSync("g++", [pathToFile, '-o', outputFile])
+          if cppProcess.status
+            resultBlock.addError("Result code is #{cppProcess.signal}")
+            resultBlock.addError(cppProcess.stderr)
+            return null
+          else
+            return spawn(outputFile)
+
+      when 'java' then return (pathToFile, resultBlock) ->
+        if match = pathToFile.match(/^(.*)\/([^/]+).java$/)
+          dirName = match[1]
+          className = match[2]
+          javacProcess = spawnSync("javac", [pathToFile])
+          if javacProcess.status
+            resultBlock.addError("Result code is #{javacProcess.status}")
+            resultBlock.addError(javacProcess.stderr)
+            return null
+          else
+            return spawn('java', ['-cp', dirName, className])
+        else
+          atom.notifications.addError("Cannot find Java class name")
+          return null
+
+      when 'javascript' then return (pathToFile, resultBlock) ->
         return spawn('node', [pathToFile])
 
-      when 'js' then return (pathToFile) ->
+      when 'js' then return (pathToFile, resultBlock) ->
         return spawn('node', [pathToFile])
 
-      # when 'java' then return (pathToFile) ->
-      #   process = spawn('javac', [pathToFile])
-      #   process.stderr.on 'data', (data) ->
-      #     return null
-      #   process.on 'close', (code) ->
-      #     if code isnt 0 return
-      #
-      #
+      when 'objc' then return (pathToFile, resultBlock) ->
+        if match = pathToFile.match(/^(.*)\/[^/]+$/)
+          dirName = match[1]
+          outputFile = "#{dirName}/test"
+          ccProcess = spawnSync("clang", ['-o', outputFile, '-lobjc', '-framework', 'Foundation', pathToFile])
+          if ccProcess.status
+            resultBlock.addError("Result code is #{ccProcess.signal}")
+            resultBlock.addError(ccProcess.stderr)
+            return null
+          else
+            return spawn(outputFile)
+
+      when 'perl' then return (pathToFile, resultBlock) ->
+        return spawn('perl', [pathToFile])
+
+      when 'php' then return (pathToFile, resultBlock) ->
+        return spawn('php', [pathToFile])
+
+      when 'python' then return (pathToFile, resultBlock) ->
+          return spawn('python', [pathToFile])
+
+      when 'shell' then return (pathToFile, resultBlock) ->
+        return spawn('sh', [pathToFile])
+
       else return null
 
 class ResultBlock
@@ -129,9 +207,12 @@ class ResultBlock
       @indentCol = match.index
       line = editor.lineTextForBufferRow(row)
 
-  addError: (resultCode) ->
+    console.log("resultRow: #{@resultRow}")
+
+  addError: (result) ->
     if not @resultRow
-      atom.notifications.addError("Process ended in error", { icon: 'alert', detail: "Result code: #{resultCode}"})
+      atom.notifications.addError("Process ended in error", { icon: 'alert', detail: result})
+      return
 
     @_addResult("!", result)
 
@@ -167,7 +248,7 @@ class ResultBlock
 
     row = @resultRow+1
     lastRow = -1
-    while @editor.lineTextForBufferRow(row).match("\s*: ")
+    while @editor.lineTextForBufferRow(row).match("\s*[:!] ")
       lastRow = row
       row += 1
 

@@ -119,34 +119,11 @@ module.exports =
     @subscriptions.add(tableStoppedChangingSub)
     @subscriptions.add(editorDestroySubscription)
 
-  _withAllSelectedLines: (editor, callback) ->
-    editor = atom.workspace.getActiveTextEditor() unless editor
-
-    if editor = atom.workspace.getActiveTextEditor()
-      selections = editor.getSelections()
-      for selection in selections
-        range = selection.getBufferRange()
-
-        #Adjust for selections that span the whole line
-        if range.end.column is 0 and range.start isnt range.end
-          range.end = new Point(range.end.row-1, editor.lineTextForBufferRow(range.end.row-1).length-1)
-
-        for i in [range.start.row..range.end.row]
-          # Create a virtual position object from the range object
-          if i is range.end.row
-            position = new Point(i, range.end.col)
-          else if i is range.start.row
-            position = new Point(i, range.start.col)
-          else
-            position = new Point(i, 0)
-
-          callback(position)
-
   indent: (event) ->
     if editor = atom.workspace.getActiveTextEditor()
       visited = {}
       editor.transact 2000, () =>
-        @_withAllSelectedLines editor, (position) =>
+        @_withAllSelectedLines editor, (position, selection) =>
           if visited[position.row]
             return
 
@@ -209,12 +186,10 @@ module.exports =
         editor.insertNewline()
         return
 
-      star = @_starInfo()
-
       # Make sure we aren't in the middle of a codeblock
       row = oldPosition.row
       line = editor.lineTextForBufferRow(row)
-
+      star = @_starInfo()
       minRow = if star then star.startRow else 0
       while row > minRow and not line.match(/^\s*```/)
         row -= 1
@@ -228,6 +203,14 @@ module.exports =
       # and what kind of star to use
       # Really hit return now
       editor.transact 1000, () =>
+        # If there is a star on the next line, we'll use it's insert level and bullet type
+        # We'll keep a reference to the old star because we need it sometimes
+        oldStar = star
+        if oldPosition.row+1 <= editor.getLastBufferRow()
+          if nextStar = @_starInfo(editor, new Point(oldPosition.row+1, oldPosition.col))
+            if nextStar.indentLevel > star.indentLevel
+              star = nextStar
+
         if star and star.indentLevel >= 0
           editor.insertNewline()
 
@@ -238,7 +221,8 @@ module.exports =
           #Create our new text to insert
           newPosition = editor.getCursorBufferPosition()
           if star.starType is 'numbers'
-            editor.setTextInBufferRange([[newPosition.row, 0], [newPosition.row, Infinity]], star.newStarLine())
+            # Make sure we use a reference to the old star here so we get the
+            editor.setTextInBufferRange([[newPosition.row, 0], [newPosition.row, Infinity]], oldStar.newStarLine())
 
             position = new Point(newPosition.row+1, 0)
             #console.log("newPosition+1: #{position}, last buffer row: #{editor.getLastBufferRow()}")
@@ -313,35 +297,39 @@ module.exports =
     return unless @autoSizeTables
     if editor = atom.workspace.getActiveTextEditor()
       scopes = editor.getLastCursor().getScopeDescriptor().getScopesArray()
-      console.log(scopes)
       if 'row.table.organized' in scopes or 'border.table.organized' in scopes
         console.log(event)
 
   toggleTodo: (event) ->
     editor = atom.workspace.getActiveTextEditor()
     if editor
-      position = editor.getCursorBufferPosition()
-      if star = @_starInfo()
-        line = editor.lineTextForBufferRow(star.startRow)
+      visited = {}
+      startPosition = editor.getCursorBufferPosition()
+      startRow = startPosition.row
 
-        currentPosition = editor.getCursorBufferPosition()
-        if (line.match(/\s*([\-\+\*]+|\d+.) \[TODO\] /))
-          deleteStart = line.indexOf("[TODO] ")
-          editor.setTextInBufferRange([[star.startRow, deleteStart], [star.startRow, deleteStart+7]], "[COMPLETED] ")
-          editor.setCursorBufferPosition([currentPosition.row, currentPosition.column+5])
-        else if (line.match(/\s*([\-\+\*]+|\d+.) \[COMPLETED\] /))
-          deleteStart = line.indexOf("[COMPLETED] ")
-          editor.setTextInBufferRange([[star.startRow, deleteStart], [star.startRow, deleteStart+12]], "")
-          editor.setCursorBufferPosition([currentPosition.row, currentPosition.column-12])
-        else
-          editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.whitespaceCol]], " [TODO]")
-          editor.setCursorBufferPosition([currentPosition.row, currentPosition.column+7])
+      @_withAllSelectedLines editor, (position, selection) =>
+        if visited[position.row]
+          return
+
+        if star = @_starInfo(editor, position)
+          for i in [star.startRow..star.endRow]
+            visited[i] = true
+
+          line = editor.lineTextForBufferRow(star.startRow)
+          if (line.match(/\s*([\-\+\*]+|\d+.) \[TODO\] /))
+            deleteStart = line.indexOf("[TODO] ")
+            editor.setTextInBufferRange([[star.startRow, deleteStart], [star.startRow, deleteStart+7]], "[COMPLETED] ")
+          else if (line.match(/\s*([\-\+\*]+|\d+.) \[COMPLETED\] /))
+            deleteStart = line.indexOf("[COMPLETED] ")
+            editor.setTextInBufferRange([[star.startRow, deleteStart], [star.startRow, deleteStart+12]], "")
+          else
+            editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.whitespaceCol]], " [TODO]")
 
   unindent: (event) ->
     if editor = atom.workspace.getActiveTextEditor()
       visited = {}
       editor.transact 2000, () =>
-        @_withAllSelectedLines editor, (position) =>
+        @_withAllSelectedLines editor, (position, selection) =>
           if visited[position.row]
             return
 
@@ -432,3 +420,27 @@ module.exports =
       return star
     else
       return null
+
+  _withAllSelectedLines: (editor, callback) ->
+    editor = atom.workspace.getActiveTextEditor() unless editor
+
+    if editor = atom.workspace.getActiveTextEditor()
+      selections = editor.getSelections()
+      for selection in selections
+        range = selection.getBufferRange()
+
+        #Adjust for selections that span the whole line
+        if range.end.column is 0 and (range.start.column isnt range.end.column or range.start.row isnt range.end.row)
+          if line = editor.lineTextForBufferRow(range.end.row-1)
+            range.end = new Point(range.end.row-1, line.length-1)
+
+        for i in [range.start.row..range.end.row]
+          # Create a virtual position object from the range object
+          if i is range.end.row
+            position = new Point(i, range.end.col)
+          else if i is range.start.row
+            position = new Point(i, range.start.col)
+          else
+            position = new Point(i, 0)
+
+          callback(position, selection)

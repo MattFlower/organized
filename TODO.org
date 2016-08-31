@@ -28,7 +28,7 @@
   * [COMPLETED] bold
     * [COMPLETED] Add grammar for bold
     * [COMPLETED] Add style for bold
-  * [TODO] If you newline after a level 1 and there are already indented bullets underneath, the new line
+  * [COMPLETED] If you newline after a level 1 and there are already indented bullets underneath, the new line
     should be at that new level of depth
 * Visibility cycling
   * [TODO] Add folding to menus to raise visibility
@@ -55,12 +55,6 @@
   * If sample size is too low, use more lines.
 * [TODO] Auto-tab to correct level on paste
 * [TODO] Command to transform existing indent as all tabs or all spaces.
-* Tests
-  * I'm already getting to the point where it is difficult to retest everything and I only have 250 line CoffeeScript
-    file.  We need some spec tests.
-  * [COMPLETED] Learn how to write spec tests
-  * [COMPLETED] Write tests for all existing functionality
-  * [TODO] Write unit tests for grammar
 * Links
   * [COMPLETED] Highlighting
   * [TODO] Link following for Urls
@@ -71,7 +65,7 @@
   * [TODO] Option to mark closed todo's with current time
   * [TODO] Priorities for TODO items
   * [TODO] Key-command to increase / decrease priority of items
-  * [TODO] Support multiple cursors for TODO toggling.
+  * [COMPLETED] Support multiple cursors for TODO toggling.
   * [TODO] Command to remove completed todos from current file
   * [TODO] UI for all TODO's in directory
   * [TODO] Configuration to show what directories we'll scan for TODO items
@@ -133,16 +127,20 @@
         * [COMPLETED] Objective C
         * [COMPLETED] PHP
         * [COMPLETED] Ruby
-        * [TODO] Perl
+        * [COMPLETED] Perl
       * This will depend a bit on how well those language grammars support embedding
     * [COMPLETED] Execute commands in a source block (except Java)
     * Add execution support for:
-      * [TODO] Java
-      * [TODO] C
+      * [COMPLETED] Java
+      * [COMPLETED] C
+      * [COMPLETED] Cpp
       * [TODO] C#
       * [TODO] Golang
-      * [TODO] Objective C
-      * [TODO] PHP
+      * [COMPLETED] Objective C
+      * [COMPLETED] PHP
+    * [TODO] Add support to include libraries and/or classpaths
+    * [COMPLETED] Errors aren't being handled gracefully in c or cpp
+    * [TODO] Weird error for Java -- talks about not being able to find class instead of code error
 * Search / Exploration
   * [TODO] Add command to search for a note
     * Maybe https://github.com/fergiemcdowall/search-index
@@ -176,8 +174,13 @@
   * [COMPLETED] Break out codeblocks into separate class
   * [TODO] Introduce static method (are there static methods in coffeescript?) to ask if a line
     has a star.
-  * [TODO] Replace newStarLine detection of codeblocks by only binding enter in the correct context.
   * [TODO] Add some comments
+* Tests
+  * I'm already getting to the point where it is difficult to retest everything and I only have 250 line CoffeeScript
+    file.  We need some spec tests.
+  * [COMPLETED] Learn how to write spec tests
+  * [COMPLETED] Write tests for all existing functionality
+  * [TODO] Write unit tests for grammar
 * Coding templates / helpful keystrokes
   * [COMPLETED] Insert ISO-8601 Date
   * [COMPLETED] Insert ISO-8601 Datetime
@@ -196,4 +199,12 @@
   * [TODO] Button to strikethrough
 * [TODO] Migration System
   * [TODO] Migration from OneNote
+    * http://www.howtogeek.com/howto/22679/beginner-save-your-onenote-2010-docs-to-different-file-formats/
+      * If this works at all anymore, it doesn't work on Mac -- I don't have these menu commands.
+    * There is a Download button in onedrive.live.com!!!
+      * It does export all of the Onenote files in .one format
+      * Unfortunately, I have no idea what .one format is.
   * [TODO] Migration from Evernote
+    * [How to export](http://lifehacker.com/how-to-jump-ship-from-evernote-and-take-your-data-with-1782841075)
+    * [Export to SimpleNote Utility](http://lifehacker.com/how-to-jump-ship-from-evernote-and-take-your-data-with-1782841075)
+      * Simplenote doesn't really import simple text anymore, but this could still be a useful starting point.

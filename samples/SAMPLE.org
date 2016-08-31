@@ -70,6 +70,30 @@ This page contains a variety of outline types to use for manual testing
 
 ## Code Highlighting
 * Highlighting is available in several languages
+  * C
+    * Jira-style
+      ```c
+      #include <stdio.h>
+
+      int main() {
+        printf("Hello, world\n");
+      }
+      ```
+      ```result
+      : Hello, world
+      ```
+  * CPP
+    * Jira-style
+      ```cpp
+      #include <iostream>
+
+      int main() {
+        std::cout << "Hello, world!" << std::endl;
+      }
+      ```
+      ```result
+      : Hello, world!
+      ```
   * Coffeescript
     * Jira-style
       ```coffee
@@ -108,9 +132,12 @@ This page contains a variety of outline types to use for manual testing
       ```java
       public class Test {
         public static void main(String[] args) {
-          System.out.println("Test");
+          System.out.println("ABC");
         }
       }
+      ```
+      ```result
+      : ABC
       ```
     * Org-mode style
       #+BEGIN_SRC java
@@ -140,6 +167,46 @@ This page contains a variety of outline types to use for manual testing
           }
       }
       #+END_SRC
+  * Objective C
+    * Jira-style
+      ```objc
+      #import <Foundation/Foundation.h>
+
+      int main(int argc, const char * argv[])
+      {
+          NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+          NSLog(@"Hello, World!");
+          [pool drain];
+          return 0;
+      }
+      ```
+      ```result
+      ! 2016-08-30 11:57:42.513 test[89128:6010778] Hello, World!
+      ```
+  * Perl
+    * Jira-style
+      ```perl
+      use strict;
+      use warnings;
+
+      print "Hello, world\n";
+      ```
+  * PHP
+    * Jira-style
+      ```php
+      <html>
+      <body>
+      <?php echo '<p>Hello World</p>'; ?>
+      </body>
+      </html>
+      ```
+
+      ```result
+      : <html>
+      : <body>
+      : <p>Hello World</p></body>
+      : </html>
+      ```
   * Python
     * Jira-style
       ```python
@@ -147,6 +214,8 @@ This page contains a variety of outline types to use for manual testing
       ```
 
       ```result
+      : [2, 4, 6, 8, 10, 12, 14, 16, 18]
+      ```
     * Org-mode style
       #+BEGIN_SRC python
       print [i*2 for i in range(1,10)]

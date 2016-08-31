@@ -21,7 +21,7 @@ us get better.
 * Code blocks
   * Syntax highlighting for code blocks in c, coffeescript, c++, css, golang, html, java,
     javascript, less, objective c, objective c++, python, php, ruby, shell scripts (generic), and sql.
-  * Execution for coffeescript, javascript, python, and shell scripts.  Put your cursor
+  * Execution for coffeescript, javascript, perl, php, python, and shell scripts.  Put your cursor
     in your code block and press [Ctrl-` x] to execute code.  Output from code will appear
     in a notification by default, or create resultblock:
     <pre>
@@ -29,6 +29,8 @@ us get better.
     ```
     </pre>
     and the output will appear there.
+  * Early support for code execution in C, C++, Java, and Objective-C.  You cannot set any libraries in
+    those languages yet, which may reduce their effectively a bit.
   * Results can be displayed as an information popup or as a separate section in
     your notes for future reference.
 * Tables
@@ -38,20 +40,24 @@ us get better.
   Org-mode-style tags (:tagname:)
 
 
-# What's New?  (Version 0.3.0)
-* Execution of code blocks.  Press [Ctrl-` x] to execute.
-* Early support for tables
-  * Syntax highlighting for the borders of tables
-  * Commands to automatically open (create the first line of) or close (create the last line of) a table
-* Text styling
-  * __Bold__ Text
-  * _Underlined_ Text
-* Bug fixes
-  * Fixed tab and shift-tab if you aren't in the context of a star.  They'll perform editor.indentSelectedRows() and
-    editor.outdentSelectedRows() respectively.
-  * Tags were able to include spaces, which made some rather unusual things being matched.
-  * When you are using stacked stars (like *** for a third level star), when you press enter, it should
-    continue to use that outline type.
+# What's New?
+* 0.3.2 (Released 2016-08-30)
+  * Added support for code execution for php and perl
+  * Early support for code execution for Java
+    * Doesn't include ability to add any libraries to the classpath.  That will come in a later release.
+  * Early support for code execution in C and C++
+    * Doesn't include ability to set any kind of c-like library paths or options.
+  * Early support for code execution in Objective-C
+    * Currently I call "clang -lobjc -framework Foundation -o <temp output file> <temporary filename>" to compile.
+    * Just as with the others above, this will need better support for libraries
+  * Bug fixes
+    * If you are on a level N outline and there is already a level N+1 indent underneath and you press return, then
+      new line should be on level N+1, not on level N.
+    * Support multiple cursors for TODO toggling.
+
+* 0.3.1 (Released 2016-08-30)
+  * Bug Fixes
+    * Intend and unindent works correctly with multiple cursors
 
 Please see the [CHANGELOG.org](https://raw.githubusercontent.com/MattFlower/organized/master/CHANGELOG.org)
 for full details of recent changes.

@@ -1,3 +1,17 @@
+* 0.3.2 (Released 2016-08-30)
+  * Added support for code execution for php and perl
+  * Early support for code execution for Java
+    * Doesn't include ability to add any libraries to the classpath.  That will come in a later release.
+  * Early support for code execution in C and C++
+    * Doesn't include ability to set any kind of c-like library paths or options.
+  * Early support for code execution in Objective-C
+    * Currently I call "clang -lobjc -framework Foundation -o <temp output file> <temporary filename>" to compile.
+    * Just as with the others above, this will need better support for libraries
+  * Bug fixes
+    * If you are on a level N outline and there is already a level N+1 indent underneath and you press return, then
+      new line should be on level N+1, not on level N.
+    * Support multiple cursors for TODO toggling.
+
 * 0.3.1 (Released 2016-08-30)
   * Bug Fixes
     * Intend and unindent works correctly with multiple cursors
