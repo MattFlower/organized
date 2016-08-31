@@ -18,7 +18,15 @@
     "atom": ">=1.0.0 <2.0.0"
   },
   "dependencies": {
-    "node-tmp": ">=0.0.28"
+    "node-tmp": ">=0.0.28",
+    "rx-text-search": ">=1.0.0"
+  },
+  "consumedServices": {
+    "tool-bar": {
+      "versions": {
+        ">0.3.2": "consumeToolBar"
+      }
+    }
   },
   "extensions": {
     ".coffee": [

@@ -3,7 +3,7 @@
 Organized is designed to allow you to keep notes, a schedule, and todo list
 inside of Atom.
 
-![Organized Screenshot](https://raw.githubusercontent.com/MattFlower/organized/master/screenshots/0_3_0.gif)
+![Organized Screenshot](https://raw.githubusercontent.com/MattFlower/organized/master/screenshots/0_4_0.gif)
 
 Right now, we're in the early stages of Organized, but join us now and watch
 us get better.
@@ -33,6 +33,8 @@ us get better.
     those languages yet, which may reduce their effectively a bit.
   * Results can be displayed as an information popup or as a separate section in
     your notes for future reference.
+* Integrates with the [tool-bar](https://atom.io/packages/tool-bar) package to get buttons for easy access
+  to common actions.
 * Tables
   * Create an ascii-based table
   * Rather than writing closing table blocks, use "Ctrl-- C" to automatically close them.
@@ -41,6 +43,19 @@ us get better.
 
 
 # What's New?
+* 0.4.0 (Released 2016-08-31)
+  * Support the "tool-bar" package for atom -- if it is installed, organized will have a toolbar with buttons for:
+    * Indent
+    * Unindent
+    * Creating Headings
+    * Bold
+    * Underline
+    * Creating Links
+    * Creating Tables
+    * Create code blocks
+    * Execute code blocks
+    * Create result blocks to display the code blocks
+
 * 0.3.2 (Released 2016-08-30)
   * Added support for code execution for php and perl
   * Early support for code execution for Java
@@ -54,10 +69,6 @@ us get better.
     * If you are on a level N outline and there is already a level N+1 indent underneath and you press return, then
       new line should be on level N+1, not on level N.
     * Support multiple cursors for TODO toggling.
-
-* 0.3.1 (Released 2016-08-30)
-  * Bug Fixes
-    * Intend and unindent works correctly with multiple cursors
 
 Please see the [CHANGELOG.org](https://raw.githubusercontent.com/MattFlower/organized/master/CHANGELOG.org)
 for full details of recent changes.

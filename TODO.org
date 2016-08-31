@@ -191,12 +191,14 @@
 * [TODO] Capture system for webpages
   * This seems like it should be somehow easier here because we are already in Chromium
 * Toolbar
-  * [TODO] Create a toolbar
-  * [TODO] Button to create a new table with X rows and Y columns
-  * [TODO] Button to create a new link or make existing string into a link
-  * [TODO] Button to bold
-  * [TODO] Button to underline
+  * [COMPLETED] Create a toolbar
+  * [TODO] Improve button to create a new table with X rows and Y columns
+  * [COMPLETED] Button to create a new link or make existing string into a link
+  * [COMPLETED] Button to bold
+  * [COMPLETED] Button to underline
   * [TODO] Button to strikethrough
+  * [COMPLETED] Button for H1, H2, H3
+  * [COMPLETED] Toolbar only present when grammar is active
 * [TODO] Migration System
   * [TODO] Migration from OneNote
     * http://www.howtogeek.com/howto/22679/beginner-save-your-onenote-2010-docs-to-different-file-formats/

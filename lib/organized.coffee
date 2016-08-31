@@ -1,7 +1,8 @@
-{CompositeDisposable, Directory, Point} = require 'atom'
+{CompositeDisposable, Directory, Disposable, Point} = require 'atom'
 OrganizedView = require './organized-view'
 Star = require './star'
 Table = require './table'
+Todo = require './todo'
 CodeBlock = require './codeblock'
 
 module.exports =
@@ -13,6 +14,8 @@ module.exports =
   createStarsOnEnter: true
   lineUpNewTextLinesUnderTextNotStar: true
   autoSizeTables: true
+  toolBar: null
+  toolBarHasItems: false
 
   config:
     levelStyle:
@@ -61,19 +64,119 @@ module.exports =
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:toggleTodo': (event) => @toggleTodo(event) }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:newLine': (event) => @newLine(event) }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:newStarLine': (event) => @newStarLine(event) }))
+
+    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:createTable': (event) => @createTable(event) }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:newTableRow': (event) => @newTableRow(event) }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:closeTable': (event) => @closeTable(event) }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:openTable': (event) => @openTable(event) }))
+
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:insertDate': (event) => @insert8601Date(event) }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:insertDateTime': (event) => @insert8601DateTime(event) }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:executeCodeBlock': (event) => @executeCodeBlock(event) }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:encryptBuffer': (event) => @encryptBuffer(event) }))
+
+    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:toggleBold': (event) => @toggleBold(event) }))
+    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:toggleUnderline': (event) => @toggleUnderline(event) }))
+    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:toggleHeading': (event) => @toggleHeading(event) }))
+
+    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:makeCodeBlock': (event) => @makeCodeBlock(event) }))
+    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:makeResultBlock': (event) => @makeResultBlock(event) }))
+    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:makeLink': (event) => @makeLink(event) }))
+
+    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:findTodos': (event) => Todo.findInDirectories() }))
 
     @subscriptions.add atom.config.observe 'organized.autoCreateStarsOnEnter', (newValue) => @createStarsOnEnter = newValue
     @subscriptions.add atom.config.observe 'organized.lineUpNewTextLinesUnderTextNotStar', (newValue) => @lineUpNewTextLinesUnderTextNotStar = newValue
     @subscriptions.add atom.config.observe 'organized.levelStyle', (newValue) => @levelStyle = newValue
     @subscriptions.add atom.config.observe 'editor.tabLength', (newValue) => @indentSpaces = newValue
     @subscriptions.add atom.config.observe 'organized.autoSizeTables', (newValue) => @autoSizeTables = newValue
+
+    # Make sure toolbar is only active when organized is active
+    atom.workspace.onDidChangeActivePaneItem (item) =>
+      if item and item.getGrammar and item.getGrammar().name is 'Organized' and @toolBar
+        @addToolbar()
+      else if @toolBar
+        @removeToolbarButtons()
+
+  addToolbar: () ->
+    if @toolBarHasItems
+      return
+
+    @toolBar.addButton
+      icon: 'indent'
+      iconset: 'fa'
+      callback: 'organized:indent'
+      tooltip: 'Indent'
+
+    @toolBar.addButton
+      icon: 'outdent'
+      iconset: 'fa'
+      callback: 'organized:unindent'
+      tooltip: 'Unindent'
+
+    @toolBar.addSpacer()
+
+    @toolBar.addButton
+      icon: 'hashtag'
+      iconset: 'fa'
+      callback: 'organized:toggleHeading'
+      tooltip: 'Headings'
+
+    @toolBar.addButton
+      icon: 'check-square-o'
+      iconset: 'fa'
+      callback: 'organized:toggleTodo'
+      tooltip: 'Toggle Todo'
+
+    @toolBar.addButton
+      icon: 'bold',
+      iconset: 'fa',
+      callback: 'organized:toggleBold',
+      tooltip: 'Bold'
+
+    @toolBar.addButton
+      icon: 'underline',
+      iconset: 'fa',
+      callback: 'organized:toggleUnderline',
+      tooltip: 'Underline'
+
+    @toolBar.addSpacer()
+
+    @toolBar.addButton
+      icon: 'link',
+      iconset: 'fa',
+      callback: 'organized:makeLink',
+      tooltip: 'Link'
+
+    @toolBar.addSpacer()
+
+    @toolBar.addButton
+      icon: 'table',
+      iconset: 'fa',
+      callback: 'organized:createTable'
+      tooltip: 'Create Table'
+
+    @toolBar.addSpacer()
+
+    @toolBar.addButton
+      icon: 'code',
+      iconset: 'fa',
+      callback: 'organized:makeCodeBlock'
+      tooltip: 'Create Code Block'
+
+    @toolBar.addButton
+      icon: 'play'
+      iconset: 'fa',
+      callback: 'organized:executeCodeBlock'
+      tooltip: 'Execute Code Block'
+
+    @toolBar.addButton
+      icon: 'terminal'
+      iconset: 'fa'
+      callback: 'organized:makeResultBlock'
+      tooltip: 'Create Code Execution Result Block'
+
+    @toolBarHasItems = true
 
   closeTable: (event) ->
     if editor = atom.workspace.getActiveTextEditor()
@@ -94,7 +197,29 @@ module.exports =
           # console.log("startMatch: #{startMatch}, endMatch: #{endMatch}")
           editor.insertText("+#{'-'.repeat(endMatch.index-startMatch.index-1)}+")
 
+  # Callback from tool-bar to create a toolbar
+  consumeToolBar: (toolBar) ->
+    @toolBar = toolBar('organized');
+    @addToolbar()
+    new Disposable => @removeToolbar()
+
+  # Create a skeleton of a table ready for a user to start typing in it.
+  createTable: (event) ->
+    if editor = atom.workspace.getActiveTextEditor()
+      position = editor.getCursorBufferPosition()
+      editor.transact 1000, () =>
+        if not editor.lineTextForBufferRow(position.row).match(/\s*/)
+          editor.insertNewline()
+        editor.insertText("+----+")
+        editor.insertNewline()
+        editor.insertText("| ")
+        position = editor.getCursorBufferPosition()
+        editor.insertNewline()
+        editor.insertText("+----+")
+        editor.setCursorBufferPosition(position)
+
   deactivate: () ->
+    @removeToolbar()
     @modalPanel.destroy()
     @subscriptions.dispose()
     @organizedView.destroy()
@@ -105,7 +230,7 @@ module.exports =
         codeblock = new CodeBlock(position.row)
         codeblock.execute()
       else
-        console.error("Unable to find position of code block")
+        atom.notifications.error("Unable to find code block")
 
   handleEvents: (editor) ->
     # tableChangeSubscription = editor.onDidChange (event) =>
@@ -148,6 +273,44 @@ module.exports =
 
     editor = atom.workspace.getActiveTextEditor()
     editor.insertText(@_getISO8601Date(d) + "T" + @_getISO8601Time(d))
+
+  makeCodeBlock: (event) ->
+    if editor = atom.workspace.getActiveTextEditor()
+      position = editor.getCursorBufferPosition()
+      editor.transact 1000, () =>
+        if not editor.lineTextForBufferRow(position.row).match(/\s*/)
+          editor.insertNewline()
+        editor.insertText('```')
+        endPosition = editor.getCursorBufferPosition()
+        editor.insertNewline()
+        editor.insertText('```')
+        editor.setCursorBufferPosition(endPosition)
+
+  makeResultBlock: (event) ->
+    if editor = atom.workspace.getActiveTextEditor()
+      position = editor.getCursorBufferPosition()
+      editor.transact 1000, () =>
+        if not editor.lineTextForBufferRow(position.row).match(/\s*/)
+          editor.insertNewline()
+        editor.insertText('```result')
+        editor.insertNewline()
+        editor.insertText('```')
+
+  makeLink: (event) ->
+    if editor = atom.workspace.getActiveTextEditor()
+      editor.transact 1000, () =>
+        @_withAllSelectedLines editor, (position, selection) =>
+          if selection.isEmpty()
+            editor.insertText("[]()")
+            selection.cursor.moveLeft(3)
+          else
+            range = selection.getBufferRange()
+            if selection.getText().match(/^https?:\/\//)
+              editor.setTextInBufferRange([range.end, range.end], ")")
+              editor.setTextInBufferRange([range.start, range.start], "[](")
+            else
+              editor.setTextInBufferRange([range.end, range.end], "]()")
+              editor.setTextInBufferRange([range.start, range.start], "[")
 
   # Respond to someone pressing enter.
   # There's some special handling here.  The auto-intent that's built into atom does a good job, but I want the
@@ -261,6 +424,17 @@ module.exports =
       if match = line.match(/^(\s*)/)
         editor.insertText("+----+\n#{match[0]}| ")
 
+  removeToolbar: (event) ->
+    if @toolBar
+      @toolBar.removeItems();
+      @toolBar = null;
+      @toolBarHasItems = false
+
+  removeToolbarButtons: (event) ->
+    if @toolBar
+      @toolBar.removeItems();
+      @toolBarHasItems = false
+
   serialize: () ->
     return {
       organizedViewState: @organizedView.serialize()
@@ -300,6 +474,41 @@ module.exports =
       if 'row.table.organized' in scopes or 'border.table.organized' in scopes
         console.log(event)
 
+  toggleBold: (event) ->
+    if editor = atom.workspace.getActiveTextEditor()
+      editor.transact 1000, () =>
+        @_withAllSelectedLines editor, (position, selection) =>
+          if selection.isEmpty()
+            editor.insertText("____")
+            selection.cursor.moveLeft(2)
+          else
+            range = selection.getBufferRange()
+            startMarked = editor.getTextInBufferRange([range.start, [range.start.row, range.start.column+2]]) is "__"
+            endMarked = editor.getTextInBufferRange([[range.end.row, range.end.column-2], range.end]) is "__"
+
+            if startMarked and endMarked
+              editor.setTextInBufferRange([[range.end.row, range.end.column-2], range.end], "")
+              editor.setTextInBufferRange([range.start, [range.start.row, range.start.column+2]], "")
+            else
+              editor.setTextInBufferRange([range.end, range.end], '__')
+              editor.setTextInBufferRange([range.start, range.start], "__")
+
+  toggleHeading: (event) ->
+    if editor = atom.workspace.getActiveTextEditor()
+      editor.transact 1000, () =>
+        @_withAllSelectedLines editor, (position, selection) =>
+          startChars = editor.getTextInBufferRange([[position.row, 0], [position.row, 4]])
+          hashCount = 0
+          hashCount +=1 until startChars[hashCount] isnt '#'
+
+          if hashCount is 0
+            editor.setTextInBufferRange([[position.row, 0], [position.row, 0]], '# ')
+          else if hashCount < 3
+            editor.setTextInBufferRange([[position.row, 0], [position.row, 0]], '#')
+          else
+            charsToDelete = if startChars[3] is ' ' then 4 else 3
+            editor.setTextInBufferRange([[position.row, 0], [position.row, charsToDelete]], '')
+
   toggleTodo: (event) ->
     editor = atom.workspace.getActiveTextEditor()
     if editor
@@ -324,6 +533,28 @@ module.exports =
             editor.setTextInBufferRange([[star.startRow, deleteStart], [star.startRow, deleteStart+12]], "")
           else
             editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.whitespaceCol]], " [TODO]")
+
+  toggleUnderline: (event) ->
+    if editor = atom.workspace.getActiveTextEditor()
+      editor.transact 1000, () =>
+        @_withAllSelectedLines editor, (position, selection) =>
+          if selection.isEmpty()
+            editor.insertText('__')
+            selection.cursor.moveLeft(1)
+          else
+            range = selection.getBufferRange()
+            startThree = editor.getTextInBufferRange([range.start, [range.start.row, range.start.column+3]])
+            endThree = editor.getTextInBufferRange([[range.end.row, range.end.column-3], range.end])
+            # Need to consider situations where there is a bold and an underline
+            startMatch = startThree.match(/(_[^_][^_]|___)/)
+            endMatch = endThree.match(/([^_][^_]_|___)/)
+
+            if startMatch and endMatch
+              editor.setTextInBufferRange([[range.end.row, range.end.column-1], range.end], "")
+              editor.setTextInBufferRange([range.start, [range.start.row, range.start.column+1]], "")
+            else
+              editor.setTextInBufferRange([range.end, range.end], '_')
+              editor.setTextInBufferRange([range.start, range.start], "_")
 
   unindent: (event) ->
     if editor = atom.workspace.getActiveTextEditor()

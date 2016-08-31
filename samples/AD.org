@@ -15,6 +15,10 @@
   ```
 
 # If you have some data to store in your notes, we have you covered
-+-----------+
-| Some data |
-+-----------+
++--------+-------+
+| Before | After |
++----------------+
+|    215 |   223 |
++--------+-------+
+
+Don't see what you like?  Check the TODO.org and/or make a suggestion!
