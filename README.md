@@ -43,6 +43,15 @@ us get better.
 
 
 # What's New?
+* 0.4.2 (Released 2016-09-01)
+  * Fixed missing file preventing installation
+
+* 0.4.1 (Released 2016-09-01)
+  * Minor toolbar improvements
+    * Toolbar can be disabled through the organized setup, even if you have toolbar installed
+    * Menu item installed to toggle the toolbar, which should raise the visibility that there is a toolbar.
+  * Fix bug which caused 0.4.0 not to install correctly!
+
 * 0.4.0 (Released 2016-08-31)
   * Support the "tool-bar" package for atom -- if it is installed, organized will have a toolbar with buttons for:
     * Indent
@@ -55,20 +64,6 @@ us get better.
     * Create code blocks
     * Execute code blocks
     * Create result blocks to display the code blocks
-
-* 0.3.2 (Released 2016-08-30)
-  * Added support for code execution for php and perl
-  * Early support for code execution for Java
-    * Doesn't include ability to add any libraries to the classpath.  That will come in a later release.
-  * Early support for code execution in C and C++
-    * Doesn't include ability to set any kind of c-like library paths or options.
-  * Early support for code execution in Objective-C
-    * Currently I call "clang -lobjc -framework Foundation -o <temp output file> <temporary filename>" to compile.
-    * Just as with the others above, this will need better support for libraries
-  * Bug fixes
-    * If you are on a level N outline and there is already a level N+1 indent underneath and you press return, then
-      new line should be on level N+1, not on level N.
-    * Support multiple cursors for TODO toggling.
 
 Please see the [CHANGELOG.org](https://raw.githubusercontent.com/MattFlower/organized/master/CHANGELOG.org)
 for full details of recent changes.
