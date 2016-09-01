@@ -1,7 +1,7 @@
 {
   "name": "organized",
   "main": "./lib/organized",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Outlining and todo lists in Atom (similar to org-mode)",
   "keywords": [
     "organized",
