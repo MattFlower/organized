@@ -2,6 +2,7 @@
   * Minor toolbar improvements
     * Toolbar can be disabled through the organized setup, even if you have toolbar installed
     * Menu item installed to toggle the toolbar, which should raise the visibility that there is a toolbar.
+  * Fix bug which caused 0.4.0 not to install correctly!
 
 * 0.4.0 (Released 2016-08-31)
   * Support the "tool-bar" package for atom -- if it is installed, organized will have a toolbar with buttons for:
