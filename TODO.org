@@ -175,6 +175,7 @@
   * [TODO] Introduce static method (are there static methods in coffeescript?) to ask if a line
     has a star.
   * [TODO] Add some comments
+  * [COMPLETED] Extract toolbar support into separate class
 * Tests
   * I'm already getting to the point where it is difficult to retest everything and I only have 250 line CoffeeScript
     file.  We need some spec tests.

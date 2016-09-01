@@ -1,9 +1,10 @@
-{CompositeDisposable, Directory, Disposable, Point} = require 'atom'
+{CompositeDisposable, Directory, Point} = require 'atom'
 OrganizedView = require './organized-view'
 Star = require './star'
 Table = require './table'
 Todo = require './todo'
 CodeBlock = require './codeblock'
+OrganizedToolbar = require './toolbar'
 
 module.exports =
   organizedView: null
@@ -14,8 +15,7 @@ module.exports =
   createStarsOnEnter: true
   lineUpNewTextLinesUnderTextNotStar: true
   autoSizeTables: true
-  toolBar: null
-  toolBarHasItems: false
+  organizedToolbar: null
 
   config:
     levelStyle:
@@ -43,6 +43,11 @@ module.exports =
       default: false
       description: "If you are typing in a table, automatically resize the columns so your text fits."
 
+    enableToolbarSupport:
+      type: 'boolean'
+      default: true
+      description: "Show a toolbar using the tool-bar package if that package is installed"
+
   activate: (state) ->
     atom.themes.requireStylesheet(require.resolve('../styles/organized.less'));
 
@@ -53,6 +58,8 @@ module.exports =
       })
 
     @subscriptions = new CompositeDisposable()
+    if not @organizedToolbar
+      @organizedToolbar = new OrganizedToolbar()
 
     # Set up text editors
     @subscriptions.add atom.workspace.observeTextEditors (editor) =>
@@ -91,92 +98,7 @@ module.exports =
     @subscriptions.add atom.config.observe 'editor.tabLength', (newValue) => @indentSpaces = newValue
     @subscriptions.add atom.config.observe 'organized.autoSizeTables', (newValue) => @autoSizeTables = newValue
 
-    # Make sure toolbar is only active when organized is active
-    atom.workspace.onDidChangeActivePaneItem (item) =>
-      if item and item.getGrammar and item.getGrammar().name is 'Organized' and @toolBar
-        @addToolbar()
-      else if @toolBar
-        @removeToolbarButtons()
-
-  addToolbar: () ->
-    if @toolBarHasItems
-      return
-
-    @toolBar.addButton
-      icon: 'indent'
-      iconset: 'fa'
-      callback: 'organized:indent'
-      tooltip: 'Indent'
-
-    @toolBar.addButton
-      icon: 'outdent'
-      iconset: 'fa'
-      callback: 'organized:unindent'
-      tooltip: 'Unindent'
-
-    @toolBar.addSpacer()
-
-    @toolBar.addButton
-      icon: 'hashtag'
-      iconset: 'fa'
-      callback: 'organized:toggleHeading'
-      tooltip: 'Headings'
-
-    @toolBar.addButton
-      icon: 'check-square-o'
-      iconset: 'fa'
-      callback: 'organized:toggleTodo'
-      tooltip: 'Toggle Todo'
-
-    @toolBar.addButton
-      icon: 'bold',
-      iconset: 'fa',
-      callback: 'organized:toggleBold',
-      tooltip: 'Bold'
-
-    @toolBar.addButton
-      icon: 'underline',
-      iconset: 'fa',
-      callback: 'organized:toggleUnderline',
-      tooltip: 'Underline'
-
-    @toolBar.addSpacer()
-
-    @toolBar.addButton
-      icon: 'link',
-      iconset: 'fa',
-      callback: 'organized:makeLink',
-      tooltip: 'Link'
-
-    @toolBar.addSpacer()
-
-    @toolBar.addButton
-      icon: 'table',
-      iconset: 'fa',
-      callback: 'organized:createTable'
-      tooltip: 'Create Table'
-
-    @toolBar.addSpacer()
-
-    @toolBar.addButton
-      icon: 'code',
-      iconset: 'fa',
-      callback: 'organized:makeCodeBlock'
-      tooltip: 'Create Code Block'
-
-    @toolBar.addButton
-      icon: 'play'
-      iconset: 'fa',
-      callback: 'organized:executeCodeBlock'
-      tooltip: 'Execute Code Block'
-
-    @toolBar.addButton
-      icon: 'terminal'
-      iconset: 'fa'
-      callback: 'organized:makeResultBlock'
-      tooltip: 'Create Code Execution Result Block'
-
-    @toolBarHasItems = true
+    @organizedToolbar.activate(@subscriptions)
 
   closeTable: (event) ->
     if editor = atom.workspace.getActiveTextEditor()
@@ -199,9 +121,9 @@ module.exports =
 
   # Callback from tool-bar to create a toolbar
   consumeToolBar: (toolBar) ->
-    @toolBar = toolBar('organized');
-    @addToolbar()
-    new Disposable => @removeToolbar()
+    if not @organizedToolbar
+      @organizedToolbar = new OrganizedToolbar()
+    @organizedToolbar.consumeToolBar(toolBar)
 
   # Create a skeleton of a table ready for a user to start typing in it.
   createTable: (event) ->
@@ -219,7 +141,7 @@ module.exports =
         editor.setCursorBufferPosition(position)
 
   deactivate: () ->
-    @removeToolbar()
+    @organizedToolbar.deactivate()
     @modalPanel.destroy()
     @subscriptions.dispose()
     @organizedView.destroy()
@@ -423,17 +345,6 @@ module.exports =
       line = editor.lineTextForBufferRow(currentPosition.row)
       if match = line.match(/^(\s*)/)
         editor.insertText("+----+\n#{match[0]}| ")
-
-  removeToolbar: (event) ->
-    if @toolBar
-      @toolBar.removeItems();
-      @toolBar = null;
-      @toolBarHasItems = false
-
-  removeToolbarButtons: (event) ->
-    if @toolBar
-      @toolBar.removeItems();
-      @toolBarHasItems = false
 
   serialize: () ->
     return {
