@@ -13,3 +13,7 @@
   'Shell Source Code Block':
     'prefix': '#+BEGIN'
     'body': '#+BEGIN_SRC sh :results verbatim\n$0\n#+END_SRC'
+  'Headline':
+    'prefix': 'h'
+    'body': '# $1\n\tDEADLINE: <DATE>'
+    'description': 'Add a Headline'
