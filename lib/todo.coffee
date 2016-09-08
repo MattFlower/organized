@@ -3,27 +3,52 @@ TextSearch = require('rx-text-search')
 class Todo
   file: null
   line: null
+  column: null
   text: null
 
-  constructor: (file, line, text) ->
+  constructor: (file, line, column, text) ->
     @file = file
     @line = line
+    @column = column
     @text = text
 
   @findInDirectories: (directories = atom.project.getPaths(), onComplete) ->
-    @_findInDirectories directories, [], (todos) ->
-        for todo in todos
-          console.log("#{todo.file}:#{todo.line} #{todo.text}")
+    skipFiles = atom.config.get('organized.searchSkipFiles')
+    skipFiles = skipFiles.concat(['.git', '.atom'])
+    skipFiles = (skipFile for skipFile in skipFiles when skipFile.trim() isnt '')
 
-  @_findInDirectories: (directories, todos, onComplete) ->
+    @_findInDirectories directories, skipFiles, [], onComplete
+
+  @_findInDirectories: (directories, skipFiles, todos, onComplete) ->
     if directories.length is 0
       onComplete(todos)
     else
-      path = directories.pop()
-      TextSearch.findAsPromise("(\\[TODO\\].*)$", "**/*.org", {cwd: path})
+      if typeof directories is 'string'
+        path = directories
+        directories = []
+      else
+        path = directories.pop()
+
+      console.log("Finding TODO's in #{path}")
+      TextSearch.findAsPromise("(\\[TODO\\].*)$", "**/*.org", {cwd: path, matchBase: true})
         .then (results) =>
           for result in results
-            todos.push(new Todo(path + "/" + result.file, result.line, result.text))
-          @_findInDirectories(directories, todos, onComplete)
+            skip = false
+            for partial in skipFiles
+              if result.file.indexOf(partial) > -1
+                skip = true
+                break;
+            if skip
+              continue
+
+            text = result.text
+            # if match = result.text.match(/(\[TODO\])\s+(.*)$/)
+            #     text = match[2]
+            if match = /(\[TODO\])\s+(.*)$/.exec(result.text)
+                text = match[2]
+                column = match.index
+
+            todos.push(new Todo(path + "/" + result.file, result.line, column, text))
+          @_findInDirectories(directories, skipFiles, todos, onComplete)
 
 module.exports = Todo

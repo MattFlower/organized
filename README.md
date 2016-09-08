@@ -3,7 +3,7 @@
 Organized is designed to allow you to keep notes, a schedule, and todo list
 inside of Atom.
 
-![Organized Screenshot](https://raw.githubusercontent.com/MattFlower/organized/master/screenshots/0_4_0.gif)
+![Organized Screenshot](https://raw.githubusercontent.com/MattFlower/organized/master/screenshots/0_5_0.gif)
 
 Right now, we're in the early stages of Organized, but join us now and watch
 us get better.
@@ -21,9 +21,9 @@ us get better.
 * Code blocks
   * Syntax highlighting for code blocks in c, coffeescript, c++, css, golang, html, java,
     javascript, less, objective c, objective c++, python, php, ruby, shell scripts (generic), and sql.
-  * Execution for coffeescript, javascript, perl, php, python, and shell scripts.  Put your cursor
-    in your code block and press [Ctrl-` x] to execute code.  Output from code will appear
-    in a notification by default, or create resultblock:
+  * Execution for c, c++, coffeescript, java, javascript, objective-c, perl, php, python, and shell
+    scripts.  Put your cursor in your code block and press [Ctrl-` x] to execute code.  Output from
+    code will appear in a notification by default, or create resultblock:
     <pre>
     \```result
     ```
@@ -33,6 +33,9 @@ us get better.
     those languages yet, which may reduce their effectively a bit.
   * Results can be displayed as an information popup or as a separate section in
     your notes for future reference.
+* Sidebar
+  * New sidebar shows all the todo files across the .org files in the open projects.  Settings allow you
+    to always check additional projects.  Todos can be closed on jumped to with a single click
 * Integrates with the [tool-bar](https://atom.io/packages/tool-bar) package to get buttons for easy access
   to common actions.
 * Tables
@@ -43,27 +46,21 @@ us get better.
 
 
 # What's New?
-* 0.4.2 (Released 2016-09-01)
-  * Fixed missing file preventing installation
-
-* 0.4.1 (Released 2016-09-01)
-  * Minor toolbar improvements
-    * Toolbar can be disabled through the organized setup, even if you have toolbar installed
-    * Menu item installed to toggle the toolbar, which should raise the visibility that there is a toolbar.
-  * Fix bug which caused 0.4.0 not to install correctly!
-
-* 0.4.0 (Released 2016-08-31)
-  * Support the "tool-bar" package for atom -- if it is installed, organized will have a toolbar with buttons for:
-    * Indent
-    * Unindent
-    * Creating Headings
-    * Bold
-    * Underline
-    * Creating Links
-    * Creating Tables
-    * Create code blocks
-    * Execute code blocks
-    * Create result blocks to display the code blocks
+* 0.5.0 (Released 2016-09-08)
+  * Added sidebar, which shows TODO's from all .org files in the current project.
+    * Use menus (Packages -> Organized) or the command organized:toggleSidebar
+      to toggle whether the menu appears.
+    * Todos can be marked as completed by checking the checkbox next to them.
+    * Navigate to the source of the todo by clicking on the text.
+    * Refresh todos by clicking on the refresh button.  Todos are also refreshed
+      any time an organized file is saved.
+    * Added setting that allows additional directory names to be specified to scan.
+    * Added setting that allows you to exclude project directories from TODO scan.
+    * Added setting that allows certain files to be excluded.
+    * Added ability to resize sidebar
+    * Don't select text in sidebar while resizing.
+    * This feature is coming along, but is still in a fairly beta state.
+  * Fixed some toolbar quirkiness - should appear correctly now when enabled in settings.
 
 Please see the [CHANGELOG.org](https://raw.githubusercontent.com/MattFlower/organized/master/CHANGELOG.org)
 for full details of recent changes.

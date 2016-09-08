@@ -1,3 +1,19 @@
+* 0.5.0 (Released 2016-09-08)
+  * Added sidebar, which shows TODO's from all .org files in the current project.
+    * Use menus (Packages -> Organized) or the command organized:toggleSidebar
+      to toggle whether the menu appears.
+    * Todos can be marked as completed by checking the checkbox next to them.
+    * Navigate to the source of the todo by clicking on the text.
+    * Refresh todos by clicking on the refresh button.  Todos are also refreshed
+      any time an organized file is saved.
+    * Added setting that allows additional directory names to be specified to scan.
+    * Added setting that allows you to exclude project directories from TODO scan.
+    * Added setting that allows certain files to be excluded.
+    * Added ability to resize sidebar
+    * Don't select text in sidebar while resizing.
+    * This feature is coming along, but is still in a fairly beta state.
+  * Fixed some toolbar quirkiness - should appear correctly now when enabled in settings.
+
 * 0.4.2 (Released 2016-09-01)
   * Fixed missing file preventing installation
 
@@ -6,6 +22,9 @@
     * Toolbar can be disabled through the organized setup, even if you have toolbar installed
     * Menu item installed to toggle the toolbar, which should raise the visibility that there is a toolbar.
   * Fix bug which caused 0.4.0 not to install correctly!
+  * Bug fixes
+    * Don't hijack result blocks from other code blocks.  Previously, if there were two code blocks and a result
+      block, executing the first code block would be the results in the result block.  Only the second one should.
 
 * 0.4.0 (Released 2016-08-31)
   * Support the "tool-bar" package for atom -- if it is installed, organized will have a toolbar with buttons for:

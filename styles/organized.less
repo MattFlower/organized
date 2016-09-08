@@ -1,9 +1,90 @@
-// The ui-variables file is provided by base themes provided by Atom.
-//
-// See https://github.com/atom/atom-dark-ui/blob/master/styles/ui-variables.less
-// for a full listing of what's available.
 @import "ui-variables";
 
+atom-panel {
+  .organized-sidebar-resize-handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 10px;
+    cursor: col-resize;
+    z-index: 3;
+  }
+
+  //Styling for the sidebar
+  div.organized-sidebar {
+    -webkit-user-select: auto;
+    width: 400px;
+    min-width: 200px;
+
+    div.organized-sidebar-todo {
+      div.organized-sidebar-todo-header {
+        position: relative;
+        border-radius: 24px;
+        background-color: @pane-item-background-color;
+        overflow: hidden;
+
+        span.todo-title-icon {
+          position: relative;
+          float: left;
+          top: 12px;
+          margin-right: 8px;
+          margin-left: 8px;
+        }
+
+        span.todo-title {
+          top: 10px;
+          font-size: 16px;
+          position: relative;
+          float: left;
+        }
+
+        span.refresh-button {
+          position: relative;
+          float: right;
+          font-size: 24pt;
+          //This is clearly a hack
+          top: -8px;
+          height: 40px;
+        }
+
+
+        span.close-button {
+          position: relative;
+          float: right;
+          font-size: 24pt;
+          //This is clearly a hack
+          top: -8px;
+          height: 40px;
+        }
+      }
+    }
+
+    div.organized-sidebar-todo-items {
+      height: calc(100vh-10px);
+      ul.organized-sidebar-todo-list {
+        margin-top: 8px;
+
+        // This padding is odd.  By default it is set to 40, which is huge.
+        // At zero, it actually overflows into the text editor.  This is a
+        // bit of a kludge in my opinion.
+        padding-left: 24px;
+        font-size: 12px;
+        overflow-y: scroll;
+        list-style: none;
+
+        //Attempt to have ellipses on overflow text, don't seem to be
+        //working.
+        width: calc(100vw);
+        display:block;
+        white-space: nowrap;
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}
+
+//Custom styling for organized keywords.
 atom-text-editor, atom-text-editor::shadow {
   .organized {
     .header.level1.symbol, .header.level1.line {

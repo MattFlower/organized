@@ -5,6 +5,7 @@ Table = require './table'
 Todo = require './todo'
 CodeBlock = require './codeblock'
 OrganizedToolbar = require './toolbar'
+SidebarView = require './sidebar-view'
 
 module.exports =
   organizedView: null
@@ -13,12 +14,13 @@ module.exports =
   levelStyle: 'spaces'
   indentSpaces: 2
   createStarsOnEnter: true
-  lineUpNewTextLinesUnderTextNotStar: true
   autoSizeTables: true
   organizedToolbar: null
 
   config:
     levelStyle:
+      title: 'Level Style'
+      description: 'If you indent a star/bullet point, how should it be indented by default?'
       type: 'string'
       default: 'spaces'
       enum: [
@@ -34,10 +36,6 @@ module.exports =
       type: 'boolean'
       default: true
 
-    lineUpNewTextLinesUnderTextNotStar:
-      type: 'boolean'
-      default: true
-
     autoSizeTables:
       type: 'boolean'
       default: false
@@ -47,6 +45,33 @@ module.exports =
       type: 'boolean'
       default: true
       description: "Show a toolbar using the tool-bar package if that package is installed"
+
+    searchDirectories:
+      type: 'array'
+      title: 'Organized File Directories'
+      description: 'Directories where we will look for organized files when building todo lists, agendas, or searching'
+      default: ['','','','','']
+      items:
+        type: 'string'
+
+    includeProjectPathsInSearchDirectories:
+      type: 'boolean'
+      default: true
+      description: 'Indicates whether we should include the paths for the current project in the search directories'
+
+    searchSkipFiles:
+      type: 'array'
+      title: 'Organized Partial File Names to Skip'
+      description: 'A list of partial file names to skip'
+      default: ['', '', '', '', '']
+      items:
+        type: 'string'
+
+    sidebarVisible:
+      type: 'boolean'
+      title: "Show Sidebar"
+      description: "Sidebar is currently being shown"
+      default: false
 
   activate: (state) ->
     atom.themes.requireStylesheet(require.resolve('../styles/organized.less'));
@@ -58,16 +83,19 @@ module.exports =
       })
 
     @subscriptions = new CompositeDisposable()
-    if not @organizedToolbar
-      @organizedToolbar = new OrganizedToolbar()
 
     # Set up text editors
     @subscriptions.add atom.workspace.observeTextEditors (editor) =>
       @handleEvents(editor)
+      @subscriptions.add editor.onDidSave =>
+        if @sidebar and @sidebar.sidebarVisible and editor.getGrammar().name is 'Organized'
+          @sidebar.refreshTodos()
 
     # Register command that toggles this view
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:indent': (event) => @indent(event) }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:unindent': (event) => @unindent(event) }))
+    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:setTodo': (event) => @setTodo(event) }))
+    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:setTodoCompleted': (event) => @setTodoCompleted(event) }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:toggleTodo': (event) => @toggleTodo(event) }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:newLine': (event) => @newLine(event) }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:newStarLine': (event) => @newStarLine(event) }))
@@ -90,15 +118,21 @@ module.exports =
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:makeResultBlock': (event) => @makeResultBlock(event) }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:makeLink': (event) => @makeLink(event) }))
 
-    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:findTodos': (event) => Todo.findInDirectories() }))
+    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:refreshTodos': (event) => @sidebar.refreshTodos() }))
 
     @subscriptions.add atom.config.observe 'organized.autoCreateStarsOnEnter', (newValue) => @createStarsOnEnter = newValue
-    @subscriptions.add atom.config.observe 'organized.lineUpNewTextLinesUnderTextNotStar', (newValue) => @lineUpNewTextLinesUnderTextNotStar = newValue
     @subscriptions.add atom.config.observe 'organized.levelStyle', (newValue) => @levelStyle = newValue
     @subscriptions.add atom.config.observe 'editor.tabLength', (newValue) => @indentSpaces = newValue
     @subscriptions.add atom.config.observe 'organized.autoSizeTables', (newValue) => @autoSizeTables = newValue
 
-    @organizedToolbar.activate(@subscriptions)
+    @sidebar = new SidebarView()
+    @sidebar.activate(@subscriptions)
+    @sidebar.refreshTodos()
+
+    if not @organizedToolbar
+      @organizedToolbar = new OrganizedToolbar()
+      @organizedToolbar.activate(@subscriptions)
+      @organizedToolbar.setSidebar(@sidebar)
 
   closeTable: (event) ->
     if editor = atom.workspace.getActiveTextEditor()
@@ -123,6 +157,9 @@ module.exports =
   consumeToolBar: (toolBar) ->
     if not @organizedToolbar
       @organizedToolbar = new OrganizedToolbar()
+      @organizedToolbar.activate(@subscriptions)
+      @organizedToolbar.setSidebar(@sidebar)
+
     @organizedToolbar.consumeToolBar(toolBar)
 
   # Create a skeleton of a table ready for a user to start typing in it.
@@ -420,9 +457,42 @@ module.exports =
             charsToDelete = if startChars[3] is ' ' then 4 else 3
             editor.setTextInBufferRange([[position.row, 0], [position.row, charsToDelete]], '')
 
+  setTodo: (event) ->
+    if editor = atom.workspace.getActiveTextEditor()
+      visited = {}
+      startPosition = editor.getCursorBufferPosition()
+      startRow = startPosition.row
+
+      @_withAllSelectedLines editor, (position, selection) =>
+        if visited[position.row]
+          return
+
+        if star = @_starInfo(editor, position)
+          for i in [star.startRow..star.endRow]
+            visited[i] = true
+
+          line = editor.lineTextForBufferRow(star.startRow)
+          editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.startTextCol]], " [TODO] ")
+
+  setTodoCompleted: (event) ->
+    if editor = atom.workspace.getActiveTextEditor()
+      visited = {}
+      startPosition = editor.getCursorBufferPosition()
+      startRow = startPosition.row
+
+      @_withAllSelectedLines editor, (position, selection) =>
+        if visited[position.row]
+          return
+
+        if star = @_starInfo(editor, position)
+          for i in [star.startRow..star.endRow]
+            visited[i] = true
+
+          line = editor.lineTextForBufferRow(star.startRow)
+          editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.startTextCol]], " [COMPLETED] ")
+
   toggleTodo: (event) ->
-    editor = atom.workspace.getActiveTextEditor()
-    if editor
+    if editor = atom.workspace.getActiveTextEditor()
       visited = {}
       startPosition = editor.getCursorBufferPosition()
       startRow = startPosition.row

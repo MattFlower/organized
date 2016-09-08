@@ -18,9 +18,12 @@
     "atom": ">=1.0.0 <2.0.0"
   },
   "dependencies": {
-    "tmp": ">=0.0.28",
+    "atom-package-deps": ">=4.3.1",
+    "atom-space-pen-views": "^2.2.0",
+    "event-kit": "^1.5.0",
     "rx-text-search": ">=1.0.0",
-    "atom-package-deps": ">=4.3.1"
+    "space-pen": "^5.1.2",
+    "tmp": ">=0.0.28"
   },
   "consumedServices": {
     "tool-bar": {

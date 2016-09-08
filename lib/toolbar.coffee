@@ -1,5 +1,5 @@
 {Disposable} = require 'atom'
-# deps = require('atom-package-deps')
+deps = require('atom-package-deps')
 
 #
 # Create a toolbar based on the tool-bar package.  We don't install the
@@ -12,23 +12,30 @@ class OrganizedToolbar
   toolBar: null
   toolBarHasItems: false
   enabled: true
+  sidebar: null
+  sidebarToggle: null
 
   constructor: () ->
     # Make sure toolbar is only active when organized is active.
     atom.workspace.onDidChangeActivePaneItem (item) =>
-      if item and item.getGrammar and item.getGrammar().name is 'Organized' and @toolBar
+      if item?.getGrammar?()?.name is 'Organized' and @enabled
         @addToolbar()
       else if @toolBar
         @removeToolbarButtons()
 
   activate: (subscriptions) ->
-    subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:toggleToolbar': (event) => @organizedToolbar.toggleToolbar()}))
+    subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:toggleToolbar': (event) => @toggleToolbar()}))
     subscriptions.add atom.config.observe 'organized.enableToolbarSupport', (newValue) => @setEnabled(newValue)
 
   # If the user doesn't currently have the toolbar up, this will add the appropriate buttons.
   # This is necessary because the tool-bar package is global -- if you don't dynamically add
   # and remove the buttons, they'll stay around even when organized isn't loaded.
   addToolbar: () ->
+    if not atom.packages.getLoadedPackage('tool-bar')
+      # This has a promise that will call addToolbar if it can be installed correctly, so we'll return for now.
+      @installToolbarPlugin()
+      return
+
     if @toolBarHasItems or not @toolBar or not @enabled
       return
 
@@ -106,6 +113,14 @@ class OrganizedToolbar
       callback: 'organized:makeResultBlock'
       tooltip: 'Create Code Execution Result Block'
 
+    sidebarIcon = if @sidebar?.enabled then 'toggle-on' else 'toggle-off'
+    sidebarTooltip = if @sidebar?.enabled then 'Hide Sidebar' else 'Show Sidebar'
+    @sidebarToggle = @toolBar.addButton
+      icon: 'toggle-on'
+      iconset: 'fa'
+      callback: 'organized:toggleSidebar'
+      tooltip: sidebarTooltip
+
     @toolBarHasItems = true
 
   consumeToolBar: (toolBar) ->
@@ -113,7 +128,9 @@ class OrganizedToolbar
     if editor = atom.workspace.getActiveTextEditor()
       if editor.getGrammar().name is 'Organized'
         @addToolbar()
-        new Disposable => @removeToolbar()
+        new Disposable =>
+          @removeToolbar()
+          toolBar = null
 
   deactivate: () ->
     @removeToolbar()
@@ -121,7 +138,6 @@ class OrganizedToolbar
   removeToolbar: (event) ->
     if @toolBar
       @toolBar.removeItems();
-      @toolBar = null;
       @toolBarHasItems = false
 
   removeToolbarButtons: (event) ->
@@ -130,29 +146,54 @@ class OrganizedToolbar
       @toolBarHasItems = false
 
   setEnabled: (enabled) ->
-    if @enabled and not enabled
+    @enabled = enabled
+
+    if @enabled
+      @addToolbar()
+    else
       @removeToolbar()
 
-    @enabled = enabled
+
+  installToolbarPlugin: () ->
+    atom.confirm
+      message: "tool-bar package is not installed, it is required to see the organized toolbar.  Would you like to install it?"
+      buttons:
+        Yes: =>
+          deps.install()
+            .then () =>
+              atom.config.set('organized.enableToolbarSupport', true)
+              @addToolbar
+            .catch (e) =>
+              atom.notifications.addError("Unable to turn on organizedToolbar - encountered error while installing tool-bar package")
+              atom.notifications.addError(e)
+        No: =>
+          atom.notifications.addWarning("Unable to turn on organizedToolbar - tool-bar package is not installed")
+    return
+
+  setSidebar: (sidebar)  ->
+    @sidebar = sidebar
+    @sidebar.onDidHide @sidebarHidden
+    @sidebar.onDidShow @sidebarShown
+
+  sidebarHidden: (sidebar) =>
+    if @sidebarToggle
+      @sidebarToggle.element.classList.remove('fa-toggle-on')
+      @sidebarToggle.element.classList.add('fa-toggle-off')
+      @sidebarToggle.tooltip = "Show Sidebar"
+
+  sidebarShown: (sidebar) =>
+    if @sidebarToggle?.element
+      @sidebarToggle.element.classList.remove('fa-toggle-off')
+      @sidebarToggle.element.classList.add('fa-toggle-on')
+      @sidebarToggle.tooltip = "Hide Sidebar"
 
   # This is a little bit misleading.  It's here so we guide the user to install the tool-bar
   # plugin.
   toggleToolbar: () ->
-    if not atom.packages.getLoadedPackage('tool-bar')
-      atom.notifications.addWarning("tool-bar is not installed.  Please install it to see a tool-bar.")
+    if atom.workspace.getActiveTextEditor().getGrammar().name isnt 'Organized'
+      atom.notifications.addInfo("Organized toolbar won't appear on this page because this isn't an Organized file.")
       atom.config.set('organized.enableToolbarSupport', true)
-      # deps.install()
-      #   .then () =>
-      #     @addToolbar
-      #   .catch (e) =>
-      #     console.log(e)
-      return
-
-    if not atom.config.get('organized.enableToolbarSupport') or not @enabled
-      atom.config.set('organized.enableToolbarSupport', true)
-      @addToolbar
     else
-      atom.config.set('organized.enableToolbarSupport', false)
-      @removeToolbarButtons
+      atom.config.set('organized.enableToolbarSupport', not @enabled)
 
 module.exports = OrganizedToolbar

@@ -199,6 +199,10 @@ class ResultBlock
     row = codeBlock.endRow+1
     line = editor.lineTextForBufferRow(row)
     while row < editor.getLastBufferRow() and not line.match(/^\s*(#\+RESULT|```result)/)
+      if line.match(/^\s*(```|#BEGIN_SRC)/)
+        #Another code block is starting.  Our code block must not have one.
+        return
+
       row += 1
       line = editor.lineTextForBufferRow(row)
 
@@ -206,8 +210,6 @@ class ResultBlock
       @resultRow = row
       @indentCol = match.index
       line = editor.lineTextForBufferRow(row)
-
-    console.log("resultRow: #{@resultRow}")
 
   addError: (result) ->
     if not @resultRow

@@ -21,4 +21,6 @@
 |    215 |   223 |
 +--------+-------+
 
+# You can have a sidebar anytime to keep track of your todos
+
 Don't see what you like?  Check the TODO.org and/or make a suggestion!

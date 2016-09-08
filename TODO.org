@@ -30,6 +30,10 @@
     * [COMPLETED] Add style for bold
   * [COMPLETED] If you newline after a level 1 and there are already indented bullets underneath, the new line
     should be at that new level of depth
+* Movement - keystrokes to move around
+  * [TODO] Next/Prev bullet at same level
+  * [TODO] Up to next highest level
+  * [TODO] Move current bullet up / down
 * Visibility cycling
   * [TODO] Add folding to menus to raise visibility
   * [TODO] Start supporting folding for '**' style stars (space-indented ones already work)
@@ -67,8 +71,20 @@
   * [TODO] Key-command to increase / decrease priority of items
   * [COMPLETED] Support multiple cursors for TODO toggling.
   * [TODO] Command to remove completed todos from current file
-  * [TODO] UI for all TODO's in directory
-  * [TODO] Configuration to show what directories we'll scan for TODO items
+  * Todos for SidePanel
+    * [COMPLETED] UI for all TODO's in directory
+    * [COMPLETED] Configuration to show what directories we'll scan for TODO items
+    * [COMPLETED] Click-through from TODO to source code location
+    * [COMPLETED] Checkboxes on the todo item to automatically mark it as completed
+    * [TODO] Hierarchical todos
+    * [TODO] Filter Todo by tag
+    * [TODO] Option to show tags for todos
+    * [TODO] Truncate long todo names
+    * [COMPLETED] Styling for todo
+    * [COMPLETED] Refresh button for todo items
+    * [COMPLETED] Automatically refresh todo items
+    * [COMPLETED] Resizing for todo panel
+    * [COMPLETED] Don't select text while resizing
   * [TODO] Setting to auto-hide completed todo items
   * Figure out how to model the storage of TODO items
     * We should probably model parent-child relationship (parent outline node is a todo and it has children
@@ -98,12 +114,30 @@
   * [TODO] Handle enter key inside of a table column
 * Schedules
   * [COMPLETED] Support "SCHEDULED" tags inside of organized files
+  * Timestamps
+    * [TODO] Syntax highlighting for timestamps
+    * [TODO] Key command to insert a timestamp
+    * [TODO] Create new agenda section in sidebar for timestamp / scheduled tasks
+    * [TODO] Show timestamps in agenda
+  * Deadlines
+    * [TODO] Syntax highlighting for deadlines
   * [TODO] Add key command to add a schedule date
   * [TODO] Create agenda view to show what's coming up
     * Maybe this should be accordian style with both todos and agenda on a
       single page
   * [TODO] Support creating or changing a meeting in your calendar according to
     changes in an organized file
+  * [TODO] Support ISO-8601 style dates
+  * [TODO] Support Org-mode style dates
+* Quick capture
+  * [TODO] Add quick-capture keystroke and dialog box
+    * [TODO] Collect text of todo
+    * Where do we store the captured todo?
+      * Dropdown box of open org-mode files
+      * Recent org-mode files?
+      * Let use create new "today" file
+* Archiving
+  * Add ability to add a file to archive
 * Embedded Content
   * [TODO] Embedded Equation
   * [TODO] Embedded UML Diagrams
@@ -167,7 +201,7 @@
 * Safety
   * [TODO] Add ability to encrypt notes
 * Tags
-  * [TODO] Syntax highlighting for tags
+  * [COMPLETED] Syntax highlighting for tags
 * Code structure / Technical debt
   * [COMPLETED] Replace endless star methods with a single method that collects all the info
   * [TODO] Break up main parsing function in star.coffee into separate methods
@@ -200,6 +234,9 @@
   * [TODO] Button to strikethrough
   * [COMPLETED] Button for H1, H2, H3
   * [COMPLETED] Toolbar only present when grammar is active
+* Compatibility
+  * [TODO] Test running atom + organized on Linux
+  * [TODO] Test running atom + organized on Windows
 * [TODO] Migration System
   * [TODO] Migration from OneNote
     * http://www.howtogeek.com/howto/22679/beginner-save-your-onenote-2010-docs-to-different-file-formats/
