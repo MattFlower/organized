@@ -31,7 +31,7 @@ class OrganizedToolbar
   # This is necessary because the tool-bar package is global -- if you don't dynamically add
   # and remove the buttons, they'll stay around even when organized isn't loaded.
   addToolbar: () ->
-    if not atom.packages.getLoadedPackage('tool-bar')
+    if not atom.packages.getLoadedPackage('tool-bar') and item?.getGrammar?()?.name is 'Organized' and @enabled
       # This has a promise that will call addToolbar if it can be installed correctly, so we'll return for now.
       @installToolbarPlugin()
       return
