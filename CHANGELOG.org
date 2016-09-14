@@ -1,3 +1,19 @@
+* 0.5.2
+  * Tighten up tags regex, it was matching far too much.  Now I only match the characters from orgmode ()
+  * Rethink bold / italics support.  Now it's:
+    * *italics*
+    * **bold**
+    * ***bold italics***
+    * ~~strikeout~~
+    * __underline__
+    * __*underline italics*__
+    * __**underline bold**__
+    * __***underline bold italics***__
+  * Added toolbar buttons for italics and strikethrough
+
+* 0.5.1
+  * Potential fix for issue #2
+
 * 0.5.0 (Released 2016-09-08)
   * Added sidebar, which shows TODO's from all .org files in the current project.
     * Use menus (Packages -> Organized) or the command organized:toggleSidebar

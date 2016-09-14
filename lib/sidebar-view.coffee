@@ -26,21 +26,21 @@ class SidebarView extends View
   # Activate is called by the main activate functionality so it can control it's
   # own interaction with the rest of the system.
   activate: (subscriptions) ->
-      subscriptions.add atom.config.observe 'organized.includeProjectPathsInSearchDirectories', (newValue) =>
-        @includeProjectPaths = newValue
+    subscriptions.add atom.config.observe 'organized.includeProjectPathsInSearchDirectories', (newValue) =>
+      @includeProjectPaths = newValue
 
-      subscriptions.add atom.config.observe 'organized.sidebarVisible', (newValue) =>
-        @sidebarVisible = newValue
+    subscriptions.add atom.config.observe 'organized.sidebarVisible', (newValue) =>
+      @sidebarVisible = newValue
 
-      subscriptions.add atom.config.observe 'organized.searchDirectories', (newValue) =>
-        @searchDirectories = newValue
+    subscriptions.add atom.config.observe 'organized.searchDirectories', (newValue) =>
+      @searchDirectories = newValue
 
-      subscriptions.add atom.config.observe 'organized.searchSkipFiles', (newValue) =>
-        newValue.filter (value) =>
-          value.trim() isnt ""
-        @searchSkipFiles = newValue
+    subscriptions.add atom.config.observe 'organized.searchSkipFiles', (newValue) =>
+      newValue.filter (value) =>
+        value.trim() isnt ""
+      @searchSkipFiles = newValue
 
-      subscriptions.add(atom.commands.add('atom-workspace', { 'organized:toggleSidebar': (event) => @toggleVisibility() }))
+    subscriptions.add(atom.commands.add('atom-workspace', { 'organized:toggleSidebar': (event) => @toggleVisibility() }))
 
   constructor: ->
     super

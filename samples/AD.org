@@ -2,7 +2,15 @@
 * [TODO] Do you have things to do?
   * [COMPLETED] Some of which might already be done?
 * Maybe you need to store [links](https://github.com/MattFlower/organized)
-* Maybe you want _underlined text_ or __bold text__
+* Maybe you want:
+  * *italics*
+  * **bold**
+  * ***bold italics***
+  * ~~strikeout~~
+  * __underline__
+  * __*underline italics*__
+  * __**underline bold**__
+  * __***underline bold italics***__
 
 # Coding features
 - Maybe you write code in languages like Java, JavaScript, Python,

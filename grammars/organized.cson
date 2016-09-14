@@ -52,7 +52,7 @@ repository:
       },
       {
         name: 'tags.organized'
-        match: ":([^: ]+:){1,}"
+        match: "(^|\\s+):([A-Za-z0-9_@-]+:){1,}\\s*$"
       },
       { include: "#textcontent" }
     ]
@@ -434,22 +434,52 @@ repository:
             ]
       }
       {
-        match: '___([^_]+)___'
+        match: '\\s+\\*{3}([^\\*]+)\\*{3}\\s+'
         captures:
           1:
-            name: 'bold.underlined.text.organized'
+            name: 'bold.italics.text.organized'
       }
       {
-        match: '__([^_]+)__'
+        match: '\\s+\\*{2}([^\\*]+)\\*{2}\\s+'
         captures:
           1:
             name: 'bold.text.organized'
       }
       {
-        match: '_([^_]+)_'
+        match: '\\s+\\*([^\\*]+)\\*\\s+'
+        captures:
+          1:
+            name: 'italics.text.organized'
+      }
+      {
+        match: '\\s+__\\*{3}([^*]+)\\*{3}__\\s+'
+        captures:
+          1:
+            name: 'underlined.bold.italics.text.organized'
+      }
+      {
+        match: '\\s+__\\*\\*([^*]+)\\*\\*__\\s+'
+        captures:
+          1:
+            name: 'underlined.bold.text.organized'
+      }
+      {
+        match: '\\s+__\\*([^*]+)\\*__\\s+'
+        captures:
+          1:
+            name: 'underlined.italics.text.organized'
+      }
+      {
+        match: '\\s+__([^_]+)__\\s+'
         captures:
           1:
             name: 'underlined.text.organized'
+      }
+      {
+        match: '\\s+~~([^~]+)~~\\s+'
+        captures:
+          1:
+            name: 'strikeout.text.organized'
       }
     ]
   innerTableRow:

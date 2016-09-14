@@ -10,6 +10,11 @@ atom-panel {
     z-index: 3;
   }
 
+  div.search-dialog {
+    height: 400px;
+    width: 400px;
+  }
+
   //Styling for the sidebar
   div.organized-sidebar {
     -webkit-user-select: auto;
@@ -158,17 +163,41 @@ atom-text-editor, atom-text-editor::shadow {
       }
     }
 
-    .bold.underlined.text.organized {
+    .italics.text.organized {
+      font-style: italic;
+    }
+
+    .bold.text.organized {
       font-weight: bold;
-      text-decoration: underline;
+    }
+
+    .bold.italics.text.organized {
+      font-style: italic;
+      font-weight: bold;
+    }
+
+    .strikeout.text.organized {
+      text-decoration: line-through;
     }
 
     .underlined.text.organized {
       text-decoration: underline;
     }
 
-    .bold.text.organized {
+    .underlined.italics.text.organized {
+      font-style: italic;
+      text-decoration: underline;
+    }
+
+    .underlined.bold.text.organized {
       font-weight: bold;
+      text-decoration: underline;
+    }
+
+    .underlined.bold.italics.text.organized {
+      font-weight: bold;
+      text-decoration: underline;
+      font-style: italic;
     }
 
     .border.table.organized {

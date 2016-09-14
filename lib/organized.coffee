@@ -6,6 +6,7 @@ Todo = require './todo'
 CodeBlock = require './codeblock'
 OrganizedToolbar = require './toolbar'
 SidebarView = require './sidebar-view'
+SearchView = require './search-view'
 
 module.exports =
   organizedView: null
@@ -16,6 +17,7 @@ module.exports =
   createStarsOnEnter: true
   autoSizeTables: true
   organizedToolbar: null
+  searchView: null
 
   config:
     levelStyle:
@@ -119,6 +121,10 @@ module.exports =
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:makeLink': (event) => @makeLink(event) }))
 
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:refreshTodos': (event) => @sidebar.refreshTodos() }))
+    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:search': (event) =>
+      @searchView.refreshTags()
+      @searchView.show()
+    }))
 
     @subscriptions.add atom.config.observe 'organized.autoCreateStarsOnEnter', (newValue) => @createStarsOnEnter = newValue
     @subscriptions.add atom.config.observe 'organized.levelStyle', (newValue) => @levelStyle = newValue
@@ -133,6 +139,9 @@ module.exports =
       @organizedToolbar = new OrganizedToolbar()
       @organizedToolbar.activate(@subscriptions)
       @organizedToolbar.setSidebar(@sidebar)
+
+    @searchView ?= new SearchView()
+    @searchView.activate(@subscriptions)
 
   closeTable: (event) ->
     if editor = atom.workspace.getActiveTextEditor()
@@ -427,19 +436,19 @@ module.exports =
       editor.transact 1000, () =>
         @_withAllSelectedLines editor, (position, selection) =>
           if selection.isEmpty()
-            editor.insertText("____")
+            editor.insertText("****")
             selection.cursor.moveLeft(2)
           else
             range = selection.getBufferRange()
-            startMarked = editor.getTextInBufferRange([range.start, [range.start.row, range.start.column+2]]) is "__"
-            endMarked = editor.getTextInBufferRange([[range.end.row, range.end.column-2], range.end]) is "__"
+            startMarked = editor.getTextInBufferRange([range.start, [range.start.row, range.start.column+2]]) is "**"
+            endMarked = editor.getTextInBufferRange([[range.end.row, range.end.column-2], range.end]) is "**"
 
             if startMarked and endMarked
               editor.setTextInBufferRange([[range.end.row, range.end.column-2], range.end], "")
               editor.setTextInBufferRange([range.start, [range.start.row, range.start.column+2]], "")
             else
-              editor.setTextInBufferRange([range.end, range.end], '__')
-              editor.setTextInBufferRange([range.start, range.start], "__")
+              editor.setTextInBufferRange([range.end, range.end], '**')
+              editor.setTextInBufferRange([range.start, range.start], "**")
 
   toggleHeading: (event) ->
     if editor = atom.workspace.getActiveTextEditor()
@@ -520,8 +529,8 @@ module.exports =
       editor.transact 1000, () =>
         @_withAllSelectedLines editor, (position, selection) =>
           if selection.isEmpty()
-            editor.insertText('__')
-            selection.cursor.moveLeft(1)
+            editor.insertText('____')
+            selection.cursor.moveLeft(2)
           else
             range = selection.getBufferRange()
             startThree = editor.getTextInBufferRange([range.start, [range.start.row, range.start.column+3]])

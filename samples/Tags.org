@@ -1,0 +1,3 @@
+* Tags are interesting :interesting:
+  * They are inherited by child bullets
+  * They can be searched :search:

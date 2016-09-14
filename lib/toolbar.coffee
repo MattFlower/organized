@@ -77,6 +77,18 @@ class OrganizedToolbar
       callback: 'organized:toggleUnderline',
       tooltip: 'Underline'
 
+    @toolBar.addButton
+      icon: 'italic'
+      iconset: 'fa'
+      callback: 'organized:toggleItalic'
+      tooltip: 'Italics'
+
+    @toolBar.addButton
+      icon: 'strikethrough'
+      iconset: 'fa'
+      callback: 'organized:toggleStrikethrough'
+      tooltip: 'Strikethrough'
+
     @toolBar.addSpacer()
 
     @toolBar.addButton
