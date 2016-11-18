@@ -1,3 +1,9 @@
+* 0.5.2 (Released 2016-09-08)
+  * Fix for regular expression error.  (Thanks to John Kamenik for the PR!)
+
+* 0.5.1 (Release 2016-09-20)
+  * rbenson-patch-1 PR  (Thanks Rob Benson for the PR!)
+
 * 0.5.0 (Released 2016-09-08)
   * Added sidebar, which shows TODO's from all .org files in the current project.
     * Use menus (Packages -> Organized) or the command organized:toggleSidebar

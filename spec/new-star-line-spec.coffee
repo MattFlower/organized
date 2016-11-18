@@ -137,7 +137,9 @@ describe "Pressing enter creates a new star", ->
     textEditorView = atom.views.getView(editor)
     atom.commands.dispatch(textEditorView, "organized:newStarLine")
     #console.log("BABABABA: \n#{editor.getText()}")
-    expect(editor.getText()).toBe("* One\n  ```python\n  print('hello')\n\n  ```")
+    
+    #Spacing here depends on whether you have the python plugin installed.
+    expect(editor.getText()).toBe("* One\n  ```python\n  print('hello')\n  \n  ```")
     newCursorPosition = editor.getCursorBufferPosition()
     expect(newCursorPosition.row).toBe(3)
     # Not sure why, but this doesn't quite work the same here as in a live
