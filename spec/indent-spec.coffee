@@ -57,19 +57,52 @@ describe "organized:indent", ->
     atom.commands.dispatch(textEditorView, "organized:indent")
     expect(editor.getText()).toBe("- A\n  - \n\n* B")
 
-#   it "should add tabs if the default indent type is tabs", ->
-#     expect("").toEqual("")
-#
-#   it "should add an additional star if the indent type is stars", ->
-#     expect("").toEqual("")
-#
-# describe "when a line with one indent level (two spaces) is indented", ->
-#   it "should add another indent level (two more spaces)", ->
-#     expect("").toEqual("")
-#
-# describe "when a line with one indent level (three spaces) is indented", ->
-#   it "should add another indent level (three more spaces)", ->
-#     expect("").toEqual("")
+  it "should add tabs if the default indent type is tabs", ->
+    atom.config.set('organized.levelStyle', 'tabs')
+    editor = atom.workspace.getActiveTextEditor()
+    editor.setText("* One\n")
+    editor.setCursorBufferPosition([0, 1])
+    textEditorView = atom.views.getView(editor)
+    atom.commands.dispatch(textEditorView, "organized:indent")
+    expect(editor.getText()).toBe("\t* One\n")
+
+  it "should add an additional star if the indent type is stacked", ->
+    atom.config.set('organized.levelStyle', 'stacked')
+    editor = atom.workspace.getActiveTextEditor()
+    editor.setText("* One\n")
+    editor.setCursorBufferPosition([0, 1])
+    textEditorView = atom.views.getView(editor)
+    atom.commands.dispatch(textEditorView, "organized:indent")
+    expect(editor.getText()).toBe("** One\n")
+
+  it "should add spaces if the indent type is spaces", ->
+    atom.config.set('organized.levelStyle', 'spaces')
+    editor = atom.workspace.getActiveTextEditor()
+    editor.setText("* One\n")
+    editor.setCursorBufferPosition([0, 1])
+    textEditorView = atom.views.getView(editor)
+    atom.commands.dispatch(textEditorView, "organized:indent")
+    expect(editor.getText()).toBe("  * One\n")
+
+  it "should obey the indentSpaces setting when indentType is spaces", ->
+    atom.config.set('organized.levelStyle', 'spaces')
+    atom.config.set('organized.indentSpaces', 5)
+    editor = atom.workspace.getActiveTextEditor()
+    editor.setText("* One\n")
+    editor.setCursorBufferPosition([0, 1])
+    textEditorView = atom.views.getView(editor)
+    atom.commands.dispatch(textEditorView, "organized:indent")
+    expect(editor.getText()).toBe("     * One\n")
+
+  it "should try to obey the levelStyle on the line, even if it disagrees with the default style", ->
+    atom.config.set('organized.levelStyle', 'spaces')
+    editor = atom.workspace.getActiveTextEditor()
+    editor.setText("** Two\n")
+    editor.setCursorBufferPosition([0, 2])
+    textEditorView = atom.views.getView(editor)
+    atom.commands.dispatch(textEditorView, "organized:indent")
+    expect(editor.getText()).toBe("*** Two\n")
+
 #
 # describe "when a line with one indent level (one tab) is indented", ->
 #   it "should add another indent level (one more tab)", ->

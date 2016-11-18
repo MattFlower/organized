@@ -33,7 +33,7 @@ class Star
     row = @latestRowSeen
     line = @editor.lineTextForBufferRow(row)
     #console.log("Row: #{row}, Line: #{line}")
-    while !line.match(/^\s*([\*\-\+]+|\d+\.)[ ]/)
+    while !line.match(/^\s*([\*\-\+]+|\d+\.)([ ]|$)/)
       # console.log("No star on #{row}")
       row -= 1
       if row < 0 or line.match(/^(#|$)/)
@@ -50,7 +50,7 @@ class Star
     #console.log("Found star on row #{@startRow} and col #{@starCol}")
 
     line = @editor.lineTextForBufferRow(@startRow)
-    match = line.match(/^(\s*)([\*\-\+]+|(\d+)\.)[ ](\[TODO\] |\[COMPLETED\] )?/)
+    match = line.match(/^(\s*)([\*\-\+]+|(\d+)\.)([ ]|$)(\[TODO\] |\[COMPLETED\] )?/)
 
     #console.log(match)
 
@@ -65,7 +65,7 @@ class Star
       stars = match[2]
       starsAreNumbers = stars.match(/\d+\./)
       if not starsAreNumbers and stars.length > 1
-        #console.log("Stacked")
+        # console.log("Stacked")
         @indentType = "stacked"
         @starType = stars[0]
 
@@ -82,7 +82,7 @@ class Star
             levelCount = 0
             break
       else
-        #console.log("spaces")
+        # console.log("spaces")
         levelCount = 0
         index = 0
         indentBySpaceString = " ".repeat(@indentSpaces)

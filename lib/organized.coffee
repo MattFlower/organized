@@ -12,7 +12,7 @@ module.exports =
   modalPanel: null
   subscriptions: null
   levelStyle: 'spaces'
-  indentSpaces: 2
+  indentSpaces: atom.config.get('editor.tabLength')
   createStarsOnEnter: true
   autoSizeTables: true
   organizedToolbar: null
@@ -122,7 +122,7 @@ module.exports =
 
     @subscriptions.add atom.config.observe 'organized.autoCreateStarsOnEnter', (newValue) => @createStarsOnEnter = newValue
     @subscriptions.add atom.config.observe 'organized.levelStyle', (newValue) => @levelStyle = newValue
-    @subscriptions.add atom.config.observe 'editor.tabLength', (newValue) => @indentSpaces = newValue
+    @subscriptions.add atom.config.observe 'organized.indentSpaces', (newValue) => @indentSpaces = newValue
     @subscriptions.add atom.config.observe 'organized.autoSizeTables', (newValue) => @autoSizeTables = newValue
 
     @sidebar = new SidebarView()
@@ -215,7 +215,7 @@ module.exports =
             for i in [star.startRow..star.endRow]
               visited[i] = true
 
-            indent = if @levelStyle is "stacked" then star.starType else @_indentChars()
+            indent = if star.indentType is "stacked" then star.starType else @_indentChars()
             for row in [star.startRow..star.endRow]
               editor.setTextInBufferRange([[row, 0], [row, 0]], indent)
           else

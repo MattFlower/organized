@@ -46,6 +46,10 @@ us get better.
 
 
 # What's New?
+* 0.5.2 (Released 2016-11-18)
+  * Fixed error in regular expression (Thanks to John Kamenik for the PR!)
+* 0.5.1 (Released 2016-09-20)
+  * Added basic styling for headlines (Thanks to Ryan Benson for the PR!)
 * 0.5.0 (Released 2016-09-08)
   * Added sidebar, which shows TODO's from all .org files in the current project.
     * Use menus (Packages -> Organized) or the command organized:toggleSidebar
@@ -68,9 +72,9 @@ for full details of recent changes.
 
 # What Do I Want to Build
 * Complete compatibility with existing org-mode documents
-* Syntax coloring for code blocks
-* Ability to execute code blocks inline
-* Nice looking panes that can show you your todos and agendas across multiple organized documents
+* Syntax coloring for code blocks (Done)
+* Ability to execute code blocks inline (Done)
+* Nice looking panes that can show you your todos and agendas across multiple organized documents (In progress)
 * Export to pdf, html, etc
 
 # Learning the Basics of Organized

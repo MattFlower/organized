@@ -1,8 +1,14 @@
-* 0.5.2 (Released 2016-09-08)
+* 0.5.3 (Released 2016-11-18)
+  * Fix for Issue #7 - if a star is followed by a linebreak, that should be treated line a star too.
+  * Fix for Issue #8 - when indenting, try to detect indent type even if it is different from the default type
+  * Organized was not obeying the config setting for the number of spaces, it was only using the editor style.  Now
+    it should obey the config setting.
+
+* 0.5.2 (Released 2016-11-18)
   * Fix for regular expression error.  (Thanks to John Kamenik for the PR!)
 
 * 0.5.1 (Release 2016-09-20)
-  * rbenson-patch-1 PR  (Thanks Rob Benson for the PR!)
+  * rbenson-patch-1 PR  (Thanks Ryan Benson for the PR!)
 
 * 0.5.0 (Released 2016-09-08)
   * Added sidebar, which shows TODO's from all .org files in the current project.
