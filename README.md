@@ -46,25 +46,15 @@ us get better.
 
 
 # What's New?
+* 0.5.3 (Released 2016-11-18)
+  * Fix for Issue #7 - if a star is followed by a linebreak, that should be treated line a star too.
+  * Fix for Issue #8 - when indenting, try to detect indent type even if it is different from the default type
+  * Organized was not obeying the config setting for the number of spaces, it was only using the editor style.  Now
+    it should obey the config setting.
 * 0.5.2 (Released 2016-11-18)
   * Fixed error in regular expression (Thanks to John Kamenik for the PR!)
 * 0.5.1 (Released 2016-09-20)
   * Added basic styling for headlines (Thanks to Ryan Benson for the PR!)
-* 0.5.0 (Released 2016-09-08)
-  * Added sidebar, which shows TODO's from all .org files in the current project.
-    * Use menus (Packages -> Organized) or the command organized:toggleSidebar
-      to toggle whether the menu appears.
-    * Todos can be marked as completed by checking the checkbox next to them.
-    * Navigate to the source of the todo by clicking on the text.
-    * Refresh todos by clicking on the refresh button.  Todos are also refreshed
-      any time an organized file is saved.
-    * Added setting that allows additional directory names to be specified to scan.
-    * Added setting that allows you to exclude project directories from TODO scan.
-    * Added setting that allows certain files to be excluded.
-    * Added ability to resize sidebar
-    * Don't select text in sidebar while resizing.
-    * This feature is coming along, but is still in a fairly beta state.
-  * Fixed some toolbar quirkiness - should appear correctly now when enabled in settings.
 
 Please see the [CHANGELOG.org](https://raw.githubusercontent.com/MattFlower/organized/master/CHANGELOG.org)
 for full details of recent changes.
