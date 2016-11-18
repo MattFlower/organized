@@ -129,7 +129,9 @@ class Star
       @latestRowSeen = row
 
   _starIndexOf: (line) ->
-    match = /(?<=^\s*)([\*\-\+]|\d+\.)/.exec(line)
+    match = /^\s*([\*\-\+]|\d+\.)/.exec(line)
+    console.log("_starIndexOf: "+line)
+    console.log(match)
     return match.index
 
   newStarLine: (indentLevel = @indentLevel) ->
