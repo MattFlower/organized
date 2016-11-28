@@ -50,7 +50,7 @@ class Star
     #console.log("Found star on row #{@startRow} and col #{@starCol}")
 
     line = @editor.lineTextForBufferRow(@startRow)
-    match = line.match(/^(\s*)([\*\-\+]+|(\d+)\.)([ ]|$)(\[TODO\] |\[COMPLETED\] )?/)
+    match = line.match(/^(\s*)([\*\-\+]+|(\d+\.)+)([ ]|$)(\[TODO\] |\[COMPLETED\] )?/)
 
     #console.log(match)
 
@@ -63,7 +63,7 @@ class Star
       # Compute indent level
       levelCount = 0
       stars = match[2]
-      starsAreNumbers = stars.match(/\d+\./)
+      starsAreNumbers = stars.match(/(\d+\.)+/)
       if not starsAreNumbers and stars.length > 1
         # console.log("Stacked")
         @indentType = "stacked"
@@ -129,7 +129,7 @@ class Star
       @latestRowSeen = row
 
   _starIndexOf: (line) ->
-    match = /^(\s*)([\*\-\+]|\d+\.)/.exec(line)
+    match = /^(\s*)([\*\-\+]|(\d+\.)+)/.exec(line)
     # No match, ignore
     return 0 if match.length < 1
     # count the spaces

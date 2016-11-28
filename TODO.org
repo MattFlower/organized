@@ -21,6 +21,10 @@
   * [COMPLETED] Hitting enter at the beginning of a line shouldn't delete the content of the line
   * [COMPLETED] Highlighting multiple lines and indenting should indent all of the lines
   * [TODO] Number indents need a new type of numbering on indent (7. becomes 7a. or something)
+    * I'm going to go with 7. -> 7.1 -> 7.1.1 if the indentStyle is stacked
+    * I'll go with 7. -> a. -> i. if the indentStyle is spaces or tabs
+    * [TODO] Fix "star.currentNumber" and "star.nextNumber" to account for stacked numbers
+    * [TODO] Fix "unindent" to renumber
   * [TODO] If you have unindented and that unindent level has a different star type, adopt that star type
   * [COMPLETED] Underlines
     * [COMPLETED] Add grammar for underlined portion
@@ -49,7 +53,8 @@
 * [TODO] Add setting to autowrap at gutter
 * [TODO] Different coloring depending on the number of stars in a star block
 * [TODO] Properly support soft-tabs settings
-* [TODO] Support Atom's tab-length setting
+* [COMPLETED] Support Atom's tab-length setting
+  * This is supported initially unless you set the organized indentSpaces setting.
 * [TODO] Support Atom's tab type settings (soft and hard)
 * [TODO] Support Atom's auto tab type setting
   * Perhaps look at the first 1000 lines of a file -- see if we have more

@@ -216,6 +216,13 @@ module.exports =
               visited[i] = true
 
             indent = if star.indentType is "stacked" then star.starType else @_indentChars()
+            indentType = if star.indentType is "none" then star.defaultIndentType else star.indentType
+            if star.starType is "numbers"
+              if indentType in ['tabs', 'spaces']
+                editor.setTextInBufferRange([[star.startRow, star.starCol], [star.startRow, star.whitespaceCol]], '1.')
+              else if indentType is 'stacked'
+                editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.whitespaceCol]], '.1')
+
             for row in [star.startRow..star.endRow]
               editor.setTextInBufferRange([[row, 0], [row, 0]], indent)
           else
@@ -560,7 +567,7 @@ module.exports =
                   editor.setTextInBufferRange([[row, 0], [row, 2]], "")
                 else if line.match("^\\t")
                   editor.setTextInBufferRange([[row, 0], [row, 1]], "")
-                else if match = line.match(/^([\*\-\+]|\d+\.) /)
+                else if match = line.match(/^([\*\-\+]|(\d+\.)+) /)
                   editor.setTextInBufferRange([[row, 0], [row, match[0].length]], "")
                 else if line.match(/^[\*\-\+]/)
                   #Stacked

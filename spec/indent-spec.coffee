@@ -103,6 +103,33 @@ describe "organized:indent", ->
     atom.commands.dispatch(textEditorView, "organized:indent")
     expect(editor.getText()).toBe("*** Two\n")
 
+  it "should reset indent number to 1 when indenting and levelStyle is spaces", ->
+    atom.config.set('organized.levelStyle', 'spaces')
+    editor = atom.workspace.getActiveTextEditor()
+    editor.setText("1. One\n2. Two\n")
+    editor.setCursorBufferPosition([1, 0])
+    textEditorView = atom.views.getView(editor)
+    atom.commands.dispatch(textEditorView, "organized:indent")
+    expect(editor.getText()).toBe("1. One\n  1. Two\n")
+
+  it "should reset indent number to 1 when indenting and levelStyle is tabs", ->
+    atom.config.set('organized.levelStyle', 'tabs')
+    editor = atom.workspace.getActiveTextEditor()
+    editor.setText("1. One\n2. Two\n")
+    editor.setCursorBufferPosition([1, 0])
+    textEditorView = atom.views.getView(editor)
+    atom.commands.dispatch(textEditorView, "organized:indent")
+    expect(editor.getText()).toBe("1. One\n\t1. Two\n")
+
+  it "should reset indent number to 1 when indenting and levelStyle is stacked", ->
+    atom.config.set('organized.levelStyle', 'stacked')
+    editor = atom.workspace.getActiveTextEditor()
+    editor.setText("1. One\na. Two\n")
+    editor.setCursorBufferPosition([1, 0])
+    textEditorView = atom.views.getView(editor)
+    atom.commands.dispatch(textEditorView, "organized:indent")
+    expect(editor.getText()).toBe("1. One\n\t1. Two\n")
+
 #
 # describe "when a line with one indent level (one tab) is indented", ->
 #   it "should add another indent level (one more tab)", ->
