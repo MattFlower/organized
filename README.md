@@ -25,8 +25,10 @@ us get better.
     scripts.  Put your cursor in your code block and press [Ctrl-` x] to execute code.  Output from
     code will appear in a notification by default, or create resultblock:
 
-    \```result
-    \```
+    ~~~~
+    ```result
+    ```
+    ~~~~
 
     and the output will appear there.
   * Early support for code execution in C, C++, Java, and Objective-C.  You cannot set any libraries in
