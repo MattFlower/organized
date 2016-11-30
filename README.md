@@ -24,10 +24,10 @@ us get better.
   * Execution for c, c++, coffeescript, java, javascript, objective-c, perl, php, python, and shell
     scripts.  Put your cursor in your code block and press [Ctrl-` x] to execute code.  Output from
     code will appear in a notification by default, or create resultblock:
-    <pre>
+
     \```result
-    ```
-    </pre>
+    \```
+
     and the output will appear there.
   * Early support for code execution in C, C++, Java, and Objective-C.  You cannot set any libraries in
     those languages yet, which may reduce their effectively a bit.
@@ -46,6 +46,8 @@ us get better.
 
 
 # What's New?
+* 0.5.5 (Released 2016-11-30)
+  * Minor documentation improvements
 * 0.5.4 (Released 2016-11-29)
   * Fixed ctrl-return indenting if you are making outlines or stacked symbols.  Previously this would always
     indent two spaces, even though that wasn't right for those cases.
@@ -93,6 +95,7 @@ for full details of recent changes.
 At the most basic level, Organized is an outlining / note taking tool.  You can
 use either of the two major styles to create an outline:
 
+```
     * Level 1
       * One way to express index level 2
         * One way to express index level 3
@@ -100,10 +103,12 @@ use either of the two major styles to create an outline:
     * Level 1
     ** An alternate way to express index level 2
     *** An alternate way to express index level 3
+```
 
 You can also use alternate characters too.  If you use whitespace to establish
 your indent level, you can mix them:
 
+```
     - Level 1
       * Level 2
         - Level 3
@@ -114,34 +119,43 @@ your indent level, you can mix them:
 
     - Level 1
     -* <=== This is not valid
+```
 
 If you feel like you need to add a TODO, press ctrl-shift-t to do it:
 
+```
     * [TODO] Some important task
+```
 
 When you are done with your task, press ctrl-shift-t again to mark it as completed.
 
+```
     * [COMPLETED] Some task I'm done with
+```
 
 If you didn't mean to mark it as a TODO, pressing ctrl-shift-t a final time
 will make it disappear.
 
 You might want to organize your notes a bit.  You can do that with markdown-style headers (a # character, a space, and some text):
 
+```
     # This is a heading
     * Here are some notes
       * More specific notes
 
     ## A subheading
     * With some more notes
+```
 
 If you need to write some source code, you can do that too:
 
+~~~~
     ```java
     public static void main(String[] args) {
       System.out.println("Hello, World");
     }
     ```
+~~~~
 
 # Why Did I Write Organized?
 I designed Organized in response to a personal itch.  I've long been a user

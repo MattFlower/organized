@@ -1,3 +1,6 @@
+* 0.5.5 (Released 2016-11-30)
+  * Minor documentation improvements
+
 * 0.5.4 (Released 2016-11-29)
   * Fixed ctrl-return indenting if you are making outlines or stacked symbols.  Previously this would always
     indent two spaces, even though that wasn't right for those cases.
