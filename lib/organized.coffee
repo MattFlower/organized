@@ -12,7 +12,7 @@ module.exports =
   modalPanel: null
   subscriptions: null
   levelStyle: 'spaces'
-  indentSpaces: atom.config.get('editor.tabLength')
+  indentSpaces: 2
   createStarsOnEnter: true
   autoSizeTables: true
   organizedToolbar: null
@@ -22,15 +22,11 @@ module.exports =
       title: 'Level Style'
       description: 'If you indent a star/bullet point, how should it be indented by default?'
       type: 'string'
-      default: 'spaces'
+      default: 'whitespace'
       enum: [
-        {value: 'spaces', description: 'Sublevels are created by putting spaces in front of the stars'}
-        {value: 'tabs', description: 'Sublevels are created by putting tabs in front of the stars'}
+        {value: 'whitespace', description: 'Sublevels are created by putting spaces or tabs (based on your editor tabType setting) in front of the stars'}
         {value: 'stacked', description: 'Sublevels are created using multiple stars.  For example, level three of the outline would start with ***'}
       ]
-    indentSpaces:
-      type: 'integer'
-      default: 2
 
     autoCreateStarsOnEnter:
       type: 'boolean'
@@ -39,7 +35,7 @@ module.exports =
     autoSizeTables:
       type: 'boolean'
       default: false
-      description: "If you are typing in a table, automatically resize the columns so your text fits."
+      description: "(Not Ready for Prime Time) If you are typing in a table, automatically resize the columns so your text fits."
 
     enableToolbarSupport:
       type: 'boolean'
@@ -48,8 +44,8 @@ module.exports =
 
     searchDirectories:
       type: 'array'
-      title: 'Organized File Directories'
-      description: 'Directories where we will look for organized files when building todo lists, agendas, or searching'
+      title: 'Predefined search directories / files'
+      description: 'Directories and/or files where we will look for organized files when building todo lists, agendas, or searching'
       default: ['','','','','']
       items:
         type: 'string'
@@ -122,8 +118,8 @@ module.exports =
 
     @subscriptions.add atom.config.observe 'organized.autoCreateStarsOnEnter', (newValue) => @createStarsOnEnter = newValue
     @subscriptions.add atom.config.observe 'organized.levelStyle', (newValue) => @levelStyle = newValue
-    @subscriptions.add atom.config.observe 'organized.indentSpaces', (newValue) => @indentSpaces = newValue
     @subscriptions.add atom.config.observe 'organized.autoSizeTables', (newValue) => @autoSizeTables = newValue
+    @subscriptions.add atom.config.observe 'editor.tabLength', (newValue) => @indentSpaces = newValue
 
     @sidebar = new SidebarView()
     @sidebar.activate(@subscriptions)
@@ -147,11 +143,12 @@ module.exports =
           line = editor.lineTextForBufferRow(position.row-1)
           editor.setTextInBufferRange([[position.row, 0], [position.row, position.column]], "")
 
-        startMatch = /^(?<=\s*)[\|\+]/.exec(line)
-        endMatch = /[\|\+](?=\s*$)/.exec(line)
+        startMatch = /^(\s*)[\|\+]/.exec(line)
+        endMatch = /[\|\+](\s*$)/.exec(line)
         if startMatch and endMatch
           # console.log("startMatch: #{startMatch}, endMatch: #{endMatch}")
-          editor.insertText("+#{'-'.repeat(endMatch.index-startMatch.index-1)}+")
+          dashCount = endMatch.index-startMatch.index-startMatch[0].length
+          editor.insertText("+#{'-'.repeat(dashCount)}+")
 
   # Callback from tool-bar to create a toolbar
   consumeToolBar: (toolBar) ->
@@ -192,8 +189,8 @@ module.exports =
         atom.notifications.error("Unable to find code block")
 
   handleEvents: (editor) ->
-    # tableChangeSubscription = editor.onDidChange (event) =>
-    #   @tableChange(event)
+    tableChangeSubscription = editor.onDidChange (event) =>
+      @tableChange(event)
     tableStoppedChangingSub = editor.onDidStopChanging (event) =>
       @tableStoppedChanging(event)
     editorDestroySubscription = editor.onDidDestroy =>
@@ -279,7 +276,9 @@ module.exports =
       if star = @_starInfo()
         editor.transact 1000, () =>
           editor.insertNewline()
-          indent = @_indentChars().repeat(star.indentLevel) + "  "
+          spaceCount = star.startTextCol - star.starCol
+          indent = @_levelWhitespace(star, editor).repeat(star.indentLevel) + " ".repeat(spaceCount)
+          # console.log("spaceCount: #{spaceCount}, indentLevel: #{star.indentLevel}, levelWhiteSpace='#{@_levelWhitespace(star, editor)}'")
           newPosition = editor.getCursorBufferPosition()
           editor.transact 1000, () =>
             editor.setTextInBufferRange([[newPosition.row, 0],[newPosition.row, newPosition.column]], indent)
@@ -393,34 +392,19 @@ module.exports =
       return
 
     if editor = atom.workspace.getActiveTextEditor()
-      if 'row.table.organized' in editor.getLastCursor().getScopeDescriptor().getScopesArray()
+      scopes = editor.getLastCursor().getScopeDescriptor().getScopesArray()
+      if 'row.table.organized' in scopes or 'border.table.organized' in scopes
         table = new Table(editor)
         return unless table.found?
-        columns = table.findRowColumns()
-        return unless columns?
-
-        column = table.currentColumnIndex(columns)
-        #Add to end of column so spaces in a table column don't look weird
-        indentColumn = columns[column+1]-1
-        position = editor.getCursorBufferPosition()
-        for row in [table.firstRow..table.lastRow]
-          console.log("Row: #{row}, position.row: #{position.row}")
-          if row is position.row
-            continue
-          position = [row, indentColumn]
-          scopes = editor.scopeDescriptorForBufferPosition(position).getScopesArray()
-          console.log(scopes)
-          if 'border.table.organized' in scopes
-            editor.setTextInBufferRange([[row, indentColumn],[row, indentColumn]], "-")
-          else if 'row.table.organized' in scopes
-            editor.setTextInBufferRange([[row, indentColumn],[row, indentColumn]], " ")
+        # Getting closer, but not there yet.
+        #table.normalizeRowSizes()
 
   tableStoppedChanging: (event) ->
     return unless @autoSizeTables
-    if editor = atom.workspace.getActiveTextEditor()
-      scopes = editor.getLastCursor().getScopeDescriptor().getScopesArray()
-      if 'row.table.organized' in scopes or 'border.table.organized' in scopes
-        console.log(event)
+    # if editor = atom.workspace.getActiveTextEditor()
+    #   scopes = editor.getLastCursor().getScopeDescriptor().getScopesArray()
+    #   if 'row.table.organized' in scopes or 'border.table.organized' in scopes
+    #     console.log("Stopped changing")
 
   toggleBold: (event) ->
     if editor = atom.workspace.getActiveTextEditor()
@@ -472,7 +456,7 @@ module.exports =
             visited[i] = true
 
           line = editor.lineTextForBufferRow(star.startRow)
-          editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.startTextCol]], " [TODO] ")
+          editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.startTextCol - 1]], " [TODO] ")
 
   setTodoCompleted: (event) ->
     if editor = atom.workspace.getActiveTextEditor()
@@ -489,7 +473,7 @@ module.exports =
             visited[i] = true
 
           line = editor.lineTextForBufferRow(star.startRow)
-          editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.startTextCol]], " [COMPLETED] ")
+          editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.startTextCol - 1]], " [COMPLETED] ")
 
   toggleTodo: (event) ->
     if editor = atom.workspace.getActiveTextEditor()
@@ -595,8 +579,10 @@ module.exports =
     "" + hours + ":" + minutes + ":" + seconds + offsetString
 
   _indentChars: (star=null, editor=atom.workspace.getActiveTextEditor(), position=editor.getCursorBufferPosition()) ->
-    if star and star.indentType isnt "mixed"
+    if star and star.indentType isnt "mixed" and star.indentType isnt "none"
       indentStyle = star.indentType
+    else if @levelStyle is "whitespace"
+      indentStyle = if editor.getSoftTabs() then "spaces" else "tabs"
     else
       indentStyle = @levelStyle
 
@@ -608,6 +594,20 @@ module.exports =
       if not star
         star = @_starInfo()
       indent = star.starType
+
+    return indent
+
+  _levelWhitespace: (star=null, editor=atom.workspace.getActiveTextEditor()) ->
+    if not star
+      star = @_starInfo(editor)
+
+    # console.log("star: #{star}, indentType: #{star.indentType}, softTabs: #{editor.getSoftTabs()}")
+    if star and star.indentType is "stacked"
+      indent = ""
+    else if editor.getSoftTabs()
+      indent = " ".repeat(@indentSpaces)
+    else
+      indent = "\t"
 
     return indent
 

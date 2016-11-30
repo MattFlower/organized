@@ -4,8 +4,11 @@ class Table
   @firstRow = -1
   @lastRow = -1
   @firstCol = -1
+  @widestRowSize = 0
+  @rows = {}
 
   constructor: (editor, startPosition=null) ->
+    @rows = {}
     @editor = editor
     if not startPosition
       startPosition = editor.getCursorBufferPosition()
@@ -26,15 +29,19 @@ class Table
     # Find last border
     position = [startPosition.row, startPosition.column]
     scopes = editor.scopeDescriptorForBufferPosition(position).getScopesArray()
+
     while position[0] <= editor.getLastBufferRow() and ('border.table.organized' in scopes or 'row.table.organized' in scopes)
+      if match = @lineMatchesTableBorderOrRow(editor.lineTextForBufferRow(position[0]))
+        style = if match[0][0] is '+' then 'border' else 'row'
+        @rows[position[0]] = [match[0].length, match.index, style]
+        @widestRowSize = if @widestRowSize then Math.max(match[0].length, @widestRowSize) else match[0].length
       position = [position[0]+1, position[1]]
       scopes = editor.scopeDescriptorForBufferPosition(position).getScopesArray()
 
-    if position[0] <= editor.getLastBufferRow()
-      @lastRow = position[0]-1
+    if position[0] > editor.getLastBufferRow()
+      @lastRow = editor.getLastBufferRow()
     else
-      @found = false
-      return
+      @lastRow = position[0]
 
     # Find first column
     position = [@firstRow.row, startPosition.column]
@@ -51,40 +58,36 @@ class Table
 
     @found = true
 
-  findRowColumns: (row=null) ->
-    if not row
-      position = @editor.getCursorBufferPosition()
-      row = position.row
+  normalizeRowSizes: () ->
+    if editor = atom.workspace.getActiveTextEditor()
+      position = editor.getCursorBufferPosition()
+      if not @widestRowSize
+        console.log("WidestRowSize not found")
+        return
+      for row in [@firstRow..@lastRow]
+        if row is position.row
+          continue
+        if rowInfo = @rows[row]
+          if rowInfo[0] is @widestRowSize
+            continue
 
-    line = @editor.lineTextForBufferRow(row)
-    if match = /^[\|\+](\-+[\|\+])+$/.exec(line)
-      return @_findColumns(match[0], match.index)
-    else if match = /(\|)([^\-\+\|]+\|)+/.exec(line)
-      return @_findColumns(match[0], match.index)
-    else
-      return null
+          console.log("Current size: #{rowInfo[0]}, max size: #{@widestRowSize}, type: #{rowInfo[2]}")
 
-  currentColumnIndex: (columns=null) ->
-    position = @editor.getCursorBufferPosition()
-    if not columns
-      columns = @findRowColumns(position.row)
-    column = -1
+          indentColumn = rowInfo[0] + rowInfo[1] - 1
+          position = [row, indentColumn]
+          # console.log(scopes)
+          if rowInfo[2] is 'border'
+            editor.setTextInBufferRange([[row, indentColumn],[row, indentColumn]], "-")
+          else if rowInfo[2] is 'row'
+            editor.setTextInBufferRange([[row, indentColumn],[row, indentColumn]], " ")
+        else
+          console.log(@rows)
+          console.log("No rowsize found.  rows: #{@rows}, row: #{row}")
 
-    # We skip the last row -- if they are beyond that, they aren't in the table
-    for i in [0..columns.length-1]
-      if columns[i] >= position.column
-        column = i-1
-        break
-
-    return column
-
-  _findColumns: (text, column=0) ->
-    columns = []
-    for i in [0..text.length-1]
-      if text[i] in ['|', '+']
-        columns.push(column+i)
-
-    return columns
-
+  lineMatchesTableBorderOrRow: (line) ->
+    return ///
+      (\+[-|+]+\+)|
+      (\|.+\|)
+      ///.exec(line)
 
 module.exports = Table

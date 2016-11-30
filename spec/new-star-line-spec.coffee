@@ -137,7 +137,7 @@ describe "Pressing enter creates a new star", ->
     textEditorView = atom.views.getView(editor)
     atom.commands.dispatch(textEditorView, "organized:newStarLine")
     #console.log("BABABABA: \n#{editor.getText()}")
-    
+
     #Spacing here depends on whether you have the python plugin installed.
     expect(editor.getText()).toBe("* One\n  ```python\n  print('hello')\n  \n  ```")
     newCursorPosition = editor.getCursorBufferPosition()
@@ -145,3 +145,14 @@ describe "Pressing enter creates a new star", ->
     # Not sure why, but this doesn't quite work the same here as in a live
     # editor.  In a live editor, I get indent, I don't here.  I suspect
     # it's due to auto-indent
+
+  it "can handle numbered list if there isn't explicit outlining going on", ->
+    editor = atom.workspace.getActiveTextEditor()
+    editor.setText("Next: \n  1. One\n  2. Two")
+    editor.setCursorBufferPosition([0, 0])
+    textEditorView = atom.views.getView(editor)
+    atom.commands.dispatch(textEditorView, "organized:newStarLine")
+
+    expect(editor.getText()).toBe("\nNext: \n  1. One\n  2. Two")
+    newCursorPosition = editor.getCursorBufferPosition()
+    expect(newCursorPosition.row).toBe(1)

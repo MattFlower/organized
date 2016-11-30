@@ -46,15 +46,37 @@ us get better.
 
 
 # What's New?
+* 0.5.4 (Released 2016-11-29)
+  * Fixed ctrl-return indenting if you are making outlines or stacked symbols.  Previously this would always
+    indent two spaces, even though that wasn't right for those cases.
+  * Rethought the "editor.indentType" setting a bit.  Rather than specifying tabs or spaces directly, now
+    we'll use your editors normal setting (editor->tabType) instead.  This should make things work more
+    correctly by default for people that use tabs by default.
+  * As part of this rethinking, removed indentSpaces setting in favor of editor.tabLength setting.
+    If you were using this setting and wanted it to be separate from your standard editor.tabLength settings, atom
+    has supported it for some time now.  You can access the setting on the Organized settings page
+    (Atom Menu -> Preferences -> Packages -> Organized -> Settings) and scroll down until you find editor.tabLength.
+
+    If you prefer, you can also edit your init file (Atom Menu -> Config...) and add a new section:
+    ".organized.source":
+      editor:
+        tabLength: 42
+  * Fixed bug with indenting -- if a bullet character (-,+,*) were embedded in the middle of a
+    line, we would not indent that line along with the rest of your bullet.
+  * Modified the searchDirectories setting to allow setting files in addition to directories.
+  * Fixed bug preventing you from hitting return from the beginning of the second line of a section like this:
+    #Section
+    Some list:
+      1. One
+      2. Two
+      3. Three
+  * Fix table close command, which was erroring out due to a regex error.
+
 * 0.5.3 (Released 2016-11-18)
   * Fix for Issue #7 - if a star is followed by a linebreak, that should be treated line a star too.
   * Fix for Issue #8 - when indenting, try to detect indent type even if it is different from the default type
   * Organized was not obeying the config setting for the number of spaces, it was only using the editor style.  Now
     it should obey the config setting.
-* 0.5.2 (Released 2016-11-18)
-  * Fixed error in regular expression (Thanks to John Kamenik for the PR!)
-* 0.5.1 (Released 2016-09-20)
-  * Added basic styling for headlines (Thanks to Ryan Benson for the PR!)
 
 Please see the [CHANGELOG.org](https://raw.githubusercontent.com/MattFlower/organized/master/CHANGELOG.org)
 for full details of recent changes.

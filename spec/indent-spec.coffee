@@ -9,8 +9,9 @@ describe "organized:indent", ->
       atom.packages.activatePackage('organized')
 
   it "'* One\\n|* Two' becomes '* One\\n▢▢|* Two'", ->
-    atom.config.set("organized.levelStyle", "spaces")
+    atom.config.set("organized.levelStyle", "whitespace")
     editor = atom.workspace.getActiveTextEditor()
+    editor.setSoftTabs(true)
     editor.setText("* One\n* Two")
     editor.setCursorBufferPosition([1, 0])
     textEditorView = atom.views.getView(editor)
@@ -19,8 +20,9 @@ describe "organized:indent", ->
     expect(newLine).toBe("  * Two")
 
   it "'* One\\n|* Two' becomes '* One\\n▢▢*| Two'", ->
-    atom.config.set("organized.levelStyle", "spaces")
+    atom.config.set("organized.levelStyle", "whitespace")
     editor = atom.workspace.getActiveTextEditor()
+    editor.setSoftTabs(true)
     editor.setText("* One\n* Two")
     editor.setCursorBufferPosition([1, 1])
     textEditorView = atom.views.getView(editor)
@@ -29,8 +31,9 @@ describe "organized:indent", ->
     expect(newLine).toBe("  * Two")
 
   it "'* One\\n|* Two' becomes '* One\\n[tab]|* Two'", ->
-    atom.config.set("organized.levelStyle", "tabs")
+    atom.config.set("organized.levelStyle", "whitespace")
     editor = atom.workspace.getActiveTextEditor()
+    editor.softTabs = false
     editor.setText("* One\n* Two")
     editor.setCursorBufferPosition([1, 0])
     textEditorView = atom.views.getView(editor)
@@ -49,8 +52,9 @@ describe "organized:indent", ->
     expect(newLine).toBe("** Two")
 
   it "works with a live problem I found", ->
-    atom.config.set("organized.levelStyle", "spaces")
+    atom.config.set("organized.levelStyle", "whitespace")
     editor = atom.workspace.getActiveTextEditor()
+    editor.setSoftTabs(true)
     editor.setText("- A\n- \n\n* B")
     editor.setCursorBufferPosition([1, 1])
     textEditorView = atom.views.getView(editor)
@@ -58,8 +62,9 @@ describe "organized:indent", ->
     expect(editor.getText()).toBe("- A\n  - \n\n* B")
 
   it "should add tabs if the default indent type is tabs", ->
-    atom.config.set('organized.levelStyle', 'tabs')
+    atom.config.set('organized.levelStyle', 'whitespace')
     editor = atom.workspace.getActiveTextEditor()
+    editor.softTabs = false
     editor.setText("* One\n")
     editor.setCursorBufferPosition([0, 1])
     textEditorView = atom.views.getView(editor)
@@ -76,8 +81,9 @@ describe "organized:indent", ->
     expect(editor.getText()).toBe("** One\n")
 
   it "should add spaces if the indent type is spaces", ->
-    atom.config.set('organized.levelStyle', 'spaces')
+    atom.config.set('organized.levelStyle', 'whitespace')
     editor = atom.workspace.getActiveTextEditor()
+    editor.setSoftTabs(true)
     editor.setText("* One\n")
     editor.setCursorBufferPosition([0, 1])
     textEditorView = atom.views.getView(editor)
@@ -85,9 +91,10 @@ describe "organized:indent", ->
     expect(editor.getText()).toBe("  * One\n")
 
   it "should obey the indentSpaces setting when indentType is spaces", ->
-    atom.config.set('organized.levelStyle', 'spaces')
-    atom.config.set('organized.indentSpaces', 5)
+    atom.config.set('organized.levelStyle', 'whitespace')
+    atom.config.set('editor.tabLength', 5)
     editor = atom.workspace.getActiveTextEditor()
+    editor.setSoftTabs(true)
     editor.setText("* One\n")
     editor.setCursorBufferPosition([0, 1])
     textEditorView = atom.views.getView(editor)
@@ -95,8 +102,9 @@ describe "organized:indent", ->
     expect(editor.getText()).toBe("     * One\n")
 
   it "should try to obey the levelStyle on the line, even if it disagrees with the default style", ->
-    atom.config.set('organized.levelStyle', 'spaces')
+    atom.config.set('organized.levelStyle', 'whitespace')
     editor = atom.workspace.getActiveTextEditor()
+    editor.setSoftTabs(true)
     editor.setText("** Two\n")
     editor.setCursorBufferPosition([0, 2])
     textEditorView = atom.views.getView(editor)

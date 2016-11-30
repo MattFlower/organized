@@ -24,7 +24,11 @@ class Star
   constructor: (currentRow, indentSpaces, defaultIndentType, editor = atom.workspace.getActiveTextEditor()) ->
     @latestRowSeen = currentRow
     @indentSpaces = indentSpaces
-    @defaultIndentType = defaultIndentType
+
+    if defaultIndentType is "whitespace"
+      @defaultIndentType = if editor.getSoftTabs() then "spaces" else "tabs"
+    else
+      @defaultIndentType = defaultIndentType
     @editor = editor
     @_processStar()
 
@@ -57,9 +61,9 @@ class Star
     if match
       @whitespaceCol = @starCol + match[2].length
       if match[4]
-        @startTextCol = @whitespaceCol + match[4].length + 1
+        @startTextCol = @whitespaceCol + match[4].length
       else
-        @startTextCol = @whitespaceCol + 1
+        @startTextCol = @whitespaceCol
       # Compute indent level
       levelCount = 0
       stars = match[2]
@@ -120,7 +124,7 @@ class Star
       #console.log("Row: #{@latestRowSeen}, Last: #{@editor.getLastBufferRow()}")
       row = Math.max(@latestRowSeen, @startRow + 1)
       line = @editor.lineTextForBufferRow(row)
-      while row <= @editor.getLastBufferRow() and !line.match(/(^$)|(\s*([\*\-\+\#]|\d+\.))/)
+      while row <= @editor.getLastBufferRow() and !line.match(/(^$)|(^\s*([\*\-\+\#]|\d+\.))/)
         #console.log("checked: '#{line}'")
         row += 1
         line = @editor.lineTextForBufferRow(row)

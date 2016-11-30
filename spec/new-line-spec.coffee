@@ -11,10 +11,11 @@ describe "Pressing ctrl-enter creates a new line indented to the text", ->
   parameterized = (title,cursorPos, finalCursorPos, before, after, newLevelStyle='whitespace') ->
     describe "organized:newLine", ->
 
-      it "should indent properly for "+title, ->
+      it "should indent properly for " + title, ->
         console.log("Testing\n#{before}\n<<becomes>>\n#{after}")
-        atom.config.set('organized.levelStyle', newLevelStyle)
+        atom.config.set("organized.levelStyle", if newLevelStyle is 'stacked' then 'stacked' else 'whitespace')
         editor = atom.workspace.getActiveTextEditor()
+        editor.softTabs = if newLevelStyle is 'tabs' then false else true
         editor.setText(before)
         editor.setCursorBufferPosition(cursorPos)
         textEditorView = atom.views.getView(editor)
@@ -42,3 +43,8 @@ describe "Pressing ctrl-enter creates a new line indented to the text", ->
   parameterized("level 2 star with tabs",[1,7], [2,3], "- One\n\t- Two", "- One\n\t- Two\n\t  ", 'tabs')
   parameterized("level 2 line with tabs",[1,7], [2,3], "+ One\n\t+ Two", "+ One\n\t+ Two\n\t  ", 'tabs')
   parameterized("level 2 plus with tabs",[1,7], [2,3], "* One\n\t* Two", "* One\n\t* Two\n\t  ", 'tabs')
+
+  parameterized("Level 1 number", [0,6], [1,3], "1. One", "1. One\n   ")
+  parameterized("Level 1 large number", [0,7], [1,4], "10. One", "10. One\n    ")
+
+  parameterized("Level 2 stacked star", [0,6], [1,3], "** Two", "** Two\n   ")

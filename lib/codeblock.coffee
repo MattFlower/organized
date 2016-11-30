@@ -24,9 +24,9 @@ class CodeBlock
       row -= 1
       line = editor.lineTextForBufferRow(row)
 
-    if match = /(?<=^\s*)(```|#\+BEGIN_SRC )(\S+)/.exec(line)
+    if match = /(^\s*)(```|#\+BEGIN_SRC )(\S+)/.exec(line)
       @startRow = row
-      @language = match[2]
+      @language = match[3]      
       @startCol = match.index
     else
       return

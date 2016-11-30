@@ -20,7 +20,9 @@
   * [COMPLETED] Support numbers as outline levels
   * [COMPLETED] Hitting enter at the beginning of a line shouldn't delete the content of the line
   * [COMPLETED] Highlighting multiple lines and indenting should indent all of the lines
-  * [TODO] Number indents need a new type of numbering on indent (7. becomes 7a. or something)
+  * [TODO] Support lettered indents
+  * [TODO] Support roman numeral indenting
+  * [TODO] Number indents need a new type of numbering on indent (7. becomes a. or something)
   * [TODO] If you have unindented and that unindent level has a different star type, adopt that star type
   * [COMPLETED] Underlines
     * [COMPLETED] Add grammar for underlined portion
