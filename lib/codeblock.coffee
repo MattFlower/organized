@@ -26,7 +26,7 @@ class CodeBlock
 
     if match = /(^\s*)(```|#\+BEGIN_SRC )(\S+)/.exec(line)
       @startRow = row
-      @language = match[3]      
+      @language = match[3]
       @startCol = match.index
     else
       return
@@ -75,6 +75,8 @@ class CodeBlock
       filename = tmp.tmpNameSync({dir: dirname}) + ".c"
     else if @language is 'cpp'
       filename = tmp.tmpNameSync({dir: dirname}) + ".cpp"
+    else if @language in ['go', 'golang']
+      filename = tmp.tmpNameSync({dir: dirname}) + ".go"
     else if @language is 'objc'
       filename = tmp.tmpNameSync({dir: dirname}) + ".m"
     else
@@ -140,6 +142,14 @@ class CodeBlock
             return null
           else
             return spawn(outputFile)
+
+      # I can't figure out how the 'or' syntax works in coffeescript, I'll just leave two copies for now
+      # because they are short.
+      when 'go' then return (pathToFile, resultBlock) ->
+        return spawn('go', ['run', pathToFile])
+
+      when 'golang' then return (pathToFile, resultBlock) ->
+        return spawn('go', ['run', pathToFile])
 
       when 'java' then return (pathToFile, resultBlock) ->
         if match = pathToFile.match(/^(.*)\/([^/]+).java$/)

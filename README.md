@@ -48,6 +48,8 @@ us get better.
 
 
 # What's New?
+* 0.5.6 (Released 2016-12-06)
+  * Added golang support for code blocks
 * 0.5.5 (Released 2016-11-30)
   * Minor documentation improvements
 * 0.5.4 (Released 2016-11-29)
@@ -75,12 +77,6 @@ us get better.
       2. Two
       3. Three
   * Fix table close command, which was erroring out due to a regex error.
-
-* 0.5.3 (Released 2016-11-18)
-  * Fix for Issue #7 - if a star is followed by a linebreak, that should be treated line a star too.
-  * Fix for Issue #8 - when indenting, try to detect indent type even if it is different from the default type
-  * Organized was not obeying the config setting for the number of spaces, it was only using the editor style.  Now
-    it should obey the config setting.
 
 Please see the [CHANGELOG.org](https://raw.githubusercontent.com/MattFlower/organized/master/CHANGELOG.org)
 for full details of recent changes.

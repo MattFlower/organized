@@ -171,7 +171,7 @@
     * [COMPLETED] C
     * [COMPLETED] Cpp
     * [TODO] C#
-    * [TODO] Golang
+    * [COMPLETED] Golang
     * [COMPLETED] Objective C
     * [COMPLETED] PHP
   * [TODO] Add support to include libraries and/or classpaths
