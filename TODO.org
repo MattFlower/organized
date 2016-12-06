@@ -51,8 +51,8 @@
 * [TODO] Add setting to autowrap at gutter
 * [TODO] Different coloring depending on the number of stars in a star block
 * [TODO] Properly support soft-tabs settings
-* [TODO] Support Atom's tab-length setting
-* [TODO] Support Atom's tab type settings (soft and hard)
+* [COMPLETED] Support Atom's tab-length setting
+* [COMPLETED] Support Atom's tab type settings (soft and hard)
 * [TODO] Support Atom's auto tab type setting
   * Perhaps look at the first 1000 lines of a file -- see if we have more
     tab intentations or whitespace indentations.
@@ -145,38 +145,39 @@
   * [TODO] Embedded UML Diagrams
     * [PlantUML](http://plantuml.com/)
   * [TODO] Embedded Gantt charts
-  * Source blocks
-    * [TODO] Source block code highlighting
-      * Start with languages that I use regularly
-        * [COMPLETED] CoffeeScript
-        * [COMPLETED] CSS
-        * [COMPLETED] Java
-        * [COMPLETED] Javascript
-        * [COMPLETED] Less
-        * [COMPLETED] Python
-        * [COMPLETED] Shell
-        * [COMPLETED] SQL
-      * Then let's add other popular languages
-        * [COMPLETED] C
-        * [COMPLETED] C#
-        * [COMPLETED] Golang
-        * [COMPLETED] Objective C
-        * [COMPLETED] PHP
-        * [COMPLETED] Ruby
-        * [COMPLETED] Perl
-      * This will depend a bit on how well those language grammars support embedding
-    * [COMPLETED] Execute commands in a source block (except Java)
-    * Add execution support for:
+* Source blocks
+  * [COMPLETED] Source block code highlighting
+    * Start with languages that I use regularly
+      * [COMPLETED] CoffeeScript
+      * [COMPLETED] CSS
       * [COMPLETED] Java
+      * [COMPLETED] Javascript
+      * [COMPLETED] Less
+      * [COMPLETED] Python
+      * [COMPLETED] Shell
+      * [COMPLETED] SQL
+    * Then let's add other popular languages
       * [COMPLETED] C
-      * [COMPLETED] Cpp
-      * [TODO] C#
-      * [TODO] Golang
+      * [COMPLETED] C#
+      * [COMPLETED] Golang
       * [COMPLETED] Objective C
       * [COMPLETED] PHP
-    * [TODO] Add support to include libraries and/or classpaths
-    * [COMPLETED] Errors aren't being handled gracefully in c or cpp
-    * [TODO] Weird error for Java -- talks about not being able to find class instead of code error
+      * [COMPLETED] Ruby
+      * [COMPLETED] Perl
+    * This will depend a bit on how well those language grammars support embedding
+  * [COMPLETED] Execute commands in a source block (except Java)
+  * Add execution support for:
+    * [COMPLETED] Java
+    * [COMPLETED] C
+    * [COMPLETED] Cpp
+    * [TODO] C#
+    * [TODO] Golang
+    * [COMPLETED] Objective C
+    * [COMPLETED] PHP
+  * [TODO] Add support to include libraries and/or classpaths
+  * [COMPLETED] Errors aren't being handled gracefully in c or cpp
+  * [TODO] Weird error for Java -- talks about not being able to find class instead of code error
+  * [TODO] Need process control to be able to stop a process
 * Search / Exploration
   * [TODO] Add command to search for a note
     * Maybe https://github.com/fergiemcdowall/search-index
