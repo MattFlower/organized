@@ -50,6 +50,7 @@ us get better.
 # What's New?
 * 0.5.6 (Released 2016-12-06)
   * Added golang support for code blocks
+  * Fixed coloring for stars.
 * 0.5.5 (Released 2016-11-30)
   * Minor documentation improvements
 * 0.5.4 (Released 2016-11-29)
