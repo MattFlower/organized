@@ -1,5 +1,6 @@
 TextSearch = require('rx-text-search')
 fs = require('fs')
+path = require('path')
 
 class Todo
   file: null
@@ -18,6 +19,7 @@ class Todo
     skipFiles = skipFiles.concat(['.git', '.atom'])
     skipFiles = (skipFile for skipFile in skipFiles when skipFile.trim() isnt '')
 
+    console.log("Project paths: #{directories}")
     @_findInDirectories directories, skipFiles, [], onComplete
 
   @_findInDirectories: (directories, skipFiles, todos, onComplete) ->
@@ -25,30 +27,30 @@ class Todo
       onComplete(todos)
     else
       if typeof directories is 'string'
-        path = directories
+        searchPath = directories
         directories = []
       else
-        path = directories.pop()
+        searchPath = directories.pop()
 
-      fs.lstat path, (err, pathStat) =>
+      fs.lstat searchPath, (err, pathStat) =>
         if err
-          error = "Error finding todos in  " + path + ".  Please check that directory exists and is writable."
+          error = "Error finding todos in  " + searchPath + ".  Please check that directory exists and is writable."
           atom.notifications.addError(error)
           @_findInDirectories(directories, skipFiles, todos, onComplete)
         else if pathStat.isDirectory()
-          console.log("Finding TODO's in #{path}")
-          TextSearch.findAsPromise("(\\[TODO\\].*)$", "**/*.org", {cwd: path, matchBase: true})
+          console.log("Finding TODO's in #{searchPath}")
+          TextSearch.findAsPromise("(\\[TODO\\].*)$", "**/*.org", {cwd: searchPath, matchBase: true})
             .then (results) =>
-              @_processFile(path, results, todos, skipFiles)
+              @_processFile(searchPath, results, todos, skipFiles)
               @_findInDirectories(directories, skipFiles, todos, onComplete)
         else if pathStat.isFile()
-          console.log("Finding TODO's in file #{path}")
-          TextSearch.findAsPromise("(\\[TODO\\].*)$", path, {matchBase: true})
+          console.log("Finding TODO's in file #{searchPath}")
+          TextSearch.findAsPromise("(\\[TODO\\].*)$", searchPath, {matchBase: true})
             .then (results) =>
-              @_processFile(path, results, todos, skipFiles)
+              @_processFile(searchPath, results, todos, skipFiles)
               @_findInDirectories(directories, skipFiles, todos, onComplete)
 
-  @_processFile: (path, results, todos, skipFiles) ->
+  @_processFile: (searchPath, results, todos, skipFiles) ->
     for result in results
       skip = false
       for partial in skipFiles
@@ -65,7 +67,11 @@ class Todo
           text = match[2]
           column = match.index
 
-      todos.push(new Todo(path + "/" + result.file, result.line, column, text))
+      referencedFile = result.file
+      if not path.isAbsolute(result.file)
+        referencedFile = path.join(searchPath, result.file)
+
+      todos.push(new Todo(referencedFile, result.line, column, text))
 
 
 module.exports = Todo

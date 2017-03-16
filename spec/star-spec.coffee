@@ -23,6 +23,7 @@ describe "When stars are parsed", ->
     expect(star.endRow).toBe(0)
     expect(star.starCol).toBe(0)
     expect(star.nextNumber).toBe(2)
+    expect(star.startTextCol).toBe(3)
 
   it "finds a numbered star at level 1 correctly", ->
     editor = atom.workspace.getActiveTextEditor()
@@ -38,6 +39,7 @@ describe "When stars are parsed", ->
     expect(star.endRow).toBe(1)
     expect(star.starCol).toBe(2)
     expect(star.nextNumber).toBe(3)
+    expect(star.startTextCol).toBe(5)
 
   it "finds a numbered star at level 2 correctly", ->
     editor = atom.workspace.getActiveTextEditor()
@@ -53,6 +55,7 @@ describe "When stars are parsed", ->
     expect(star.endRow).toBe(2)
     expect(star.starCol).toBe(4)
     expect(star.nextNumber).toBe(4)
+    expect(star.startTextCol).toBe(7)
 
   it "finds a star at level 0 correctly", ->
     editor = atom.workspace.getActiveTextEditor()
@@ -67,6 +70,7 @@ describe "When stars are parsed", ->
     expect(star.startRow).toBe(0)
     expect(star.endRow).toBe(0)
     expect(star.starCol).toBe(0)
+    expect(star.startTextCol).toBe(2)
 
   it "finds a star at level 1 correctly", ->
     editor = atom.workspace.getActiveTextEditor()
@@ -81,6 +85,7 @@ describe "When stars are parsed", ->
     expect(star.startRow).toBe(1)
     expect(star.endRow).toBe(1)
     expect(star.starCol).toBe(2)
+    expect(star.startTextCol).toBe(4)
 
   it "finds a star at level 2 correctly", ->
     editor = atom.workspace.getActiveTextEditor()
@@ -95,6 +100,24 @@ describe "When stars are parsed", ->
     expect(star.startRow).toBe(2)
     expect(star.endRow).toBe(2)
     expect(star.starCol).toBe(4)
+    expect(star.startTextCol).toBe(6)
+
+  it "find a level 0 star with a [TODO] correctly", ->
+    console.log("asdf in")
+    editor = atom.workspace.getActiveTextEditor()
+    editor.setText("* [TODO] One")
+    editor.setCursorBufferPosition([0, 0])
+
+    star = new Star(0, 2)
+    console.log(star)
+    expect(star.starType).toBe('*')
+    expect(star.indentLevel).toBe(0)
+    expect(star.indentType).toBe('none')
+    expect(star.startRow).toBe(0)
+    expect(star.endRow).toBe(0)
+    expect(star.starCol).toBe(0)
+    expect(star.startTextCol).toBe(9)
+    console.log("asdf out")
 
   it "finds a minus at level 0 correctly", ->
     editor = atom.workspace.getActiveTextEditor()
@@ -109,6 +132,7 @@ describe "When stars are parsed", ->
     expect(star.startRow).toBe(0)
     expect(star.endRow).toBe(0)
     expect(star.starCol).toBe(0)
+    expect(star.startTextCol).toBe(2)
 
   it "finds a minus at level 1 correctly", ->
     editor = atom.workspace.getActiveTextEditor()
@@ -123,6 +147,7 @@ describe "When stars are parsed", ->
     expect(star.startRow).toBe(1)
     expect(star.endRow).toBe(1)
     expect(star.starCol).toBe(2)
+    expect(star.startTextCol).toBe(4)
 
   it "finds a minus at level 2 correctly", ->
     editor = atom.workspace.getActiveTextEditor()
@@ -137,3 +162,4 @@ describe "When stars are parsed", ->
     expect(star.startRow).toBe(2)
     expect(star.endRow).toBe(2)
     expect(star.starCol).toBe(4)
+    expect(star.startTextCol).toBe(6)

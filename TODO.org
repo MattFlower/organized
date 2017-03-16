@@ -22,7 +22,7 @@
   * [COMPLETED] Highlighting multiple lines and indenting should indent all of the lines
   * [TODO] Support lettered indents
   * [TODO] Support roman numeral indenting
-  * [TODO] Number indents need a new type of numbering on indent (7. becomes a. or something)
+  * [TODO] Number indents need a new type of numbering on indent (7. becomes a. or 7.1 or something)
   * [TODO] If you have unindented and that unindent level has a different star type, adopt that star type
   * [COMPLETED] Underlines
     * [COMPLETED] Add grammar for underlined portion
@@ -116,6 +116,7 @@
   * [TODO] Handle enter key inside of a table column
 * Schedules
   * [COMPLETED] Support "SCHEDULED" tags inside of organized files
+  * [TODO] Add Agenda pane to sidebar
   * Timestamps
     * [TODO] Syntax highlighting for timestamps
     * [TODO] Key command to insert a timestamp
@@ -123,14 +124,14 @@
     * [TODO] Show timestamps in agenda
   * Deadlines
     * [TODO] Syntax highlighting for deadlines
-  * [TODO] Add key command to add a schedule date
+  * [COMPLETED] Add key command to add a schedule date
   * [TODO] Create agenda view to show what's coming up
     * Maybe this should be accordian style with both todos and agenda on a
       single page
   * [TODO] Support creating or changing a meeting in your calendar according to
     changes in an organized file
   * [TODO] Support ISO-8601 style dates
-  * [TODO] Support Org-mode style dates
+  * [COMPLETED] Support Org-mode style dates
 * Quick capture
   * [TODO] Add quick-capture keystroke and dialog box
     * [TODO] Collect text of todo

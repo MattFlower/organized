@@ -9,6 +9,7 @@ class Star
   @endRow: -1
   @starCol: -1
   @whitespaceCol: -1
+  @startTodoCol: -1
   @startTextCol: -1
   @starType: null
   @indentLevel: 0
@@ -54,16 +55,17 @@ class Star
     #console.log("Found star on row #{@startRow} and col #{@starCol}")
 
     line = @editor.lineTextForBufferRow(@startRow)
-    match = line.match(/^(\s*)([\*\-\+]+|(\d+)\.)([ ]|$)(\[?TODO\]? |\[?COMPLETED\]? )?/)
+    match = line.match(/^(\s*)([\*\-\+]+|(\d+)\.)([ ]|$)(\[TODO\] |\[COMPLETED\] )?/)
 
     #console.log(match)
 
     if match
       @whitespaceCol = @starCol + match[2].length
-      if match[4]
-        @startTextCol = @whitespaceCol + match[4].length
+      @startTodoCol = @whitespaceCol + 1
+      if match[5]
+        @startTextCol = @startTodoCol + match[5].length
       else
-        @startTextCol = @whitespaceCol
+        @startTextCol = @startTodoCol
       # Compute indent level
       levelCount = 0
       stars = match[2]

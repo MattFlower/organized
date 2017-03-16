@@ -18,10 +18,11 @@ us get better.
 * Support todo items
   * Highlighting of [TODO]/[COMPLETED] tags
   * Ctrl-Shift-T for toggling todo items from [TODO] to [COMPLETED] to blank.
+  * Highlighting for CLOSED and SCHEDULED tags
 * Code blocks
   * Syntax highlighting for code blocks in c, coffeescript, c++, css, golang, html, java,
-    javascript, less, objective c, objective c++, python, php, ruby, shell scripts (generic), and sql.
-  * Execution for c, c++, coffeescript, java, javascript, objective-c, perl, php, python, and shell
+    javascript, less, objective c, objective c++, python, php, r, ruby, shell scripts (generic), and sql.
+  * Execution for c, c++, coffeescript, golang, java, javascript, objective-c, perl, php, python, r, and shell
     scripts.  Put your cursor in your code block and press [Ctrl-` x] to execute code.  Output from
     code will appear in a notification by default, or create resultblock:
 
@@ -31,7 +32,7 @@ us get better.
     ~~~~
 
     and the output will appear there.
-  * Early support for code execution in C, C++, Java, and Objective-C.  You cannot set any libraries in
+  * Early support for code execution in C, C++, Java, Golang, R, and Objective-C.  You cannot set any libraries in
     those languages yet, which may reduce their effectively a bit.
   * Results can be displayed as an information popup or as a separate section in
     your notes for future reference.
@@ -48,15 +49,18 @@ us get better.
 
 
 # What's New?
+* 0.5.8 (Released 2017-03-16)
+  * Fixed problem where completing a todo item from the sidebar would leave the TODO tag in place.
+  * Fixed problem where clicking on todo items in sidebar wouldn't bring you to the correct file if the file came
+    from the search path.
 * 0.5.7 (Released 2017-03-15)
   * Fixed case where pressing enter on a non-star-line would cause an exception if the next line had a star.
   * Fixed error leading to an empty sidebar when a predefined search file or directory does not exist.
   * Added support for R-language for code blocks
   * Fix deprecation warnings due to removal of Shadow DOM
   * Fixed color coding for CLOSED and SCHEDULED tags.  (They haven't been working for quite a while.)
-* 0.5.6 (Released 2016-12-06)
   * Added golang support for code blocks
-  * Fixed coloring for stars.
+  * Fix coloring for stars
 
 Please see the [CHANGELOG.org](https://raw.githubusercontent.com/MattFlower/organized/master/CHANGELOG.org)
 for full details of recent changes.

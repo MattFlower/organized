@@ -115,6 +115,7 @@ module.exports =
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:makeLink': (event) => @makeLink(event) }))
 
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:refreshTodos': (event) => @sidebar.refreshTodos() }))
+    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:scheduleItem': (event) => @scheduleItem(event) }))
 
     @subscriptions.add atom.config.observe 'organized.autoCreateStarsOnEnter', (newValue) => @createStarsOnEnter = newValue
     @subscriptions.add atom.config.observe 'organized.levelStyle', (newValue) => @levelStyle = newValue
@@ -276,7 +277,7 @@ module.exports =
       if star = @_starInfo()
         editor.transact 1000, () =>
           editor.insertNewline()
-          spaceCount = star.startTextCol - star.starCol
+          spaceCount = star.startTodoCol - star.starCol
           indent = @_levelWhitespace(star, editor).repeat(star.indentLevel) + " ".repeat(spaceCount)
           # console.log("spaceCount: #{spaceCount}, indentLevel: #{star.indentLevel}, levelWhiteSpace='#{@_levelWhitespace(star, editor)}'")
           newPosition = editor.getCursorBufferPosition()
@@ -441,6 +442,26 @@ module.exports =
             charsToDelete = if startChars[3] is ' ' then 4 else 3
             editor.setTextInBufferRange([[position.row, 0], [position.row, charsToDelete]], '')
 
+  scheduleItem: (event) ->
+    if editor = atom.workspace.getActiveTextEditor()
+      visited = {}
+      d = new Date()
+      df = new Intl.DateTimeFormat('en-US', {weekday: 'short'})
+      dow = df.format(d)
+      @_withAllSelectedLines editor, (position, selection) =>
+          if visited[position.row]
+            return
+
+          if star = @_starInfo(editor, position)
+            for i in [star.startRow..star.endRow]
+              visited[i] = true
+
+            editor.transact 1000, () =>
+              originalPosition = editor.getCursorBufferPosition()
+              newText = " ".repeat(star.startTodoCol) + "SCHEDULED: <" + @_getISO8601Date(d) + " " + dow + ">" + "\n"
+              console.log("New Text: #{newText}")
+              editor.setTextInBufferRange([[star.startRow+1, 0], [star.startRow+1, 0]], newText)
+
   setTodo: (event) ->
     if editor = atom.workspace.getActiveTextEditor()
       visited = {}
@@ -456,7 +477,7 @@ module.exports =
             visited[i] = true
 
           line = editor.lineTextForBufferRow(star.startRow)
-          editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.startTextCol - 1]], " [TODO] ")
+          editor.setTextInBufferRange([[star.startRow, star.startTodoCol], [star.startRow, star.startTextCol]], " [TODO] ")
 
   setTodoCompleted: (event) ->
     if editor = atom.workspace.getActiveTextEditor()
@@ -473,7 +494,7 @@ module.exports =
             visited[i] = true
 
           line = editor.lineTextForBufferRow(star.startRow)
-          editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.startTextCol - 1]], " [COMPLETED] ")
+          editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.startTextCol]], " [COMPLETED] ")
 
   toggleTodo: (event) ->
     if editor = atom.workspace.getActiveTextEditor()
@@ -491,13 +512,11 @@ module.exports =
 
           line = editor.lineTextForBufferRow(star.startRow)
           if (line.match(/\s*([\-\+\*]+|\d+.) \[TODO\] /))
-            deleteStart = line.indexOf("[TODO] ")
-            editor.setTextInBufferRange([[star.startRow, deleteStart], [star.startRow, deleteStart+7]], "[COMPLETED] ")
+            editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.startTextCol]], " [COMPLETED] ")
           else if (line.match(/\s*([\-\+\*]+|\d+.) \[COMPLETED\] /))
-            deleteStart = line.indexOf("[COMPLETED] ")
-            editor.setTextInBufferRange([[star.startRow, deleteStart], [star.startRow, deleteStart+12]], "")
+            editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.startTextCol]], " ")
           else
-            editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.whitespaceCol]], " [TODO]")
+            editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.startTextCol]], " [TODO] ")
 
   toggleUnderline: (event) ->
     if editor = atom.workspace.getActiveTextEditor()
