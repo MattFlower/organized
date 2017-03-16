@@ -30,19 +30,23 @@ class Todo
       else
         path = directories.pop()
 
-      pathStat = fs.lstatSync(path)
-      if pathStat.isDirectory()
-        console.log("Finding TODO's in #{path}")
-        TextSearch.findAsPromise("(\\[TODO\\].*)$", "**/*.org", {cwd: path, matchBase: true})
-          .then (results) =>
-            @_processFile(path, results, todos, skipFiles)
-            @_findInDirectories(directories, skipFiles, todos, onComplete)
-      else if pathStat.isFile()
-        console.log("Finding TODO's in file #{path}")
-        TextSearch.findAsPromise("(\\[TODO\\].*)$", path, {matchBase: true})
-          .then (results) =>
-            @_processFile(path, results, todos, skipFiles)
-            @_findInDirectories(directories, skipFiles, todos, onComplete)
+      fs.lstat path, (err, pathStat) =>
+        if err
+          error = "Error finding todos in  " + path + ".  Please check that directory exists and is writable."
+          atom.notifications.addError(error)
+          @_findInDirectories(directories, skipFiles, todos, onComplete)
+        else if pathStat.isDirectory()
+          console.log("Finding TODO's in #{path}")
+          TextSearch.findAsPromise("(\\[TODO\\].*)$", "**/*.org", {cwd: path, matchBase: true})
+            .then (results) =>
+              @_processFile(path, results, todos, skipFiles)
+              @_findInDirectories(directories, skipFiles, todos, onComplete)
+        else if pathStat.isFile()
+          console.log("Finding TODO's in file #{path}")
+          TextSearch.findAsPromise("(\\[TODO\\].*)$", path, {matchBase: true})
+            .then (results) =>
+              @_processFile(path, results, todos, skipFiles)
+              @_findInDirectories(directories, skipFiles, todos, onComplete)
 
   @_processFile: (path, results, todos, skipFiles) ->
     for result in results

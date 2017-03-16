@@ -10,6 +10,7 @@
   # Keystrokes starting with ctrl-i are general purpose
   'ctrl-i t': 'organized:insertDateTime'
   'ctrl-i d': 'organized:insertDate'
+  'ctrl-i l': 'organized:makeLink'
   # Keystrokes starting with ctrl-- refer to tables
   'ctrl-- c': 'organized:closeTable'
   'ctrl-- o': 'organized:openTable'

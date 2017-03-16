@@ -1,4 +1,5 @@
 @import "ui-variables";
+@import "syntax-variables";
 
 atom-panel {
   .organized-sidebar-resize-handle {
@@ -85,91 +86,90 @@ atom-panel {
 }
 
 //Custom styling for organized keywords.
-atom-text-editor, atom-text-editor::shadow {
-  .organized {
-    .header.level1.symbol, .header.level1.line {
+atom-text-editor {
+  .syntax--organized {
+    .syntax--header.syntax--level1.syntax--symbol, .syntax--header.syntax--level1.syntax--line {
       font-weight: bolder;
       color: @text-color-selected;
     }
 
-    .header.level2.symbol, .header.level2.line {
+    .syntax--header.syntax--level2.syntax--symbol, .syntax--header.syntax--level2.syntax--line {
       font-weight: underline;
       color: @text-color-selected;
     }
 
-    .header.level3.symbol, .header.level3.line {
+    .syntax--header.syntax--level3.syntax--symbol, .syntax--header.syntax--level3.syntax--line {
       color: @text-color-selected;
     }
 
-    .starline {
-      .symbol {
+    .syntax--starline {
+      .syntax--symbol {
         color: @text-color-selected
       }
 
-      .todo {
+      .syntax--todo {
         color: @text-color-info;
       }
 
-      .completed {
+      .syntax--completed {
         color: @text-color-subtle
       }
 
-      .tags {
+      .syntax--tags {
         color: @text-color-info;
       }
     }
 
-    .othertext.organized {
-      .scheduled {
-        .tag {
-          color: @text-color-highlight;
-        }
-        .colon {
-        }
-        .begintimeblock {
-          color: @text-color-highlight;
-        }
-        .timeblock {
-          color: @text-color-subtle
-        }
-        .endtimeblock {
-          color: @text-color-highlight;
-        }
+    .syntax--scheduled, .syntax--closed {
+      .syntax--tag {
+        color: @text-color-highlight;
       }
-      .code.block.tag.completed {
-        color: red;
+      .syntax--colon {
       }
-      .code.block.language.completed {
-        color: red;
+      .syntax--begintimeblock {
+        color: @text-color-highlight;
       }
-    }
-
-    .link.organized {
-      .link.brackets.organized, .link.parens.organized {
-        color: @text-color;
-      }
-      .link.url.organized {
+      .syntax--timeblock {
+        color: @text-color-subtle;
         text-decoration: underline;
       }
-      .link.title.organized {
+      .syntax--endtimeblock {
+        color: @text-color-highlight;
+      }
+    }
+    .syntax--code.syntax--block.syntax--tag.syntax--completed {
+      color: red;
+    }
+    .syntax--code.syntax--block.syntax--language.syntax--completed {
+      color: red;
+    }
+
+    .syntax--link.syntax--organized {
+      .syntax--link.syntax--brackets.syntax--organized, .syntax--link.syntax--parens.syntax--organized {
+        color: @text-color;
+      }
+      .syntax--link.syntax--url.syntax--organized {
+        text-decoration: underline;
+      }
+      .syntax--link.syntax--title.syntax--organized {
         color: @text-color-subtle;
       }
     }
 
-    .bold.underlined.text.organized {
+    .syntax--bold.syntax--underlined.syntax--text.syntax--organized {
       font-weight: bold;
       text-decoration: underline;
     }
 
-    .underlined.text.organized {
+    .syntax--underlined.syntax--text.syntax--organized {
       text-decoration: underline;
     }
 
-    .bold.text.organized {
+    .syntax--bold.syntax--text.syntax--organized {
       font-weight: bold;
     }
 
-    .border.table.organized {
+    .syntax--border.syntax--table.syntax--organized {
       color: @text-color-selected;
       font-weight: bold;
     }

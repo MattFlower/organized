@@ -54,7 +54,7 @@ class Star
     #console.log("Found star on row #{@startRow} and col #{@starCol}")
 
     line = @editor.lineTextForBufferRow(@startRow)
-    match = line.match(/^(\s*)([\*\-\+]+|(\d+)\.)([ ]|$)(\[TODO\] |\[COMPLETED\] )?/)
+    match = line.match(/^(\s*)([\*\-\+]+|(\d+)\.)([ ]|$)(\[?TODO\]? |\[?COMPLETED\]? )?/)
 
     #console.log(match)
 

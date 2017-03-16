@@ -329,7 +329,7 @@ module.exports =
         oldStar = star
         if oldPosition.row+1 <= editor.getLastBufferRow()
           if nextStar = @_starInfo(editor, new Point(oldPosition.row+1, oldPosition.col))
-            if nextStar.indentLevel > star.indentLevel
+            if not star or nextStar.indentLevel > star.indentLevel
               star = nextStar
 
         if star and star.indentLevel >= 0

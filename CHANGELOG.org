@@ -1,3 +1,10 @@
+* 0.5.7 (Released 2017-03-15)
+  * Fixed case where pressing enter on a non-star-line would cause an exception if the next line had a star.
+  * Fixed error leading to an empty sidebar when a predefined search file or directory does not exist.
+  * Added support for R-language for code blocks
+  * Fix deprecation warnings due to removal of Shadow DOM
+  * Fixed color coding for CLOSED and SCHEDULED tags.  (They haven't been working for quite a while.)
+
 * 0.5.6 (Released 2016-12-06)
   * Added golang support for code blocks
   * Fix coloring for stars

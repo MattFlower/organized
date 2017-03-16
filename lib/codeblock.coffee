@@ -193,6 +193,9 @@ class CodeBlock
       when 'python' then return (pathToFile, resultBlock) ->
           return spawn('python', [pathToFile])
 
+      when 'r' then return (pathToFile, resultBlock) ->
+          return spawn('Rscript', [pathToFile])
+
       when 'shell' then return (pathToFile, resultBlock) ->
         return spawn('sh', [pathToFile])
 

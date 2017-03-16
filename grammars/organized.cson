@@ -144,6 +144,21 @@ repository:
             name: 'endtimeblock'
       },
       {
+        name: 'closed.meta'
+        match: "\s*(CLOSED)(:) (\\[)([^\\>]+)(\\])"
+        captures:
+          1:
+            name: 'tag'
+          2:
+            name: 'colon'
+          3:
+            name: 'begintimeblock'
+          4:
+            name: 'timeblock'
+          5:
+            name: 'endtimeblock'
+      },
+      {
         name: 'c.code.block.organized'
         begin: '(```|#\\+BEGIN_SRC )(c)(\s|$)'
         captures:
@@ -337,6 +352,21 @@ repository:
         patterns: [
           { include: '#embedded-code' }
           { include: 'source.php' }
+        ]
+        end: '```|#\\+END_SRC'
+      },
+      {
+        name: 'r.code.block.organized'
+        begin: '(```|#\\+BEGIN_SRC )(r|R)(\s|$)'
+        captures:
+          1:
+            name: 'code.block.tag.organized'
+          2:
+            name: 'code.block.language.organized'
+        contentName: "source.r"
+        patterns: [
+          { include: '#embedded-code' }
+          { include: 'source.r' }
         ]
         end: '```|#\\+END_SRC'
       },

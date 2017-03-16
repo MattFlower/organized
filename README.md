@@ -48,36 +48,15 @@ us get better.
 
 
 # What's New?
+* 0.5.7 (Released 2017-03-15)
+  * Fixed case where pressing enter on a non-star-line would cause an exception if the next line had a star.
+  * Fixed error leading to an empty sidebar when a predefined search file or directory does not exist.
+  * Added support for R-language for code blocks
+  * Fix deprecation warnings due to removal of Shadow DOM
+  * Fixed color coding for CLOSED and SCHEDULED tags.  (They haven't been working for quite a while.)
 * 0.5.6 (Released 2016-12-06)
   * Added golang support for code blocks
   * Fixed coloring for stars.
-* 0.5.5 (Released 2016-11-30)
-  * Minor documentation improvements
-* 0.5.4 (Released 2016-11-29)
-  * Fixed ctrl-return indenting if you are making outlines or stacked symbols.  Previously this would always
-    indent two spaces, even though that wasn't right for those cases.
-  * Rethought the "editor.indentType" setting a bit.  Rather than specifying tabs or spaces directly, now
-    we'll use your editors normal setting (editor->tabType) instead.  This should make things work more
-    correctly by default for people that use tabs by default.
-  * As part of this rethinking, removed indentSpaces setting in favor of editor.tabLength setting.
-    If you were using this setting and wanted it to be separate from your standard editor.tabLength settings, atom
-    has supported it for some time now.  You can access the setting on the Organized settings page
-    (Atom Menu -> Preferences -> Packages -> Organized -> Settings) and scroll down until you find editor.tabLength.
-
-    If you prefer, you can also edit your init file (Atom Menu -> Config...) and add a new section:
-    ".organized.source":
-      editor:
-        tabLength: 42
-  * Fixed bug with indenting -- if a bullet character (-,+,*) were embedded in the middle of a
-    line, we would not indent that line along with the rest of your bullet.
-  * Modified the searchDirectories setting to allow setting files in addition to directories.
-  * Fixed bug preventing you from hitting return from the beginning of the second line of a section like this:
-    #Section
-    Some list:
-      1. One
-      2. Two
-      3. Three
-  * Fix table close command, which was erroring out due to a regex error.
 
 Please see the [CHANGELOG.org](https://raw.githubusercontent.com/MattFlower/organized/master/CHANGELOG.org)
 for full details of recent changes.
