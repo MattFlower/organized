@@ -8,6 +8,7 @@
   'enter': 'organized:newStarLine'
   # 'enter': 'organized:newTableRow'
   # Keystrokes starting with ctrl-i are general purpose
+  'ctrl-i a': 'organized:archiveSubtree'
   'ctrl-i t': 'organized:insertDateTime'
   'ctrl-i d': 'organized:insertDate'
   'ctrl-i l': 'organized:makeLink'

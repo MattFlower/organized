@@ -17,6 +17,72 @@ atom-panel {
     width: 400px;
     min-width: 200px;
 
+    div.organized-sidebar-agenda {
+      div.organized-sidebar-agenda-header {
+        position: relative;
+        border-radius: 24px;
+        background-color: @pane-item-background-color;
+        overflow: hidden;
+
+        span.agenda-title-icon {
+          position: relative;
+          float: left;
+          top: 12px;
+          margin-right: 8px;
+          margin-left: 8px;
+        }
+
+        span.agenda-title {
+          top: 10px;
+          font-size: 16px;
+          position: relative;
+          float: left;
+        }
+
+        span.refresh-button {
+          position: relative;
+          float: right;
+          font-size: 24pt;
+          //This is clearly a hack
+          top: -8px;
+          height: 40px;
+        }
+
+
+        span.close-button {
+          position: relative;
+          float: right;
+          font-size: 24pt;
+          //This is clearly a hack
+          top: -8px;
+          height: 40px;
+        }
+      }
+      div.organized-sidebar-agenda-items {
+        ul.organized-sidebar-agenda-list {
+          li.date-separator-item:first-child {
+            margin-top: 0;
+          }
+
+          li.date-separator-item {
+            margin-top: 10px;
+            span.date-separator-title {
+              font-size: 14px;
+            }
+          }
+
+          li.organized-sidebar-agenda-item {
+            a.organized-sidebar-agenda-item-title {
+            }
+
+            a.organized-sidebar-agenda-item-time {
+              margin-right: 10px;
+            }
+          }
+        }
+      }
+    }
+
     div.organized-sidebar-todo {
       div.organized-sidebar-todo-header {
         position: relative;
@@ -60,8 +126,29 @@ atom-panel {
       }
     }
 
+    div.organized-sidebar-agenda-items {
+      height: calc(30vh);
+      overflow-y: scroll;
+      ul.organized-sidebar-agenda-list {
+        margin-top: 8px;
+
+        padding-left: 24px;
+        font-size: 12px;
+        list-style: none;
+
+        //Attempt to have ellipses on overflow text, don't seem to be
+        //working.
+        width: calc(100vw);
+        display:block;
+        white-space: nowrap;
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
     div.organized-sidebar-todo-items {
-      height: calc(100vh-10px);
+      height: calc(100vh);
+      overflow-y: scroll;
       ul.organized-sidebar-todo-list {
         margin-top: 8px;
 
@@ -70,7 +157,6 @@ atom-panel {
         // bit of a kludge in my opinion.
         padding-left: 24px;
         font-size: 12px;
-        overflow-y: scroll;
         list-style: none;
 
         //Attempt to have ellipses on overflow text, don't seem to be
@@ -136,6 +222,13 @@ atom-text-editor {
       .syntax--endtimeblock {
         color: @text-color-highlight;
       }
+    }
+
+    .syntax--properties.syntax--organized.syntax--blocktag {
+      color: @text-color-info
+    }
+    .syntax--property.syntax--name {
+      color: @text-color-info
     }
     .syntax--code.syntax--block.syntax--tag.syntax--completed {
       color: red;

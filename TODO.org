@@ -1,37 +1,12 @@
-* [COMPLETED] Convert to CoffeeScript
-* [COMPLETED] Figure out why I have to toggle to get keybindings to work
-  * It's because I was using activationCommand.  If it's absent, atom will
-    activate your package by default.
-  * [COMPLETED] Request a change to the flight manual to point this out more explicitly
-* [COMPLETED] Remove toggle, it's not being used.
-* [COMPLETED] Extract the star finding logic -- it's going to be reused somewhat heavily
-* Initial commit
-  * [COMPLETED] Create github repository for organized project
-  * [COMPLETED] Set version number in project.json
-* [COMPLETED] Figure out why styles do not work consistently
-* Page Organization
-  * [COMPLETED] Add support for atx/markdown-style headings (#, ##, ###, etc)
+* [TODO] Release 0.6.0
+  SCHEDULED: <2017-03-17 Fri>
+* [TODO] Get to 1.0
+  SCHEDULED: <2018-06-01 Fri>
 * Outlining
-  * [COMPLETED] Implement indent
-  * [COMPLETED] Implement unindent
-  * [COMPLETED] Figure out how to group undos for indent and unindent
-  * [COMPLETED] Setting of whether you want different depth levels to be shown
-    as multiple stars or as whitespace and stars
-  * [COMPLETED] Support numbers as outline levels
-  * [COMPLETED] Hitting enter at the beginning of a line shouldn't delete the content of the line
-  * [COMPLETED] Highlighting multiple lines and indenting should indent all of the lines
   * [TODO] Support lettered indents
   * [TODO] Support roman numeral indenting
   * [TODO] Number indents need a new type of numbering on indent (7. becomes a. or 7.1 or something)
   * [TODO] If you have unindented and that unindent level has a different star type, adopt that star type
-  * [COMPLETED] Underlines
-    * [COMPLETED] Add grammar for underlined portion
-    * [COMPLETED] Add styles for underlines
-  * [COMPLETED] bold
-    * [COMPLETED] Add grammar for bold
-    * [COMPLETED] Add style for bold
-  * [COMPLETED] If you newline after a level 1 and there are already indented bullets underneath, the new line
-    should be at that new level of depth
 * Movement - keystrokes to move around
   * [TODO] Next/Prev bullet at same level
   * [TODO] Up to next highest level
@@ -40,19 +15,11 @@
   * [TODO] Add folding to menus to raise visibility
   * [TODO] Start supporting folding for '**' style stars (space-indented ones already work)
 * Improve return key Support
-  * [COMPLETED] If you press ctrl-return you should have a star at the same level on
-    a new line.
-  * [COMPLETED] If you press return you should get a new line without a star
-  * [COMPLETED] Make this behavior configurable so users can turn it off if they
-    don't like it.
-  * [COMPLETED] If you hit enter on a level created with multiple stars, the new line should also be multi-star
   * [TODO] Figure out why I can't bind shift-enter correctly.
     * This might be due to peculiarity in chromium css specificity.
 * [TODO] Add setting to autowrap at gutter
 * [TODO] Different coloring depending on the number of stars in a star block
 * [TODO] Properly support soft-tabs settings
-* [COMPLETED] Support Atom's tab-length setting
-* [COMPLETED] Support Atom's tab type settings (soft and hard)
 * [TODO] Support Atom's auto tab type setting
   * Perhaps look at the first 1000 lines of a file -- see if we have more
     tab intentations or whitespace indentations.
@@ -62,51 +29,31 @@
 * [TODO] Auto-tab to correct level on paste
 * [TODO] Command to transform existing indent as all tabs or all spaces.
 * Links
-  * [COMPLETED] Highlighting
   * [TODO] Link following for Urls
   * [TODO] Support org-mode style links
-  * [COMPLETED] Support [markdown-style](https://daringfireball.net/projects/markdown/syntax#link) links
 * Todos
-  * [COMPLETED] Key command to toggle "TODO", "CLOSED", remove todo
   * [TODO] Option to mark closed todo's with current time
   * [TODO] Priorities for TODO items
   * [TODO] Key-command to increase / decrease priority of items
-  * [COMPLETED] Support multiple cursors for TODO toggling.
   * [TODO] Command to remove completed todos from current file
   * Todos for SidePanel
-    * [COMPLETED] UI for all TODO's in directory
-    * [COMPLETED] Configuration to show what directories we'll scan for TODO items
-    * [COMPLETED] Click-through from TODO to source code location
-    * [COMPLETED] Checkboxes on the todo item to automatically mark it as completed
     * [TODO] Hierarchical todos
     * [TODO] Filter Todo by tag
     * [TODO] Option to show tags for todos
     * [TODO] Truncate long todo names
-    * [COMPLETED] Styling for todo
-    * [COMPLETED] Refresh button for todo items
-    * [COMPLETED] Automatically refresh todo items
-    * [COMPLETED] Resizing for todo panel
-    * [COMPLETED] Don't select text while resizing
   * [TODO] Setting to auto-hide completed todo items
   * Figure out how to model the storage of TODO items
     * We should probably model parent-child relationship (parent outline node is a todo and it has children
       that also have todo items).
       * This would allow us to show todo items in search results with the children rolled up by default.  If we unrolled
         then all the items below would show up as well.
-* Promotion
-  * [COMPLETED] Improve the readme file to work on some of Organized's best features.
-  * [COMPLETED] Write a roadmap of the next few versions to show what I'm planning
-  * [COMPLETED] Add license and contribution policy
 * Tables
   * [TODO] Syntax highlighting
     * [TODO] Header row is highlighted
     * [TODO] Header column is highlighted
       * How do we get a header column?
-    * [COMPLETED] Border have special color
   * [TODO] Automatic resizing of table columns while you type
   * [TODO] Ctrl-enter to add a new table row
-  * [COMPLETED] Command to open a table
-  * [COMPLETED] Command to close a table
   * [TODO] Popup menu options to add or delete a row
   * [TODO] Popup menu options to add or delete a column
   * [TODO] Automatic calculation like a spreadsheet
@@ -115,23 +62,13 @@
   * [TODO] How do we differentiate "rows" in a column from wrapping text.  Maybe we don't?
   * [TODO] Handle enter key inside of a table column
 * Schedules
-  * [COMPLETED] Support "SCHEDULED" tags inside of organized files
-  * [TODO] Add Agenda pane to sidebar
-  * Timestamps
-    * [TODO] Syntax highlighting for timestamps
-    * [TODO] Key command to insert a timestamp
-    * [TODO] Create new agenda section in sidebar for timestamp / scheduled tasks
-    * [TODO] Show timestamps in agenda
   * Deadlines
     * [TODO] Syntax highlighting for deadlines
-  * [COMPLETED] Add key command to add a schedule date
   * [TODO] Create agenda view to show what's coming up
     * Maybe this should be accordian style with both todos and agenda on a
       single page
   * [TODO] Support creating or changing a meeting in your calendar according to
     changes in an organized file
-  * [TODO] Support ISO-8601 style dates
-  * [COMPLETED] Support Org-mode style dates
 * Quick capture
   * [TODO] Add quick-capture keystroke and dialog box
     * [TODO] Collect text of todo
@@ -147,36 +84,9 @@
     * [PlantUML](http://plantuml.com/)
   * [TODO] Embedded Gantt charts
 * Source blocks
-  * [COMPLETED] Source block code highlighting
-    * Start with languages that I use regularly
-      * [COMPLETED] CoffeeScript
-      * [COMPLETED] CSS
-      * [COMPLETED] Java
-      * [COMPLETED] Javascript
-      * [COMPLETED] Less
-      * [COMPLETED] Python
-      * [COMPLETED] Shell
-      * [COMPLETED] SQL
-    * Then let's add other popular languages
-      * [COMPLETED] C
-      * [COMPLETED] C#
-      * [COMPLETED] Golang
-      * [COMPLETED] Objective C
-      * [COMPLETED] PHP
-      * [COMPLETED] Ruby
-      * [COMPLETED] Perl
-    * This will depend a bit on how well those language grammars support embedding
-  * [COMPLETED] Execute commands in a source block (except Java)
   * Add execution support for:
-    * [COMPLETED] Java
-    * [COMPLETED] C
-    * [COMPLETED] Cpp
     * [TODO] C#
-    * [COMPLETED] Golang
-    * [COMPLETED] Objective C
-    * [COMPLETED] PHP
   * [TODO] Add support to include libraries and/or classpaths
-  * [COMPLETED] Errors aren't being handled gracefully in c or cpp
   * [TODO] Weird error for Java -- talks about not being able to find class instead of code error
   * [TODO] Need process control to be able to stop a process
 * Search / Exploration
@@ -204,25 +114,16 @@
   * [TODO] Export as PDF
 * Safety
   * [TODO] Add ability to encrypt notes
-* Tags
-  * [COMPLETED] Syntax highlighting for tags
 * Code structure / Technical debt
-  * [COMPLETED] Replace endless star methods with a single method that collects all the info
   * [TODO] Break up main parsing function in star.coffee into separate methods
-  * [COMPLETED] Break out codeblocks into separate class
   * [TODO] Introduce static method (are there static methods in coffeescript?) to ask if a line
     has a star.
   * [TODO] Add some comments
-  * [COMPLETED] Extract toolbar support into separate class
 * Tests
   * I'm already getting to the point where it is difficult to retest everything and I only have 250 line CoffeeScript
     file.  We need some spec tests.
-  * [COMPLETED] Learn how to write spec tests
-  * [COMPLETED] Write tests for all existing functionality
   * [TODO] Write unit tests for grammar
 * Coding templates / helpful keystrokes
-  * [COMPLETED] Insert ISO-8601 Date
-  * [COMPLETED] Insert ISO-8601 Datetime
   * [TODO] Allow user to set default ISO-8601 timezone
   * [TODO] Use a library for ISO-8601 dates -- seems odd to do that myself
   * [TODO] organized:newStarLine plus organized:indent in one command
@@ -230,14 +131,8 @@
 * [TODO] Capture system for webpages
   * This seems like it should be somehow easier here because we are already in Chromium
 * Toolbar
-  * [COMPLETED] Create a toolbar
   * [TODO] Improve button to create a new table with X rows and Y columns
-  * [COMPLETED] Button to create a new link or make existing string into a link
-  * [COMPLETED] Button to bold
-  * [COMPLETED] Button to underline
   * [TODO] Button to strikethrough
-  * [COMPLETED] Button for H1, H2, H3
-  * [COMPLETED] Toolbar only present when grammar is active
 * Compatibility
   * [TODO] Test running atom + organized on Linux
   * [TODO] Test running atom + organized on Windows

@@ -3,7 +3,7 @@
 Organized is designed to allow you to keep notes, a schedule, and todo list
 inside of Atom.
 
-![Organized Screenshot](https://raw.githubusercontent.com/MattFlower/organized/master/screenshots/0_5_0.gif)
+![Organized Screenshot](https://raw.githubusercontent.com/MattFlower/organized/master/screenshots/0_6_0.gif)
 
 Right now, we're in the early stages of Organized, but join us now and watch
 us get better.
@@ -16,8 +16,8 @@ us get better.
   * "*", "-", and "+" characters supported for outlining
   * Support numbered bullets
 * Support todo items
-  * Highlighting of [TODO]/[COMPLETED] tags
-  * Ctrl-Shift-T for toggling todo items from [TODO] to [COMPLETED] to blank.
+  * Highlighting of [TODO]/[DONE] tags
+  * Ctrl-Shift-T for toggling todo items from [TODO] to [DONE] to blank.
   * Highlighting for CLOSED and SCHEDULED tags
 * Code blocks
   * Syntax highlighting for code blocks in c, coffeescript, c++, css, golang, html, java,
@@ -49,6 +49,17 @@ us get better.
 
 
 # What's New?
+* 0.6.0 (Released 2017-03-17)
+  * New Agenda sidebar panel
+  * Any item marked with a SCHEDULED tag later than or equal to the
+    start of today will show up in the Agenda Panel of the sidebar.
+  * New archive command (ctrl-i a) which moves the current subtree you are pointing to into a file named
+    <current-filename>_archive.  (For example, for TODO.org, it would be moved to TODO.org_archive)
+  * Archive files are now colored by org-mode as well.
+  * Stop using COMPLETED for todo items.  Instead use DONE.  Existing COMPLETED tags will continue to be colored
+    correctly.
+  * Don't require brackets around TODO items.
+  * Add a setting which asks whether we should use brackets around TODO or DONE by default
 * 0.5.8 (Released 2017-03-16)
   * Fixed problem where completing a todo item from the sidebar would leave the TODO tag in place.
   * Fixed problem where clicking on todo items in sidebar wouldn't bring you to the correct file if the file came
@@ -112,7 +123,7 @@ If you feel like you need to add a TODO, press ctrl-shift-t to do it:
 When you are done with your task, press ctrl-shift-t again to mark it as completed.
 
 ```
-    * [COMPLETED] Some task I'm done with
+    * [DONE] Some task I'm done with
 ```
 
 If you didn't mean to mark it as a TODO, pressing ctrl-shift-t a final time

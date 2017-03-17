@@ -1,9 +1,21 @@
+* 0.6.0 (Released 2017-03-17)
+  * New Agenda sidebar panel
+  * Any item marked with a SCHEDULED tag later than or equal to the
+    start of today will show up in the Agenda Panel of the sidebar.
+  * New archive command (ctrl-i a) which moves the current subtree you are pointing to into a file named
+    <current-filename>_archive.  (For example, for TODO.org, it would be moved to TODO.org_archive)
+  * Archive files are now colored by org-mode as well.
+  * Stop using COMPLETED for todo items.  Instead use DONE.  Existing COMPLETED tags will continue to be colored
+    correctly.
+  * Don't require brackets around TODO items.
+  * Add a setting which asks whether we should use brackets around TODO or DONE by default
+
 * 0.5.8 (Released 2017-03-16)
   * Fixed problem where completing a todo item from the sidebar would leave the TODO tag in place.
   * Fixed problem where clicking on todo items in sidebar wouldn't bring you to the correct file if the file came
     from the search path.
   * Add key command to add a schedule completion date (default ctrl-i s), defaulting to today.  This should be
-    considered beta.  
+    considered beta.
 
 * 0.5.7 (Released 2017-03-15)
   * Fixed case where pressing enter on a non-star-line would cause an exception if the next line had a star.
@@ -54,7 +66,7 @@
   * Added sidebar, which shows TODO's from all .org files in the current project.
     * Use menus (Packages -> Organized) or the command organized:toggleSidebar
       to toggle whether the menu appears.
-    * Todos can be marked as completed by checking the checkbox next to them.
+    * Todos can be marked as done by checking the checkbox next to them.
     * Navigate to the source of the todo by clicking on the text.
     * Refresh todos by clicking on the refresh button.  Todos are also refreshed
       any time an organized file is saved.

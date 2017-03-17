@@ -1,8 +1,12 @@
 {CompositeDisposable, Directory, Point} = require 'atom'
+fs = require 'fs'
+{dialog} = require('electron')
+moment = require 'moment'
+
 OrganizedView = require './organized-view'
 Star = require './star'
 Table = require './table'
-Todo = require './todo'
+Todo = require './sidebar-items'
 CodeBlock = require './codeblock'
 OrganizedToolbar = require './toolbar'
 SidebarView = require './sidebar-view'
@@ -16,6 +20,7 @@ module.exports =
   createStarsOnEnter: true
   autoSizeTables: true
   organizedToolbar: null
+  useBracketsAroundTodoTags: true
 
   config:
     levelStyle:
@@ -31,6 +36,11 @@ module.exports =
     autoCreateStarsOnEnter:
       type: 'boolean'
       default: true
+
+    useBracketsAroundTodoTags:
+      type: 'boolean'
+      default: true
+      description: "When created TODO or DONE tags, prefer [TODO] over TODO and [DONE] over DONE"
 
     autoSizeTables:
       type: 'boolean'
@@ -85,7 +95,7 @@ module.exports =
       @handleEvents(editor)
       @subscriptions.add editor.onDidSave =>
         if @sidebar and @sidebar.sidebarVisible and editor.getGrammar().name is 'Organized'
-          @sidebar.refreshTodos()
+          @sidebar.refreshAll()
 
     # Register command that toggles this view
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:indent': (event) => @indent(event) }))
@@ -115,21 +125,55 @@ module.exports =
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:makeLink': (event) => @makeLink(event) }))
 
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:refreshTodos': (event) => @sidebar.refreshTodos() }))
+    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:refreshAgenda': (event) => @sidebar.refreshAgendaItems() }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:scheduleItem': (event) => @scheduleItem(event) }))
+
+    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:archiveSubtree': (event) => @archiveSubtree(event) }))
 
     @subscriptions.add atom.config.observe 'organized.autoCreateStarsOnEnter', (newValue) => @createStarsOnEnter = newValue
     @subscriptions.add atom.config.observe 'organized.levelStyle', (newValue) => @levelStyle = newValue
     @subscriptions.add atom.config.observe 'organized.autoSizeTables', (newValue) => @autoSizeTables = newValue
     @subscriptions.add atom.config.observe 'editor.tabLength', (newValue) => @indentSpaces = newValue
+    @subscriptions.add atom.config.observe 'organized.useBracketsAroundTodoTags', (newValue) => @useBracketsAroundTodoTags = newValue
 
     @sidebar = new SidebarView()
     @sidebar.activate(@subscriptions)
-    @sidebar.refreshTodos()
+    @sidebar.populateSidebarItems(true, true)
 
     if not @organizedToolbar
       @organizedToolbar = new OrganizedToolbar()
       @organizedToolbar.activate(@subscriptions)
       @organizedToolbar.setSidebar(@sidebar)
+
+  archiveSubtree: (event) ->
+    if editor = atom.workspace.getActiveTextEditor()
+      star = @_starInfo()
+      startOfSubtree = star.startRow
+      endOfSubtree = star.getEndOfSubtree()
+      lastCol = editor.lineTextForBufferRow(endOfSubtree).length
+
+      archiveText = editor.lineTextForBufferRow(startOfSubtree) + '\n'
+      archiveText += ' '.repeat(star.startTodoCol) + ':PROPERTIES:' + '\n'
+      archiveText += ' '.repeat(star.startTodoCol) + ':ARCHIVE_TIME: ' + moment().format('YYYY-MM-DD ddd HH:mm') + '\n'
+      if path = editor.getPath()
+        archiveText += ' '.repeat(star.startTodoCol) + ':ARCHIVE_FILE: ' + path + "\n"
+      archiveText += ' '.repeat(star.startTodoCol) + ':END:' + "\n"
+
+      # If end is the same as the beginning, we've already gotten all of the text
+      if endOfSubtree > startOfSubtree
+        archiveText += editor.getTextInBufferRange([[startOfSubtree+1, 0], [endOfSubtree, lastCol]])
+
+      if not archiveFilename = editor.getPath() + '_archive'
+        archiveFilename = dialog.showSaveDialog({title: 'Archive filename', message: 'Choose the file where this content will be moved to'})
+        if not archiveFilename
+          return
+
+      fs.appendFile archiveFilename, '\n\n' + archiveText, (err) ->
+        if err
+          atom.notifications.addError("Unable to archive content due to error: " + err)
+        else
+          editor.setTextInBufferRange([[startOfSubtree, 0], [endOfSubtree, lastCol]], '')
+      #fs.appendFile(@editor.get)
 
   closeTable: (event) ->
     if editor = atom.workspace.getActiveTextEditor()
@@ -494,7 +538,7 @@ module.exports =
             visited[i] = true
 
           line = editor.lineTextForBufferRow(star.startRow)
-          editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.startTextCol]], " [COMPLETED] ")
+          editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.startTextCol]], " [DONE] ")
 
   toggleTodo: (event) ->
     if editor = atom.workspace.getActiveTextEditor()
@@ -511,12 +555,14 @@ module.exports =
             visited[i] = true
 
           line = editor.lineTextForBufferRow(star.startRow)
-          if (line.match(/\s*([\-\+\*]+|\d+.) \[TODO\] /))
-            editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.startTextCol]], " [COMPLETED] ")
-          else if (line.match(/\s*([\-\+\*]+|\d+.) \[COMPLETED\] /))
+          if match = line.match(/\s*([\-\+\*]+|\d+.) (\[(TODO)\]|\wTODO\w) /)
+            replacement = if match[2].includes('[') then " [DONE] " else " DONE "
+            editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.startTextCol]], replacement)
+          else if (line.match(/\s*([\-\+\*]+|\d+.) ((\[(COMPLETED|DONE)\])|\w(COMPLETED|DONE)\w) /))
             editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.startTextCol]], " ")
           else
-            editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.startTextCol]], " [TODO] ")
+            replacement = if @useBracketsAroundTodoTags then " [TODO] " else " TODO "
+            editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.startTextCol]], replacement)
 
   toggleUnderline: (event) ->
     if editor = atom.workspace.getActiveTextEditor()
@@ -559,7 +605,9 @@ module.exports =
             editor.transact 1000, () ->
               for row in [firstRow..lastRow]
                 line = editor.lineTextForBufferRow(row)
-                if line.match("^  ")
+                if not line
+                  continue
+                else if line.match("^  ")
                   editor.setTextInBufferRange([[row, 0], [row, 2]], "")
                 else if line.match("^\\t")
                   editor.setTextInBufferRange([[row, 0], [row, 1]], "")

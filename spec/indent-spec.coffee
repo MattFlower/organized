@@ -51,6 +51,17 @@ describe "organized:indent", ->
     newLine = editor.lineTextForBufferRow(1)
     expect(newLine).toBe("** Two")
 
+  it "stacked intending can handle todos", ->
+    atom.config.set("organized.levelStyle", "stacked")
+    editor = atom.workspace.getActiveTextEditor()
+    editor.setText("* [TODO] One\n* [TODO] Two")
+    editor.setCursorBufferPosition([1, 0])
+    textEditorView = atom.views.getView(editor)
+    atom.commands.dispatch(textEditorView, "organized:indent")
+    newLine = editor.lineTextForBufferRow(1)
+    expect(newLine).toBe("** [TODO] Two")
+
+
   it "works with a live problem I found", ->
     atom.config.set("organized.levelStyle", "whitespace")
     editor = atom.workspace.getActiveTextEditor()

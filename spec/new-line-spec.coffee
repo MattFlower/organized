@@ -48,3 +48,5 @@ describe "Pressing ctrl-enter creates a new line indented to the text", ->
   parameterized("Level 1 large number", [0,7], [1,4], "10. One", "10. One\n    ")
 
   parameterized("Level 2 stacked star", [0,6], [1,3], "** Two", "** Two\n   ")
+
+  parameterized("Level 1 with TODO", [0,13], [1,2], "* [TODO] One", "* [TODO] One\n  ")

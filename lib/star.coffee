@@ -1,28 +1,36 @@
 {shell} = require 'electron'
+moment = require 'moment'
 
 #
 # Centralize all the information about a star into one place so don't repeatedly
 # search for the start of star in the editor.
 #
 class Star
-  @startRow: -1
-  @endRow: -1
-  @starCol: -1
-  @whitespaceCol: -1
-  @startTodoCol: -1
-  @startTextCol: -1
-  @starType: null
-  @indentLevel: 0
-  @indentType: null
-  @defaultIndentType: null
-  @currentNumber: 0
-  @nextNumber: 0
+  @_dateFormats = ['YYYY-MM-DD ddd HH:mm:ss', 'YYYY-MM-DD ddd HH:mm', 'YYYY-MM-DD ddd', moment.ISO_8601]
+  startRow: -1
+  endRow: -1
+  starCol: -1
+  whitespaceCol: -1
+  startTodoCol: -1
+  startTextCol: -1
+  starType: null
+  indentLevel: 0
+  indentType: null
+  defaultIndentType: null
+  currentNumber: 0
+  nextNumber: 0
 
-  @latestRowSeen: -1
-  @indentSpaces: -1
-  @editor: null
+  statusRow: -1
+  scheduleDate: null
+  closeDate: null
+
+  latestRowSeen: -1
+  indentSpaces: -1
+  editor: null
 
   constructor: (currentRow, indentSpaces, defaultIndentType, editor = atom.workspace.getActiveTextEditor()) ->
+    @_dateFormats = ['YYYY-MM-DD ddd hh:mm:ss', 'YYYY-MM-DD ddd hh:mm', 'YYYY-MM-DD ddd', moment.ISO_8601]
+
     @latestRowSeen = currentRow
     @indentSpaces = indentSpaces
 
@@ -33,31 +41,13 @@ class Star
     @editor = editor
     @_processStar()
 
-  _processStar: ->
-    # Find starting row
-    row = @latestRowSeen
-    line = @editor.lineTextForBufferRow(row)
-    #console.log("Row: #{row}, Line: #{line}")
-    while !line.match(/^\s*([\*\-\+]+|\d+\.)([ ]|$)/)
-      # console.log("No star on #{row}")
-      row -= 1
-      if row < 0 or line.match(/^(#|$)/)
-        @startRow = -1
-        return
-      else
-        line = @editor.lineTextForBufferRow(row)
-
-    @startRow = row
-
+  _processLine: (line) ->
     # Find info about star
     @starCol = @_starIndexOf(line)
 
     #console.log("Found star on row #{@startRow} and col #{@starCol}")
 
-    line = @editor.lineTextForBufferRow(@startRow)
-    match = line.match(/^(\s*)([\*\-\+]+|(\d+)\.)([ ]|$)(\[TODO\] |\[COMPLETED\] )?/)
-
-    #console.log(match)
+    match = line.match(/^(\s*)([\*\-\+]+|(\d+)\.)([ ]|$)(\[?TODO\]? |\[?(COMPLETED|DONE)\]? )?/)
 
     if match
       @whitespaceCol = @starCol + match[2].length
@@ -121,6 +111,39 @@ class Star
           @starType = stars
 
       @indentLevel = levelCount
+      return true
+    else
+      return false
+
+  _processStar: ->
+    # Find starting row
+    row = @latestRowSeen
+    line = @editor.lineTextForBufferRow(row)
+    #console.log("Row: #{row}, Line: #{line}")
+    while !line.match(/^\s*([\*\-\+]+|\d+\.)([ ]|$)/)
+      # console.log("No star on #{row}")
+      row -= 1
+      if row < 0 or line.match(/^(#|$)/)
+        @startRow = -1
+        return
+      else
+        line = @editor.lineTextForBufferRow(row)
+
+    @startRow = row
+
+    if @_processLine(line)
+      # Look for closed or scheduled tags on the following line
+      if @startRow
+        statusLine = @editor.lineTextForBufferRow(@startRow+1)
+        if match = /SCHEDULED: <([^>]+)>/.exec(statusLine)
+          d = moment(match[1], @_dateFormats, false)
+          if d.isValid()
+            @scheduleDate = d.toDate()
+
+        if match = /CLOSED: \(([^)]+)\)/.exec(statusLine)
+          d = moment(match[1], @_dateFormats, false)
+          if d.isValid()
+            @closeDate = d.toDate()
 
       # End row
       #console.log("Row: #{@latestRowSeen}, Last: #{@editor.getLastBufferRow()}")
@@ -140,6 +163,21 @@ class Star
     return 0 if match.length < 1
     # count the spaces
     return match[1].length
+
+  # Find the last line at the same level as this star
+  getEndOfSubtree: () ->
+    currentLine = @endRow + 1
+    while currentLine < @editor.getLineCount()
+      if star = new Star(currentLine, @indentSpaces, @defaultIndentType, @editor)
+        if star.indentLevel <= @indentLevel
+          return currentLine-1
+        else
+          currentLine = star.endRow+1
+    # We weren't able to find another star at the same level
+    if currentLine >= @editor.getLineCount()
+      currentLine = @editor.getLineCount()-1
+
+    return currentLine
 
   newStarLine: (indentLevel = @indentLevel) ->
     if @indentType isnt "mixed"

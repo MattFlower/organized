@@ -1,7 +1,11 @@
 {$, View} = require 'atom-space-pen-views'
-Todo = require './todo'
+{Todo, findInDirectories} = require './sidebar-items'
 TodoView = require './todo-view'
+AgendaView = require './agenda-view'
+DateSeparator = require './date-separator-view'
 {Emitter} = require 'event-kit'
+moment = require 'moment'
+
 
 module.exports =
 class SidebarView extends View
@@ -14,11 +18,18 @@ class SidebarView extends View
   @content: ->
     @div class: 'organized-sidebar', tabindex: -1, outlet: 'sidebar', =>
       @div class: 'organized-sidebar-resize-handle', mousedown: 'resizeStarted', outlet: 'resizeHandle'
+      @div class: 'organized-sidebar-agenda', =>
+        @div class: 'organized-sidebar-agenda-header', =>
+          @span class: 'agenda-title-icon fa fa-2x fa-calendar'
+          @span class: 'agenda-title', "Agenda"
+          @span class: 'close-button icon icon-remove-close', click: 'minimize'
+          @span class: 'refresh-button icon icon-sync', click: 'refreshAgendaItems'
+        @div class: 'organized-sidebar-agenda-items', =>
+          @ul class: 'organized-sidebar-agenda-list', outlet: 'agendalist'
       @div class: 'organized-sidebar-todo', =>
         @div class: 'organized-sidebar-todo-header', =>
           @span class: 'todo-title-icon fa fa-2x fa-check-square-o'
           @span class: 'todo-title', 'Todo Items'
-          @span class: 'close-button icon icon-remove-close', click: 'minimize'
           @span class: 'refresh-button icon icon-sync', click: 'refreshTodos'
         @div class: 'organized-sidebar-todo-items', =>
           @ul class: 'organized-sidebar-todo-list', outlet: 'todolist'
@@ -46,6 +57,9 @@ class SidebarView extends View
     super
     @emitter = new Emitter
 
+  clearAgendaItems: ->
+    @agendalist.empty()
+
   clearTodos: ->
     @todolist.empty()
 
@@ -70,9 +84,18 @@ class SidebarView extends View
   onDidShow: (callback) ->
     @emitter.on 'did-show', callback
 
+  refreshAgendaItems: () ->
+    @clearAgendaItems()
+    @populateSidebarItems(true, false)
+
+  refreshAll: () ->
+    @clearAgendaItems()
+    @clearTodos()
+    @populateSidebarItems(true, true)
+
   refreshTodos: () ->
     @clearTodos()
-    @populateTodos()
+    @populateSidebarItems(false, true)
 
   # My resize implementation was lifted from tree-view.
   #
@@ -94,7 +117,7 @@ class SidebarView extends View
     $(document).off('mousemove', @resizeSidebar)
     $(document).off('mouseup', @resizeStopped)
 
-  populateTodos: () ->
+  populateSidebarItems: (refreshAgendaItems, refreshTodos) ->
     directories = []
 
     # Current open projects
@@ -109,10 +132,43 @@ class SidebarView extends View
     directories = (directory.trim() for directory in directories when directory.trim() isnt "")
 
     if @todolist and directories.length isnt 0
-        Todo.findInDirectories directories, (todos) =>
-          for todo in todos
-            todoView = new TodoView(todo)
-            todoView.appendTo(@todolist)
+        findInDirectories directories, (todos, agendaItems) =>
+          if refreshTodos
+            for todo in todos
+              todoView = new TodoView(todo)
+              todoView.appendTo(@todolist)
+
+          if refreshAgendaItems
+            currentDate = null
+            today = moment().startOf('day')
+            agendaItems.sort (a,b) =>
+              if a.date.isBefore(b.date)
+                return -1
+              else if a.date.isAfter(b.date)
+                return 1
+              else
+                return 0
+            invalidHeaderAdded = false
+
+            for agendaItem in agendaItems
+              if not agendaItem.date or not agendaItem.date.isValid()
+                # Deal with agenda items with a date we cannot parse
+                if not invalidHeaderAdded
+                  dateSeparator(null, "Invalid Date")
+                  dateSeparator.appendTo(@agendalist)
+              else
+                startOfDate = agendaItem.date.clone().startOf('day')
+                if startOfDate < today
+                  continue
+
+                if not currentDate or startOfDate > currentDate
+                  # We don't have a header for this date yet
+                  currentDate = startOfDate
+                  formattedDate = currentDate.format("LL")
+                  dateSeparator = new DateSeparator(agendaItem.date.toDate(), formattedDate)
+                  dateSeparator.appendTo(@agendalist)
+              agendaView = new AgendaView(agendaItem)
+              agendaView.appendTo(@agendalist)
 
   toggleVisibility: () ->
     if @view.isVisible()

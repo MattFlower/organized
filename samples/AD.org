@@ -1,6 +1,6 @@
 * Do you take notes or need an engineering notebook?
 * [TODO] Do you have things to do?
-  * [COMPLETED] Some of which might already be done?
+  * [DONE] Some of which might already be done?
 * Maybe you need to store [links](https://github.com/MattFlower/organized)
 * Maybe you want _underlined text_ or __bold text__
 

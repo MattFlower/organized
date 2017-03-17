@@ -2,6 +2,7 @@ scopeName: 'source.organized'
 name: 'Organized'
 fileTypes: [
   'org'
+  'org_archive'
   'organized'
 ]
 
@@ -47,8 +48,16 @@ repository:
         match: "\\[TODO\\]"
       },
       {
+        name: 'todo.organized'
+        match: "TODO"
+      },
+      {
         name: 'completed.organized'
-        match: "\\[COMPLETED\\]"
+        match: "\\[(COMPLETED|DONE)\\]"
+      },
+      {
+        name: 'completed.organized'
+        match: "COMPLETED|DONE"
       },
       {
         name: 'tags.organized'
@@ -157,6 +166,18 @@ repository:
             name: 'timeblock'
           5:
             name: 'endtimeblock'
+      },
+      {
+        name: 'properties.block.organized'
+        begin: ':(PROPERTIES):'
+        contentName: 'properties.organized'
+        captures:
+          1:
+            name: 'properties.organized.blocktag'
+        end: ':(END):'
+        patterns: [
+          { include: '#propertieslist'}
+        ]
       },
       {
         name: 'c.code.block.organized'
@@ -414,6 +435,18 @@ repository:
           { include: 'source.sql' }
         ]
         end: '```|#\\+END_SRC'
+      }
+    ]
+  propertieslist:
+    patterns: [
+      {
+        name: 'property.organized'
+        match: '(:)([^:]+)(:)'
+        captures:
+          1:
+            name: 'property.symbol'
+          2:
+            name: 'property.name'
       }
     ]
   textcontent:
