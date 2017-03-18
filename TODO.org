@@ -1,4 +1,4 @@
-* [TODO] Release 0.6.0
+* [DONE] Release 0.6.0
   SCHEDULED: <2017-03-17 Fri>
 * [TODO] Get to 1.0
   SCHEDULED: <2018-06-01 Fri>
