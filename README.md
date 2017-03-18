@@ -49,6 +49,9 @@ us get better.
 
 
 # What's New?
+
+* 0.6.1 (Released 2017-03-18)
+  * Missed adding some files before I released, re-releasing.  This closes issue #14.
 * 0.6.0 (Released 2017-03-17)
   * New Agenda sidebar panel
   * Any item marked with a SCHEDULED tag later than or equal to the
