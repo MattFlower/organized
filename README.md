@@ -50,6 +50,12 @@ us get better.
 
 # What's New?
 
+* 0.6.2 (Released 2017-03-22)
+  * Archive used to only archive the current subtree and it ignored selections.  Now it archives the entire selection
+    too, even if it is multiple subtrees.
+  * Even if sidebar is hidden, the toolbar button always said it was enabled.
+  * If there are links inside of an agenda or todo item, render them as hyperlinks
+  * If there is bold or underlined text in an agenda or todo item, render them.
 * 0.6.1 (Released 2017-03-18)
   * Missed adding some files before I released, re-releasing.  This closes issue #14.
 * 0.6.0 (Released 2017-03-17)
@@ -63,18 +69,6 @@ us get better.
     correctly.
   * Don't require brackets around TODO items.
   * Add a setting which asks whether we should use brackets around TODO or DONE by default
-* 0.5.8 (Released 2017-03-16)
-  * Fixed problem where completing a todo item from the sidebar would leave the TODO tag in place.
-  * Fixed problem where clicking on todo items in sidebar wouldn't bring you to the correct file if the file came
-    from the search path.
-* 0.5.7 (Released 2017-03-15)
-  * Fixed case where pressing enter on a non-star-line would cause an exception if the next line had a star.
-  * Fixed error leading to an empty sidebar when a predefined search file or directory does not exist.
-  * Added support for R-language for code blocks
-  * Fix deprecation warnings due to removal of Shadow DOM
-  * Fixed color coding for CLOSED and SCHEDULED tags.  (They haven't been working for quite a while.)
-  * Added golang support for code blocks
-  * Fix coloring for stars
 
 Please see the [CHANGELOG.org](https://raw.githubusercontent.com/MattFlower/organized/master/CHANGELOG.org)
 for full details of recent changes.

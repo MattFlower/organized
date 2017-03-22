@@ -3,13 +3,14 @@ fs = require 'fs'
 {dialog} = require('electron')
 moment = require 'moment'
 
+CodeBlock = require './codeblock'
+#GoogleCalendar = require './google-calendar'
+OrganizedToolbar = require './toolbar'
 OrganizedView = require './organized-view'
+SidebarView = require './sidebar-view'
 Star = require './star'
 Table = require './table'
 Todo = require './sidebar-items'
-CodeBlock = require './codeblock'
-OrganizedToolbar = require './toolbar'
-SidebarView = require './sidebar-view'
 
 module.exports =
   organizedView: null
@@ -55,7 +56,7 @@ module.exports =
     searchDirectories:
       type: 'array'
       title: 'Predefined search directories / files'
-      description: 'Directories and/or files where we will look for organized files when building todo lists, agendas, or searching'
+      description: 'Directories and/or files where we will look for organized files when building todo lists, agendas, or searching.  Separate multiple files or directories with a comma'
       default: ['','','','','']
       items:
         type: 'string'
@@ -129,6 +130,8 @@ module.exports =
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:scheduleItem': (event) => @scheduleItem(event) }))
 
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:archiveSubtree': (event) => @archiveSubtree(event) }))
+    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:archiveToClipboard': (event) => @archiveToClipboard(event) }))
+    #@subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:importTodaysEvents': (event) => GoogleCalendar.importTodaysEvents() }))
 
     @subscriptions.add atom.config.observe 'organized.autoCreateStarsOnEnter', (newValue) => @createStarsOnEnter = newValue
     @subscriptions.add atom.config.observe 'organized.levelStyle', (newValue) => @levelStyle = newValue
@@ -146,34 +149,11 @@ module.exports =
       @organizedToolbar.setSidebar(@sidebar)
 
   archiveSubtree: (event) ->
-    if editor = atom.workspace.getActiveTextEditor()
-      star = @_starInfo()
-      startOfSubtree = star.startRow
-      endOfSubtree = star.getEndOfSubtree()
-      lastCol = editor.lineTextForBufferRow(endOfSubtree).length
+    @_archiveSubtree(false)
 
-      archiveText = editor.lineTextForBufferRow(startOfSubtree) + '\n'
-      archiveText += ' '.repeat(star.startTodoCol) + ':PROPERTIES:' + '\n'
-      archiveText += ' '.repeat(star.startTodoCol) + ':ARCHIVE_TIME: ' + moment().format('YYYY-MM-DD ddd HH:mm') + '\n'
-      if path = editor.getPath()
-        archiveText += ' '.repeat(star.startTodoCol) + ':ARCHIVE_FILE: ' + path + "\n"
-      archiveText += ' '.repeat(star.startTodoCol) + ':END:' + "\n"
-
-      # If end is the same as the beginning, we've already gotten all of the text
-      if endOfSubtree > startOfSubtree
-        archiveText += editor.getTextInBufferRange([[startOfSubtree+1, 0], [endOfSubtree, lastCol]])
-
-      if not archiveFilename = editor.getPath() + '_archive'
-        archiveFilename = dialog.showSaveDialog({title: 'Archive filename', message: 'Choose the file where this content will be moved to'})
-        if not archiveFilename
-          return
-
-      fs.appendFile archiveFilename, '\n\n' + archiveText, (err) ->
-        if err
-          atom.notifications.addError("Unable to archive content due to error: " + err)
-        else
-          editor.setTextInBufferRange([[startOfSubtree, 0], [endOfSubtree, lastCol]], '')
-      #fs.appendFile(@editor.get)
+  archiveToClipboard: (event) ->
+    archiveText = @_archiveSubtree(true)
+    atom.clipboard.write(archiveText)
 
   closeTable: (event) ->
     if editor = atom.workspace.getActiveTextEditor()
@@ -621,6 +601,105 @@ module.exports =
           else
             editor.outdentSelectedRows()
 
+  _archiveSubtree: (outputToString) ->
+    if editor = atom.workspace.getActiveTextEditor()
+      visited = {}
+
+      baseArchiveLevel = null
+      stars = []
+
+      # If there are multiple selections, this could span multiple subtrees.  Calculate
+      # the total size of the tree first.  One possible problem is that we aren't going
+      # to have properties for each of the subtrees when we archive.
+      @_withAllSelectedLines editor, (position, selection) =>
+        if visited[position.row]
+          return
+
+        # Mark all lines in subtree as visited
+        visited[position.row] = true
+
+        if not star = @_starInfo(editor, position)
+          return
+
+        # Capture the first star, so we know how deeply to indent the properties
+        if not baseArchiveLevel
+          baseArchiveLevel = star.indentLevel
+
+        if star.indentLevel == baseArchiveLevel
+          # We need to put properties on this level too, otherwise we won't be able to unarchive it.
+          stars.push(star)
+
+        endOfSubtree = star.getEndOfSubtree()
+        for line in [star.startRow..endOfSubtree]
+          visited[line] = true
+
+      # Now act on those lines
+      editor.transact 2000, () =>
+        textToInsertIntoArchiveFile = ""
+        rangeToDelete = null
+
+        # Iterate backwards so we don't change the line number of stars.
+        # Collect the text to delete and the ranges that we are deleting.
+        for star in stars by -1
+          startOfSubtree = star.startRow
+          endOfSubtree = star.getEndOfSubtree()
+          startTodoCol = star.startTodoCol
+
+          # Be careful to support selecting out of the end of a file
+          if endOfSubtree == editor.getLastBufferRow()
+            lastCol = editor.lineTextForBufferRow(endOfSubtree).length
+          else
+            endOfSubtree += 1
+            lastCol = 0
+
+          archiveText = editor.lineTextForBufferRow(startOfSubtree) + '\n'
+          archiveText += ' '.repeat(startTodoCol) + ':PROPERTIES:' + '\n'
+          archiveText += ' '.repeat(startTodoCol) + ':ARCHIVE_TIME: ' + moment().format('YYYY-MM-DD ddd HH:mm') + '\n'
+          if path = editor.getPath()
+            archiveText += ' '.repeat(startTodoCol) + ':ARCHIVE_FILE: ' + path + "\n"
+          archiveText += ' '.repeat(startTodoCol) + ':END:' + "\n"
+
+          # If end is the same as the beginning, we've already gotten all of the text
+          if endOfSubtree > startOfSubtree
+            archiveText += editor.getTextInBufferRange([[startOfSubtree+1, 0], [endOfSubtree, lastCol]])
+
+          if textToInsertIntoArchiveFile isnt ''
+            textToInsertIntoArchiveFile = archiveText + textToInsertIntoArchiveFile
+          else
+            textToInsertIntoArchiveFile = archiveText
+
+          starRangeToDelete = [[startOfSubtree, 0], [endOfSubtree, lastCol]]
+
+          # Increase the total range we are deleting to encompass this star too
+          if not rangeToDelete
+            rangeToDelete = starRangeToDelete
+          # Is this later than our selection to delete?
+          if starRangeToDelete[1][0] > rangeToDelete[1][0]
+            rangeToDelete[1] = starRangeToDelete[1]
+          # Is this earlier than our earliest selection to delete?
+          if starRangeToDelete[0][0] < rangeToDelete[0][0]
+            rangeToDelete[0] = starRangeToDelete[0]
+
+        # If there is actually something to archive, do that now
+        if rangeToDelete
+          if outputToString
+            editor.setTextInBufferRange(rangeToDelete, '')
+            return textToInsertIntoArchiveFile.trimLeft()
+          else
+            if not archiveFilename = editor.getPath() + '_archive'
+              archiveFilename = dialog.showSaveDialog({title: 'Archive filename', message: 'Choose the file where this content will be moved to'})
+              if not archiveFilename
+                return
+
+            fs.stat archiveFilename, (err, stat) ->
+              if err == fs.ENOENT or stat.size == 0
+                textToInsertIntoArchiveFile = textToInsertIntoArchiveFile.trimLeft()
+              fs.appendFile archiveFilename, textToInsertIntoArchiveFile, (err) ->
+                if err
+                  atom.notifications.addError("Unable to archive content due to error: " + err)
+                else
+                  editor.setTextInBufferRange(rangeToDelete, '')
+
   _getISO8601Date: (date) ->
     year = ("0000" + date.getFullYear()).substr(-4, 4)
     month = ("00" + (date.getMonth() + 1)).substr(-2, 2)
@@ -703,7 +782,7 @@ module.exports =
   _withAllSelectedLines: (editor, callback) ->
     editor = atom.workspace.getActiveTextEditor() unless editor
 
-    if editor = atom.workspace.getActiveTextEditor()
+    if editor
       selections = editor.getSelections()
       for selection in selections
         range = selection.getBufferRange()

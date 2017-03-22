@@ -116,7 +116,7 @@ class OrganizedToolbar
     sidebarIcon = if @sidebar?.enabled then 'toggle-on' else 'toggle-off'
     sidebarTooltip = if @sidebar?.enabled then 'Hide Sidebar' else 'Show Sidebar'
     @sidebarToggle = @toolBar.addButton
-      icon: 'toggle-on'
+      icon: sidebarIcon
       iconset: 'fa'
       callback: 'organized:toggleSidebar'
       tooltip: sidebarTooltip
@@ -176,7 +176,7 @@ class OrganizedToolbar
     @sidebar.onDidShow @sidebarShown
 
   sidebarHidden: (sidebar) =>
-    if @sidebarToggle
+    if @sidebarToggle?.element
       @sidebarToggle.element.classList.remove('fa-toggle-on')
       @sidebarToggle.element.classList.add('fa-toggle-off')
       @sidebarToggle.tooltip = "Show Sidebar"

@@ -1,3 +1,11 @@
+* 0.6.2 (Released 2017-03-22)
+  * Even if sidebar is hidden, the toolbar button always said it was enabled.
+  * Archive used to only archive the current subtree and it ignored selections.  Now it archives the entire selection
+    too, even if it is multiple subtrees.
+  * Indicate in settings that multiple predefined directories should be separated with a comma.
+  * If there are links inside of an agenda or todo item, render them as hyperlinks
+  * If there is bold or underlined text in an agenda or todo item, render them.
+
 * 0.6.1 (Released 2017-03-18)
   * Missed adding some files before I released, re-releasing.  This closes issue #14.
 

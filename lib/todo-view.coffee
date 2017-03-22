@@ -5,7 +5,7 @@ class TodoView extends View
     @todo = todo
     @li class: 'todoitem', =>
       @a 'data-file': todo.file, 'data-line': todo.line, 'data-column': todo.column, class: 'icon fa fa-square-o', click: 'checkClick'
-      @a 'data-file': todo.file, 'data-line': todo.line, 'data-column': todo.column, click: 'todoclick', todo.text
+      @span 'data-file': todo.file, 'data-line': todo.line, 'data-column': todo.column, click: 'todoclick', text: @raw(todo.text)
 
   visibility: 'show'
 

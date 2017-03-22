@@ -64,10 +64,10 @@ describe "Running archiveSubtree", ->
     time = moment().format('YYYY-MM-DD ddd HH:mm')
     expectedText =
       "* One\n"+
-      "\t:PROPERTIES:\n"+
-      "\t:ARCHIVE_TIME: #{time}\n"+
-      "\t:ARCHIVE_FILE: /Applications/Atom.app/Contents/Resources/app.asar/spec/test.org\n"+
-      "\t:END:\n"+
+      "  :PROPERTIES:\n"+
+      "  :ARCHIVE_TIME: #{time}\n"+
+      "  :ARCHIVE_FILE: /Applications/Atom.app/Contents/Resources/app.asar/spec/test.org\n"+
+      "  :END:\n"+
       "\t* Two\n"
 
     expect(editor.getText()).toBe("")
@@ -113,6 +113,37 @@ describe "Running archiveSubtree", ->
       "  :ARCHIVE_FILE: /Applications/Atom.app/Contents/Resources/app.asar/spec/test.org\n"+
       "  :END:\n"+
       "  - Two\n"
+
+    expect(editor.getText()).toBe("")
+    expect(archiveText).toBe(expectedText)
+
+  it "should archive multiple selections", ->
+    editor = atom.workspace.getActiveTextEditor()
+    editor.setText(
+      "* One\n" +
+      "  * Two\n" +
+      "* Three\n" +
+      "  * Four\n")
+    editor.setCursorBufferPosition([0, 0])
+    editor.setSelectedBufferRange([[0, 0], [3]])
+
+    textEditorView = atom.views.getView(editor)
+    atom.commands.dispatch(textEditorView, "organized:archiveToClipboard")
+    archiveText = atom.clipboard.read()
+    time = moment().format('YYYY-MM-DD ddd HH:mm')
+    expectedText =
+      "* One\n"+
+      "  :PROPERTIES:\n"+
+      "  :ARCHIVE_TIME: #{time}\n"+
+      "  :ARCHIVE_FILE: /Applications/Atom.app/Contents/Resources/app.asar/spec/test.org\n"+
+      "  :END:\n"+
+      "  * Two\n"+
+      "* Three\n"+
+      "  :PROPERTIES:\n"+
+      "  :ARCHIVE_TIME: #{time}\n"+
+      "  :ARCHIVE_FILE: /Applications/Atom.app/Contents/Resources/app.asar/spec/test.org\n"+
+      "  :END:\n"+
+      "  * Four\n"
 
     expect(editor.getText()).toBe("")
     expect(archiveText).toBe(expectedText)

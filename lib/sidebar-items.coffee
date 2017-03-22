@@ -78,6 +78,19 @@ findInDirectories = (directories = atom.project.getPaths(), onComplete) ->
   console.log("Project paths: #{directories}")
   _findInDirectories directories, skipFiles, [], [], onComplete
 
+_cleanupSideitemTitles = (title) ->
+  if match = /\[([^)]+)\]\(([^)]+)\)/g.exec(title)
+    linktitle = match[1]
+    url = match[2]
+    title = title.replace(/\[[^)]+\]\([^)]+\)/, "<a href=\"#{url}\">#{linktitle}</a>")
+
+  if match = /__([^_]+)__/g.exec(title)
+    title = title.replace(/__[^_]+__/, "<b>"+match[1]+"</b>")
+
+  if match = /_([^_]+)_/g.exec(title)
+    title = title.replace("/_[^_]+_/", "<u>" + match[1] + "</u>")
+
+  return title
 
 _getFileLine = (filename, line, onFind) ->
   fileContents = fs.readFileSync filename
@@ -107,7 +120,8 @@ _processFile = (searchPath, results, todos, agendas, skipFiles) ->
     if match = /(\[TODO\])\s+(.*)$/.exec(result.text)
         text = match[2]
         column = match.index
-        todos.push(new Todo(referencedFile, result.line, column, text))
+        todoText = _cleanupSideitemTitles(text)
+        todos.push(new Todo(referencedFile, result.line, column, todoText))
     else if match = /SCHEDULED: <([^>]+)>/.exec(result.text)
         date = match[1]
         parsedDate = moment(date, dateFormats)
@@ -118,10 +132,11 @@ _processFile = (searchPath, results, todos, agendas, skipFiles) ->
         # suck less
         item = ""
         if starline = _getFileLine(referencedFile, result.line-2)
-          if match = starline.match(/^(\s*)([\*\-\+]+|(\d+)\.)([ ]|$)(\[TODO\] |\[COMPLETED|DONE\] )?(.*)/)
-            item = match[6]
+          if match = starline.match(/^(\s*)([\*\-\+]+|(\d+)\.)([ ]|$)(\[TODO\] |\[(COMPLETED|DONE)\] )?(.*)/)
+            item = match[7]
 
-        agendas.push(new AgendaItem(referencedFile, result.line, column, parsedDate, item))
+        agendaText = _cleanupSideitemTitles(item)
+        agendas.push(new AgendaItem(referencedFile, result.line, column, parsedDate, agendaText))
 
 
 module.exports = { Todo, findInDirectories }

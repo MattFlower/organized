@@ -3,9 +3,10 @@
 class AgendaView extends View
   @content: (agenda) ->
     @agenda = agenda
+
     @li class: 'organized-sidebar-agenda-item', =>
       @a class: 'organized-sidebar-agenda-item-time', 'data-file': agenda.file, 'data-line': agenda.line, 'data-column': agenda.column, click: 'agendaItemClick', agenda.date.format("LT")
-      @a class: 'organized-sidebar-agenda-item-title', 'data-file': agenda.file, 'data-line': agenda.line, 'data-column': agenda.column, click: 'agendaItemClick', agenda.text
+      @span class: 'organized-sidebar-agenda-item-title', 'data-file': agenda.file, 'data-line': agenda.line, 'data-column': agenda.column, click: 'agendaItemClick', text: @raw(agenda.text)
 
   visibility: 'show'
 
