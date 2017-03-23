@@ -31,8 +31,8 @@
   * [TODO] Support org-mode style links
 * Todos
   * [TODO] Option to mark closed todo's with current time
-  * [TODO] Priorities for TODO items
-  * [TODO] Key-command to increase / decrease priority of items
+  * [DONE] Priorities for TODO items
+  * [DONE] Key-command to increase / decrease priority of items
   * [TODO] Command to remove completed todos from current file
   * Todos for SidePanel
     * [TODO] Hierarchical todos
@@ -61,7 +61,7 @@
   * [TODO] Handle enter key inside of a table column
 * Agendas
   * Deadlines
-    * [TODO] Syntax highlighting for deadlines
+    * [DONE] Syntax highlighting for deadlines
   * [DONE] Create agenda view to show what's coming up
     * Maybe this should be accordian style with both todos and agenda on a
       single page
@@ -75,6 +75,7 @@
     * Safe storage of Organized client info
     * https://developers.google.com/google-apps/calendar/v3/reference/events/list
     * https://content.googleapis.com/calendar/v3/calendars/<email_url_encoded>/events?timeMax=2017-03-21T23%3A59%3A59%2B04%3A00&timeMin=2017-03-21T00%3A00%3A00%2B04%3A00&key=...
+    * https://tools.ietf.org/html/draft-ietf-oauth-native-apps-09
 * Quick capture
   * [TODO] Add quick-capture keystroke and dialog box
     * [TODO] Collect text of todo

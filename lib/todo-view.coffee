@@ -3,9 +3,25 @@
 class TodoView extends View
   @content: (todo) ->
     @todo = todo
+    todoText = if todo.text != 'C' then @textWithPriority(todo.text, todo.priority) else todo.text
+
     @li class: 'todoitem', =>
       @a 'data-file': todo.file, 'data-line': todo.line, 'data-column': todo.column, class: 'icon fa fa-square-o', click: 'checkClick'
-      @span 'data-file': todo.file, 'data-line': todo.line, 'data-column': todo.column, click: 'todoclick', text: @raw(todo.text)
+      @span 'data-file': todo.file, 'data-line': todo.line, 'data-column': todo.column, click: 'todoclick', text: @raw(todoText)
+
+  @textWithPriority: (text, priority) ->
+    todoText = ""
+    if priority == "A"
+      todoText += '<span class="icon fa fa-arrow-up" style="color: green"/>'
+    else if priority == "B"
+      todoText += '<span class="icon fa fa-arrow-up"/>'
+    else if priority == "D"
+      todoText += '<span class="icon fa fa-arrow-down"/>'
+    else if priority == "E"
+      todoText += '<span class="icon fa fa-arrow-down" style="color: red"/>'
+
+    todoText += text
+    return todoText
 
   visibility: 'show'
 

@@ -24,12 +24,14 @@ class Todo
   line: null
   column: null
   text: null
+  priority: null
 
-  constructor: (file, line, column, text) ->
+  constructor: (file, line, column, text, priority) ->
     @file = file
     @line = line
     @column = column
     @text = text
+    @priority = priority
 
 
 findInDirectories: (directories = atom.project.getPaths(), onComplete) ->
@@ -57,13 +59,13 @@ _findInDirectories = (directories, skipFiles, todos, agendas, onComplete) ->
         _findInDirectories(directories, skipFiles, todos, agendas, onComplete)
       else if pathStat.isDirectory()
         console.log("Finding TODO's in #{searchPath}")
-        TextSearch.findAsPromise(["(\\[TODO\\].*)$", "(SCHEDULED: <[^>]+>)"], "**/*.org", {cwd: searchPath, matchBase: true})
+        TextSearch.findAsPromise(["(\\[TODO\\].*)$", "((SCHEDULED|DEADLINE): <[^>]+>)"], "**/*.org", {cwd: searchPath, matchBase: true})
           .then (results) =>
             _processFile(searchPath, results, todos, agendas, skipFiles)
             _findInDirectories(directories, skipFiles, todos, agendas, onComplete)
       else if pathStat.isFile()
         console.log("Finding TODO's in file #{searchPath}")
-        TextSearch.findAsPromise(["(\\[TODO\\].*)$", "(SCHEDULED: <[^>]+>)"], searchPath, {matchBase: true})
+        TextSearch.findAsPromise(["(\\[TODO\\].*)$", "((SCHEDULED|DEADLINE): <[^>]+>)"], searchPath, {matchBase: true})
           .then (results) =>
             _processFile(searchPath, results, todos, agendas, skipFiles)
             _findInDirectories(directories, skipFiles, todos, agendas, onComplete)
@@ -79,16 +81,16 @@ findInDirectories = (directories = atom.project.getPaths(), onComplete) ->
   _findInDirectories directories, skipFiles, [], [], onComplete
 
 _cleanupSideitemTitles = (title) ->
-  if match = /\[([^)]+)\]\(([^)]+)\)/g.exec(title)
+  if match = /\[([^\]]+?)\]\(([^)]+?)\)/g.exec(title)
     linktitle = match[1]
     url = match[2]
-    title = title.replace(/\[[^)]+\]\([^)]+\)/, "<a href=\"#{url}\">#{linktitle}</a>")
+    title = title.replace(/\[[^\]]+?\]\([^)]+?\)/, "<a href=\"#{url}\">#{linktitle}</a>")
 
   if match = /__([^_]+)__/g.exec(title)
-    title = title.replace(/__[^_]+__/, "<b>"+match[1]+"</b>")
+    title = title.replace(/__[^_]+?__/, "<b>"+match[1]+"</b>")
 
   if match = /_([^_]+)_/g.exec(title)
-    title = title.replace("/_[^_]+_/", "<u>" + match[1] + "</u>")
+    title = title.replace("/_[^_]+?_/", "<u>" + match[1] + "</u>")
 
   return title
 
@@ -115,15 +117,15 @@ _processFile = (searchPath, results, todos, agendas, skipFiles) ->
     referencedFile = result.file
     if not path.isAbsolute(result.file)
       referencedFile = path.join(searchPath, result.file)
-    # if match = result.text.match(/(\[TODO\])\s+(.*)$/)
-    #     text = match[2]
-    if match = /(\[TODO\])\s+(.*)$/.exec(result.text)
-        text = match[2]
+
+    if match = /(\[TODO\])\s+(\[#([A-E])\]\s+)?(.*)$/.exec(result.text)
+        priority = if match[3] then match[3] else "C"
+        text = match[4]
         column = match.index
         todoText = _cleanupSideitemTitles(text)
-        todos.push(new Todo(referencedFile, result.line, column, todoText))
-    else if match = /SCHEDULED: <([^>]+)>/.exec(result.text)
-        date = match[1]
+        todos.push(new Todo(referencedFile, result.line, column, todoText, priority))
+    else if match = /(SCHEDULED|DEADLINE): <([^>]+)>/.exec(result.text)
+        date = match[2]
         parsedDate = moment(date, dateFormats)
         if not parsedDate.isValid()
           parsedDate = null

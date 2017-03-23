@@ -39,17 +39,20 @@ class SidebarView extends View
   activate: (subscriptions) ->
       subscriptions.add atom.config.observe 'organized.includeProjectPathsInSearchDirectories', (newValue) =>
         @includeProjectPaths = newValue
+        @refreshAll()
 
       subscriptions.add atom.config.observe 'organized.sidebarVisible', (newValue) =>
         @sidebarVisible = newValue
 
       subscriptions.add atom.config.observe 'organized.searchDirectories', (newValue) =>
         @searchDirectories = newValue
+        @refreshAll ()
 
       subscriptions.add atom.config.observe 'organized.searchSkipFiles', (newValue) =>
         newValue.filter (value) =>
           value.trim() isnt ""
         @searchSkipFiles = newValue
+        @refreshAll()
 
       subscriptions.add(atom.commands.add('atom-workspace', { 'organized:toggleSidebar': (event) => @toggleVisibility() }))
 
@@ -134,6 +137,16 @@ class SidebarView extends View
     if @todolist and directories.length isnt 0
         findInDirectories directories, (todos, agendaItems) =>
           if refreshTodos
+            todos.sort (a, b) =>
+              if not a.priority and not b.priority
+                return 0
+              else if (a.priority and not(b.priority)) or a.priority < b.priority
+                return -1
+              else if (b.priority and not(a.priority)) or a.priority > b.priority
+                return 1
+              else
+                return 0
+
             for todo in todos
               todoView = new TodoView(todo)
               todoView.appendTo(@todolist)
@@ -141,6 +154,7 @@ class SidebarView extends View
           if refreshAgendaItems
             currentDate = null
             today = moment().startOf('day')
+
             agendaItems.sort (a,b) =>
               if a.date.isBefore(b.date)
                 return -1

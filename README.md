@@ -18,7 +18,9 @@ us get better.
 * Support todo items
   * Highlighting of [TODO]/[DONE] tags
   * Ctrl-Shift-T for toggling todo items from [TODO] to [DONE] to blank.
-  * Highlighting for CLOSED and SCHEDULED tags
+  * Todo items can be marked with a priority of A to E.  This will impact their sorting in the sidebar. (The default
+    level is C if the items aren't marked.)
+  * Highlighting for CLOSED, DEADLINE, and SCHEDULED tags.  DEADLINE and SCHEDULED items will show up in the sidebar.
 * Code blocks
   * Syntax highlighting for code blocks in c, coffeescript, c++, css, golang, html, java,
     javascript, less, objective c, objective c++, python, php, r, ruby, shell scripts (generic), and sql.
@@ -50,6 +52,16 @@ us get better.
 
 # What's New?
 
+* 0.6.3 (Release 2017-03-23)
+  * Implemented syntax coloring for todo priorities
+  * Todo Items are now sorted according to priority.  (Default priority is "C", range is A-E)
+  * Added keystrokes option-shift-up and option-shift-down to change priority of current item.  These should be
+    alt-shift-up and alt-shift-down on windows.
+  * Priority items in todo items
+  * Added syntax highlighting for deadlines
+  * Added keystrokes (ctrl-i d) to add a deadline.  Existing "insert date" functionality has been remapped to
+    (ctrl-i /)
+  * Deadlines are treated like schedule items (for now) in agendas
 * 0.6.2 (Released 2017-03-22)
   * Archive used to only archive the current subtree and it ignored selections.  Now it archives the entire selection
     too, even if it is multiple subtrees.

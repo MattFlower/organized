@@ -60,6 +60,10 @@ repository:
         match: "COMPLETED|DONE"
       },
       {
+        name: 'priority.organized'
+        match: '\\[#[A-E]\\]'
+      },
+      {
         name: 'tags.organized'
         match: ":([^: ]+:){1,}"
       },
@@ -152,6 +156,21 @@ repository:
           5:
             name: 'endtimeblock'
       },
+      {
+        name: 'deadline.meta'
+        match: "\s*(DEADLINE)(:) (\\<)([^\\>]+)(\\>)"
+        captures:
+          1:
+            name: 'tag'
+          2:
+            name: 'colon'
+          3:
+            name: 'begintimeblock'
+          4:
+            name: 'timeblock'
+          5:
+            name: 'endtimeblock'
+      }
       {
         name: 'closed.meta'
         match: "\s*(CLOSED)(:) (\\[)([^\\>]+)(\\])"

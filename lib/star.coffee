@@ -19,6 +19,8 @@ class Star
   defaultIndentType: null
   currentNumber: 0
   nextNumber: 0
+  priority: "C"
+  priorityPresent: false
 
   statusRow: -1
   scheduleDate: null
@@ -46,8 +48,7 @@ class Star
     @starCol = @_starIndexOf(line)
 
     #console.log("Found star on row #{@startRow} and col #{@starCol}")
-
-    match = line.match(/^(\s*)([\*\-\+]+|(\d+)\.)([ ]|$)(\[?TODO\]? |\[?(COMPLETED|DONE)\]? )?/)
+    match = line.match(/^(\s*)([\*\-\+]+|(\d+)\.)([ ]|$)(\[?TODO\]?\s+|\[?(COMPLETED|DONE)\]?\s+)?(\[#([A-E])\]\s+)?/)
 
     if match
       @whitespaceCol = @starCol + match[2].length
@@ -56,6 +57,12 @@ class Star
         @startTextCol = @startTodoCol + match[5].length
       else
         @startTextCol = @startTodoCol
+
+      # Grab the priority
+      if match[8]
+        @priority = match[8]
+        @priorityPresent = true
+
       # Compute indent level
       levelCount = 0
       stars = match[2]
@@ -164,6 +171,20 @@ class Star
     # count the spaces
     return match[1].length
 
+  decreasePriority: (editor) ->
+    if not @priorityPresent
+      newPriority = @getMinPriority()
+    else if @priority == @getMinPriority()
+      return @removePriority(editor)
+    else
+      newPriority = String.fromCharCode(@priority.charCodeAt()+1)
+
+    line = editor.lineTextForBufferRow(@startRow)
+    if match = new RegExp("\\[#"+@priority+"\\]").exec(line)
+      editor.setTextInBufferRange([[@startRow, match.index+2], [@startRow, match.index+3]], newPriority)
+    else
+      editor.setTextInBufferRange([[@startRow, @startTextCol], [@startRow, @startTextCol]], "[##{newPriority}] ")
+
   # Find the last line at the same level as this star
   getEndOfSubtree: () ->
     currentLine = @endRow + 1
@@ -178,6 +199,26 @@ class Star
       currentLine = @editor.getLineCount()-1
 
     return currentLine
+
+  getMaxPriority: () ->
+    return "A"
+
+  getMinPriority: () ->
+    return "E"
+
+  increasePriority: (editor) ->
+    if not @priorityPresent
+      newPriority = @getMaxPriority()
+    else if @priority == @getMaxPriority()
+      return @removePriority(editor)
+    else
+      newPriority = String.fromCharCode(@priority.charCodeAt()-1)
+
+    line = editor.lineTextForBufferRow(@startRow)
+    if match = new RegExp("\\[#"+@priority+"\\]").exec(line)
+      editor.setTextInBufferRange([[@startRow, match.index+2], [@startRow, match.index+3]], newPriority)
+    else
+      editor.setTextInBufferRange([[@startRow, @startTextCol], [@startRow, @startTextCol]], "[##{newPriority}] ")
 
   newStarLine: (indentLevel = @indentLevel) ->
     if @indentType isnt "mixed"
@@ -201,5 +242,10 @@ class Star
         indent += @starType + " "
 
     return indent
+
+  removePriority: (editor) ->
+    line = editor.lineTextForBufferRow(@startRow)
+    if match = new RegExp("\\[#"+@priority+"\\]\\s+").exec(line)
+      editor.setTextInBufferRange([[@startRow, match.index], [@startRow, match.index + match[0].length]], "")
 
 module.exports = Star

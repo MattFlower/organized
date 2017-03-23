@@ -1,12 +1,19 @@
 * Do you take notes or need an engineering notebook?
 * [TODO] Do you have things to do?
   * [DONE] Some of which might already be done?
+* Some things are scheduled
+  SCHEDULED: <2017-03-24 Fri 14:00>
+* Others have a deadline
+  DEADLINE: <2017-03-24 Fri 15:00>
+* [TODO] [#A] Some tasks are very important
+* [TODO] [#B] Some are less important
+* [TODO] [#E] Some aren't important at all
 * Maybe you need to store [links](https://github.com/MattFlower/organized)
 * Maybe you want _underlined text_ or __bold text__
 
 # Coding features
-- Maybe you write code in languages like Java, JavaScript, Python,
-  PHP, Objective C, Ruby, or even Shell Scripts?
+- Maybe you write code in languages like Go, Java, JavaScript, Python,
+  PHP, Objective C, R, Ruby, or even Shell Scripts?
   ```javascript
   console.log("You can execute these")
   ```
@@ -21,6 +28,6 @@
 |    215 |   223 |
 +--------+-------+
 
-# You can have a sidebar anytime to keep track of your todos
+# You can have a sidebar anytime to keep track of your todos or see what's happening today
 
 Don't see what you like?  Check the TODO.org and/or make a suggestion!

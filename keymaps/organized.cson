@@ -10,11 +10,15 @@
   # Keystrokes starting with ctrl-i are general purpose
   'ctrl-i a': 'organized:archiveSubtree'
   'ctrl-i t': 'organized:insertDateTime'
-  'ctrl-i d': 'organized:insertDate'
+  'ctrl-i /': 'organized:insertDate'
   'ctrl-i l': 'organized:makeLink'
+  'ctrl-i d': 'organized:deadlineItem'
   'ctrl-i s': 'organized:scheduleItem'
   # Keystrokes starting with ctrl-- refer to tables
   'ctrl-- c': 'organized:closeTable'
   'ctrl-- o': 'organized:openTable'
   # Keystrokes starting with ctrl-` refer to code blocks
   'ctrl-` x': 'organized:executeCodeBlock'
+  # Adjust todo Priorities
+  'alt-shift-up': 'organized:increasePriority'
+  'alt-shift-down': 'organized:decreasePriority'

@@ -128,10 +128,13 @@ module.exports =
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:refreshTodos': (event) => @sidebar.refreshTodos() }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:refreshAgenda': (event) => @sidebar.refreshAgendaItems() }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:scheduleItem': (event) => @scheduleItem(event) }))
+    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:deadlineItem': (event) => @deadlineItem(event) }))
 
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:archiveSubtree': (event) => @archiveSubtree(event) }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:archiveToClipboard': (event) => @archiveToClipboard(event) }))
     #@subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:importTodaysEvents': (event) => GoogleCalendar.importTodaysEvents() }))
+    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:increasePriority': (event) => @increasePriority(event) }))
+    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:decreasePriority': (event) => @decreasePriority(event) }))
 
     @subscriptions.add atom.config.observe 'organized.autoCreateStarsOnEnter', (newValue) => @createStarsOnEnter = newValue
     @subscriptions.add atom.config.observe 'organized.levelStyle', (newValue) => @levelStyle = newValue
@@ -205,6 +208,12 @@ module.exports =
     @subscriptions.dispose()
     @organizedView.destroy()
 
+  deadlineItem: (event) ->
+    @_addMarkerDate("DEADLINE")
+
+  decreasePriority: () ->
+    @_changePriority(false)
+
   executeCodeBlock: () ->
     if editor = atom.workspace.getActiveTextEditor()
       if position = editor.getCursorBufferPosition()
@@ -224,6 +233,9 @@ module.exports =
     # @subscriptions.add(tableChangeSubscription)
     @subscriptions.add(tableStoppedChangingSub)
     @subscriptions.add(editorDestroySubscription)
+
+  increasePriority: () ->
+    @_changePriority(true)
 
   indent: (event) ->
     if editor = atom.workspace.getActiveTextEditor()
@@ -412,6 +424,43 @@ module.exports =
       organizedViewState: @organizedView.serialize()
     }
 
+  scheduleItem: (event) ->
+    @_addMarkerDate("SCHEDULED")
+
+  setTodo: (event) ->
+    if editor = atom.workspace.getActiveTextEditor()
+      visited = {}
+      startPosition = editor.getCursorBufferPosition()
+      startRow = startPosition.row
+
+      @_withAllSelectedLines editor, (position, selection) =>
+        if visited[position.row]
+          return
+
+        if star = @_starInfo(editor, position)
+          for i in [star.startRow..star.endRow]
+            visited[i] = true
+
+          line = editor.lineTextForBufferRow(star.startRow)
+          editor.setTextInBufferRange([[star.startRow, star.startTodoCol], [star.startRow, star.startTextCol]], " [TODO] ")
+
+  setTodoCompleted: (event) ->
+    if editor = atom.workspace.getActiveTextEditor()
+      visited = {}
+      startPosition = editor.getCursorBufferPosition()
+      startRow = startPosition.row
+
+      @_withAllSelectedLines editor, (position, selection) =>
+        if visited[position.row]
+          return
+
+        if star = @_starInfo(editor, position)
+          for i in [star.startRow..star.endRow]
+            visited[i] = true
+
+          line = editor.lineTextForBufferRow(star.startRow)
+          editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.startTextCol]], " [DONE] ")
+
   tableChange: (event) ->
     if not @autoSizeTables
       return
@@ -465,60 +514,6 @@ module.exports =
           else
             charsToDelete = if startChars[3] is ' ' then 4 else 3
             editor.setTextInBufferRange([[position.row, 0], [position.row, charsToDelete]], '')
-
-  scheduleItem: (event) ->
-    if editor = atom.workspace.getActiveTextEditor()
-      visited = {}
-      d = new Date()
-      df = new Intl.DateTimeFormat('en-US', {weekday: 'short'})
-      dow = df.format(d)
-      @_withAllSelectedLines editor, (position, selection) =>
-          if visited[position.row]
-            return
-
-          if star = @_starInfo(editor, position)
-            for i in [star.startRow..star.endRow]
-              visited[i] = true
-
-            editor.transact 1000, () =>
-              originalPosition = editor.getCursorBufferPosition()
-              newText = " ".repeat(star.startTodoCol) + "SCHEDULED: <" + @_getISO8601Date(d) + " " + dow + ">" + "\n"
-              console.log("New Text: #{newText}")
-              editor.setTextInBufferRange([[star.startRow+1, 0], [star.startRow+1, 0]], newText)
-
-  setTodo: (event) ->
-    if editor = atom.workspace.getActiveTextEditor()
-      visited = {}
-      startPosition = editor.getCursorBufferPosition()
-      startRow = startPosition.row
-
-      @_withAllSelectedLines editor, (position, selection) =>
-        if visited[position.row]
-          return
-
-        if star = @_starInfo(editor, position)
-          for i in [star.startRow..star.endRow]
-            visited[i] = true
-
-          line = editor.lineTextForBufferRow(star.startRow)
-          editor.setTextInBufferRange([[star.startRow, star.startTodoCol], [star.startRow, star.startTextCol]], " [TODO] ")
-
-  setTodoCompleted: (event) ->
-    if editor = atom.workspace.getActiveTextEditor()
-      visited = {}
-      startPosition = editor.getCursorBufferPosition()
-      startRow = startPosition.row
-
-      @_withAllSelectedLines editor, (position, selection) =>
-        if visited[position.row]
-          return
-
-        if star = @_starInfo(editor, position)
-          for i in [star.startRow..star.endRow]
-            visited[i] = true
-
-          line = editor.lineTextForBufferRow(star.startRow)
-          editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.startTextCol]], " [DONE] ")
 
   toggleTodo: (event) ->
     if editor = atom.workspace.getActiveTextEditor()
@@ -600,6 +595,28 @@ module.exports =
                   #cannot unindent - not sure how to do so
           else
             editor.outdentSelectedRows()
+
+  _addMarkerDate: (dateType) ->
+    if editor = atom.workspace.getActiveTextEditor()
+      visited = {}
+      d = new Date()
+      df = new Intl.DateTimeFormat('en-US', {weekday: 'short'})
+      dow = df.format(d)
+      @_withAllSelectedLines editor, (position, selection) =>
+          if visited[position.row]
+            return
+
+          if star = @_starInfo(editor, position)
+            for i in [star.startRow..star.endRow]
+              visited[i] = true
+
+            editor.transact 1000, () =>
+              originalPosition = editor.getCursorBufferPosition()
+
+              # Now add the marker
+              newText = "\n" + " ".repeat(star.startTodoCol) + "#{dateType}: <#{@_getISO8601Date(d)} #{dow}>"
+              col = editor.lineTextForBufferRow(0).length
+              editor.setTextInBufferRange([[star.startRow, col], [star.startRow, col]], newText)
 
   _archiveSubtree: (outputToString) ->
     if editor = atom.workspace.getActiveTextEditor()
@@ -699,6 +716,23 @@ module.exports =
                   atom.notifications.addError("Unable to archive content due to error: " + err)
                 else
                   editor.setTextInBufferRange(rangeToDelete, '')
+
+  _changePriority: (up) ->
+    if editor = atom.workspace.getActiveTextEditor()
+      visited = {}
+      editor.transact 1000, () =>
+        @_withAllSelectedLines editor, (position, selection) =>
+          if visited[position.row]
+            return
+
+          if star = @_starInfo(editor, position)
+            for i in [star.startRow..star.endRow]
+              visited[i] = true
+
+            if up
+              star.increasePriority(editor)
+            else
+              star.decreasePriority(editor)
 
   _getISO8601Date: (date) ->
     year = ("0000" + date.getFullYear()).substr(-4, 4)

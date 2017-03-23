@@ -201,12 +201,16 @@ atom-text-editor {
         color: @text-color-subtle
       }
 
+      .syntax--priority {
+        color: @text-color-info
+      }
+
       .syntax--tags {
         color: @text-color-info;
       }
     }
 
-    .syntax--scheduled, .syntax--closed {
+    .syntax--scheduled, .syntax-deadline, .syntax--closed {
       .syntax--tag {
         color: @text-color-highlight;
       }
