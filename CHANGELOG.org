@@ -1,4 +1,7 @@
-* 0.6.3 (Release 2017-03-23)
+* 0.6.4 (Released 2017-03-23)
+  * An errant space was causing an error on load.  Quick fix.
+
+* 0.6.3 (Released 2017-03-23)
   * Implemented syntax coloring for todo priorities
   * Todo Items are now sorted according to priority.  (Default priority is "C", range is A-E)
   * Added keystrokes option-shift-up and option-shift-down to change priority of current item.  These should be
