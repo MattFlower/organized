@@ -615,7 +615,7 @@ module.exports =
 
               # Now add the marker
               newText = "\n" + " ".repeat(star.startTodoCol) + "#{dateType}: <#{@_getISO8601Date(d)} #{dow}>"
-              col = editor.lineTextForBufferRow(0).length
+              col = editor.lineTextForBufferRow(star.startRow).length
               editor.setTextInBufferRange([[star.startRow, col+1], [star.startRow, col+1]], newText)
 
   _archiveSubtree: (outputToString) ->

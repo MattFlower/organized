@@ -52,7 +52,7 @@ us get better.
 
 # What's New?
 
-* 0.6.3-0.6.5 (Release 2017-03-23)
+* 0.6.3-0.6.6 (Release 2017-03-23)
   * Implemented syntax coloring for todo priorities
   * Todo Items are now sorted according to priority.  (Default priority is "C", range is A-E)
   * Added keystrokes option-shift-up and option-shift-down to change priority of current item.  These should be
