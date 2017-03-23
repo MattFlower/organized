@@ -46,7 +46,7 @@ class SidebarView extends View
 
       subscriptions.add atom.config.observe 'organized.searchDirectories', (newValue) =>
         @searchDirectories = newValue
-        @refreshAll ()
+        @refreshAll()
 
       subscriptions.add atom.config.observe 'organized.searchSkipFiles', (newValue) =>
         newValue.filter (value) =>
