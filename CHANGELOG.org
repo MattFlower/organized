@@ -1,3 +1,6 @@
+* 0.6.5 (Released 2017-03-23)
+  * Fix off-by-one error when inserting schedule markers.  
+
 * 0.6.4 (Released 2017-03-23)
   * An errant space was causing an error on load.  Quick fix.
 

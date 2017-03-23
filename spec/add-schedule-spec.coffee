@@ -38,3 +38,6 @@ describe "when the schedule command is used", ->
   parameterized([0,0], "* One", "* One\n  SCHEDULED: {date}")
   parameterized([0,0], "* One\n* Two", "* One\n  SCHEDULED: {date}\n* Two")
   parameterized([0,0], "* One\n  * Two", "* One\n  SCHEDULED: {date}\n  * Two")
+  parameterized([0,2], "* One", "* One\n  SCHEDULED: {date}")
+  parameterized([0,2], "* One\n* Two", "* One\n  SCHEDULED: {date}\n* Two")
+  parameterized([0,2], "* One\n  * Two", "* One\n  SCHEDULED: {date}\n  * Two")

@@ -616,7 +616,7 @@ module.exports =
               # Now add the marker
               newText = "\n" + " ".repeat(star.startTodoCol) + "#{dateType}: <#{@_getISO8601Date(d)} #{dow}>"
               col = editor.lineTextForBufferRow(0).length
-              editor.setTextInBufferRange([[star.startRow, col], [star.startRow, col]], newText)
+              editor.setTextInBufferRange([[star.startRow, col+1], [star.startRow, col+1]], newText)
 
   _archiveSubtree: (outputToString) ->
     if editor = atom.workspace.getActiveTextEditor()
