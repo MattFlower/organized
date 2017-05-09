@@ -115,7 +115,7 @@ module.exports =
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:insertDate': (event) => @insert8601Date(event) }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:insertDateTime': (event) => @insert8601DateTime(event) }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:executeCodeBlock': (event) => @executeCodeBlock(event) }))
-    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:encryptBuffer': (event) => @encryptBuffer(event) }))
+    #@subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:encryptBuffer': (event) => @encryptBuffer(event) }))
 
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:toggleBold': (event) => @toggleBold(event) }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:toggleUnderline': (event) => @toggleUnderline(event) }))
@@ -144,7 +144,6 @@ module.exports =
 
     @sidebar = new SidebarView()
     @sidebar.activate(@subscriptions)
-    @sidebar.populateSidebarItems(true, true)
 
     if not @organizedToolbar
       @organizedToolbar = new OrganizedToolbar()

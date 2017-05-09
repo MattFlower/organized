@@ -37,23 +37,39 @@ class SidebarView extends View
   # Activate is called by the main activate functionality so it can control it's
   # own interaction with the rest of the system.
   activate: (subscriptions) ->
+      # Pre-load config values so we don't end up refreshing multiple times at start
+      @includeProjectPaths = atom.config.get('organized.includeProjectPathsInSearchDirectories')
+      @sidebarVisible = atom.config.get('organized.sidebarVisible')
+      @searchDirectories = atom.config.get('organized.searchDirectories')
+      @searchSkipFiles = atom.config.get('organized.searchSkipFiles')
+
       subscriptions.add atom.config.observe 'organized.includeProjectPathsInSearchDirectories', (newValue) =>
+        refresh = @includeProjectPaths != newValue
         @includeProjectPaths = newValue
-        @refreshAll()
+        if refresh
+          @clearAll()
+          @refreshAll()
 
       subscriptions.add atom.config.observe 'organized.sidebarVisible', (newValue) =>
         @sidebarVisible = newValue
 
       subscriptions.add atom.config.observe 'organized.searchDirectories', (newValue) =>
+        refresh = @searchDirectories.length isnt newValue.length or @searchDirectories.some (e, i) => e isnt newValue[i]
         @searchDirectories = newValue
-        @refreshAll()
+        if refresh
+          @clearAll()
+          @refreshAll()
 
       subscriptions.add atom.config.observe 'organized.searchSkipFiles', (newValue) =>
         newValue.filter (value) =>
           value.trim() isnt ""
+        refresh = @searchSkipFiles.length isnt newValue.length or @searchSkipFiles.some (e, i) => e isnt newValue[i]
         @searchSkipFiles = newValue
-        @refreshAll()
+        if refresh
+          @clearAll()
+          @refreshAll()
 
+      @refreshAll()
       subscriptions.add(atom.commands.add('atom-workspace', { 'organized:toggleSidebar': (event) => @toggleVisibility() }))
 
   constructor: ->
@@ -62,6 +78,10 @@ class SidebarView extends View
 
   clearAgendaItems: ->
     @agendalist.empty()
+
+  clearAll: ->
+    @clearTodos()
+    @clearAgendaItems()
 
   clearTodos: ->
     @todolist.empty()

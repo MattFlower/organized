@@ -52,6 +52,10 @@ us get better.
 
 # What's New?
 
+* 0.6.7 (Released 2017-05-09)
+  * Fixed bug that caused sidebar to be refreshed several times during startup.  This
+    slowed down startup and caused duplicates to show up in the agenda and todo items.
+  * Removed command that was accidentally included and not yet implemented.
 * 0.6.3-0.6.6 (Release 2017-03-23)
   * Implemented syntax coloring for todo priorities
   * Todo Items are now sorted according to priority.  (Default priority is "C", range is A-E)
