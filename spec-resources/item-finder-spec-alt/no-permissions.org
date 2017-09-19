@@ -1,0 +1,2 @@
+* [TODO] This file should be chmod 700, but owned by another user.  The contents are unimportant -- the important part is that it exists and has a todo in it so 
+  that the spec test will fail because it will find the wrong number of todos.

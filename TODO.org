@@ -70,6 +70,7 @@
     changes in an organized file
   * [DONE] Render []() style links into hyperlinks inside agenda items
   * [DONE] Render bold or underlined text in agenda and todo views
+  * [TODO] If agendas are "all day", show them as a dot instead of at 12:00 AM
   * [TODO] Add an "import today from gmail" feature
     * We'd need to figure out authentication and where to store a user's info
     * Safe storage of Organized client info
@@ -95,6 +96,8 @@
   * Add execution support for:
     * [TODO] C#
   * [TODO] Add support to include libraries and/or classpaths
+  * [TODO] Add support to set parameters for execution
+  * [TODO] Add support to save source code into new file.
   * [TODO] Weird error for Java -- talks about not being able to find class instead of code error
   * [TODO] Need process control to be able to stop a process
 * Search / Exploration
@@ -153,3 +156,6 @@
     * [How to export](http://lifehacker.com/how-to-jump-ship-from-evernote-and-take-your-data-with-1782841075)
     * [Export to SimpleNote Utility](http://lifehacker.com/how-to-jump-ship-from-evernote-and-take-your-data-with-1782841075)
       * Simplenote doesn't really import simple text anymore, but this could still be a useful starting point.
+* Documentation
+  * Add documentation for all feature with example source code
+  * Make tooltips discoverable

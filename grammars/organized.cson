@@ -488,32 +488,27 @@ repository:
               name: 'link.parens.organized'
       }
       {
-        name: 'border.table.organized'
-        match: '\\s*[\\|\\+](\\-*[\\|\\+])+\\s*'
+        begin: '^\\s*(\\|)'
+        beginCaptures:
+          '1':
+            'name': 'border.table.organized'
+        patterns: [
+          {
+            match: '[^\\|\\-]+'
+            name: 'row.table.organized'
+          }
+          {
+            match: '[\\|\\+]'
+            name: 'border.table.organized'
+          }
+        ]
+        end: '$'
       }
       {
-        #Not quite right, but getting there
-        #          |            |    ....                 |
-        # begin: '(\\|)'
-        # beginCaptures:
-        #   1:
-        #     name: 'border1.table.organized'
-        # end: '([^\\-\\+\\|]+)(\\|)'
-        #
-        # endCaptures:
-        #   1:
-        #     name: 'row2.table.organized'
-        #   2:
-        #     name: 'border2.table.organized'
-
-        match: '(\\|)((?:[^\\-\\+\\|]+\\|)+)'
+        match: '\\s*(\\+(?:\\-*[\\|\\+])+)\\s*'
         captures:
           1:
             name: 'border.table.organized'
-          2:
-            patterns: [
-              { include: '#innerTableRow' }
-            ]
       }
       {
         match: '___([^_]+)___'
@@ -532,16 +527,5 @@ repository:
         captures:
           1:
             name: 'underlined.text.organized'
-      }
-    ]
-  innerTableRow:
-    patterns: [
-      {
-        match: '([^\\-\\+\\|]+)(\\|)'
-        captures:
-          1:
-            name: 'row.table.organized'
-          2:
-            name: 'border.table.organized'
       }
     ]

@@ -15,7 +15,7 @@ describe "When stars are parsed", ->
     editor.setCursorBufferPosition([0, 0])
 
     star = new Star(0, 2)
-    console.log(star)
+    # console.log(star)
     expect(star.starType).toBe('numbers')
     expect(star.indentLevel).toBe(0)
     expect(star.indentType).toBe('none')
@@ -31,7 +31,7 @@ describe "When stars are parsed", ->
     editor.setCursorBufferPosition([1, 0])
 
     star = new Star(1, 2)
-    console.log(star)
+    # console.log(star)
     expect(star.starType).toBe('numbers')
     expect(star.indentLevel).toBe(1)
     expect(star.indentType).toBe('spaces')
@@ -47,7 +47,7 @@ describe "When stars are parsed", ->
     editor.setCursorBufferPosition([1, 0])
 
     star = new Star(2, 2)
-    console.log(star)
+    # console.log(star)
     expect(star.starType).toBe('numbers')
     expect(star.indentLevel).toBe(2)
     expect(star.indentType).toBe('spaces')
@@ -63,7 +63,7 @@ describe "When stars are parsed", ->
     editor.setCursorBufferPosition([0, 0])
 
     star = new Star(0, 2)
-    console.log(star)
+    # console.log(star)
     expect(star.starType).toBe('*')
     expect(star.indentLevel).toBe(0)
     expect(star.indentType).toBe('none')
@@ -78,7 +78,7 @@ describe "When stars are parsed", ->
     editor.setCursorBufferPosition([1, 0])
 
     star = new Star(1, 2)
-    console.log(star)
+    # console.log(star)
     expect(star.starType).toBe('*')
     expect(star.indentLevel).toBe(1)
     expect(star.indentType).toBe('spaces')
@@ -93,7 +93,7 @@ describe "When stars are parsed", ->
     editor.setCursorBufferPosition([1, 0])
 
     star = new Star(2, 2)
-    console.log(star)
+    # console.log(star)
     expect(star.starType).toBe('*')
     expect(star.indentLevel).toBe(2)
     expect(star.indentType).toBe('spaces')
@@ -108,7 +108,7 @@ describe "When stars are parsed", ->
     editor.setCursorBufferPosition([0, 0])
 
     star = new Star(0, 2)
-    console.log(star)
+    # console.log(star)
     expect(star.starType).toBe('*')
     expect(star.indentLevel).toBe(0)
     expect(star.indentType).toBe('none')
@@ -124,7 +124,7 @@ describe "When stars are parsed", ->
     editor.setCursorBufferPosition([0, 0])
 
     star = new Star(0, 2)
-    console.log(star)
+    # console.log(star)
     expect(star.starType).toBe('*')
     expect(star.indentLevel).toBe(0)
     expect(star.indentType).toBe('none')
@@ -140,7 +140,7 @@ describe "When stars are parsed", ->
     editor.setCursorBufferPosition([0, 0])
 
     star = new Star(0, 2)
-    console.log(star)
+    # console.log(star)
     expect(star.starType).toBe('*')
     expect(star.indentLevel).toBe(0)
     expect(star.indentType).toBe('none')
@@ -156,7 +156,7 @@ describe "When stars are parsed", ->
     editor.setCursorBufferPosition([0, 0])
 
     star = new Star(0, 2)
-    console.log(star)
+    # console.log(star)
     expect(star.starType).toBe('*')
     expect(star.indentLevel).toBe(0)
     expect(star.indentType).toBe('none')
@@ -172,7 +172,7 @@ describe "When stars are parsed", ->
     editor.setCursorBufferPosition([0, 0])
 
     star = new Star(0, 2)
-    console.log(star)
+    # console.log(star)
     expect(star.starType).toBe('*')
     expect(star.indentLevel).toBe(0)
     expect(star.indentType).toBe('none')
@@ -188,7 +188,7 @@ describe "When stars are parsed", ->
     editor.setCursorBufferPosition([0, 0])
 
     star = new Star(0, 2)
-    console.log(star)
+    # console.log(star)
     expect(star.starType).toBe('*')
     expect(star.indentLevel).toBe(0)
     expect(star.indentType).toBe('none')
@@ -204,7 +204,7 @@ describe "When stars are parsed", ->
     editor.setCursorBufferPosition([0, 0])
 
     star = new Star(0, 2)
-    console.log(star)
+    # console.log(star)
     expect(star.starType).toBe('-')
     expect(star.indentLevel).toBe(0)
     expect(star.indentType).toBe('none')
@@ -219,7 +219,7 @@ describe "When stars are parsed", ->
     editor.setCursorBufferPosition([1, 0])
 
     star = new Star(1, 2)
-    console.log(star)
+    # console.log(star)
     expect(star.starType).toBe('-')
     expect(star.indentLevel).toBe(1)
     expect(star.indentType).toBe('spaces')
@@ -234,7 +234,7 @@ describe "When stars are parsed", ->
     editor.setCursorBufferPosition([1, 0])
 
     star = new Star(2, 2)
-    console.log(star)
+    # console.log(star)
     expect(star.starType).toBe('-')
     expect(star.indentLevel).toBe(2)
     expect(star.indentType).toBe('spaces')

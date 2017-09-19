@@ -52,6 +52,15 @@ us get better.
 
 # What's New?
 
+* 0.6.8 (Released 2017-09-18)
+  * Re-write of code that finds agendas and todo items.  This should fix several problems:
+    * Files should not longer be open multiple times per scan
+    * Soft-linked files, permissions errors, or other problems relating to opening files should be eliminated
+    * Close Issue #4 - Sidebar not working
+  * Fixed bug that duplicates agenda and todo items if you have specified a predefined directory and you have
+    that directory open as a project.
+  * Try to eliminate duplicates which arise if you have a predefined search directory and you open it's parent
+    directory as a project.
 * 0.6.7 (Released 2017-05-09)
   * Fixed bug that caused sidebar to be refreshed several times during startup.  This
     slowed down startup and caused duplicates to show up in the agenda and todo items.
@@ -66,25 +75,6 @@ us get better.
   * Added keystrokes (ctrl-i d) to add a deadline.  Existing "insert date" functionality has been remapped to
     (ctrl-i /)
   * Deadlines are treated like schedule items (for now) in agendas
-* 0.6.2 (Released 2017-03-22)
-  * Archive used to only archive the current subtree and it ignored selections.  Now it archives the entire selection
-    too, even if it is multiple subtrees.
-  * Even if sidebar is hidden, the toolbar button always said it was enabled.
-  * If there are links inside of an agenda or todo item, render them as hyperlinks
-  * If there is bold or underlined text in an agenda or todo item, render them.
-* 0.6.1 (Released 2017-03-18)
-  * Missed adding some files before I released, re-releasing.  This closes issue #14.
-* 0.6.0 (Released 2017-03-17)
-  * New Agenda sidebar panel
-  * Any item marked with a SCHEDULED tag later than or equal to the
-    start of today will show up in the Agenda Panel of the sidebar.
-  * New archive command (ctrl-i a) which moves the current subtree you are pointing to into a file named
-    <current-filename>_archive.  (For example, for TODO.org, it would be moved to TODO.org_archive)
-  * Archive files are now colored by org-mode as well.
-  * Stop using COMPLETED for todo items.  Instead use DONE.  Existing COMPLETED tags will continue to be colored
-    correctly.
-  * Don't require brackets around TODO items.
-  * Add a setting which asks whether we should use brackets around TODO or DONE by default
 
 Please see the [CHANGELOG.org](https://raw.githubusercontent.com/MattFlower/organized/master/CHANGELOG.org)
 for full details of recent changes.

@@ -23,7 +23,7 @@ describe "Running archiveSubtree", ->
       "* One\n"+
       "  :PROPERTIES:\n"+
       "  :ARCHIVE_TIME: #{time}\n"+
-      "  :ARCHIVE_FILE: /Applications/Atom.app/Contents/Resources/app.asar/spec/test.org\n"+
+      "  :ARCHIVE_FILE: /Applications/Atom.app/Contents/Resources/app/spec/test.org\n"+
       "  :END:\n"
 
     expect(editor.getText()).toBe("")
@@ -44,7 +44,7 @@ describe "Running archiveSubtree", ->
       "* One\n"+
       "  :PROPERTIES:\n"+
       "  :ARCHIVE_TIME: #{time}\n"+
-      "  :ARCHIVE_FILE: /Applications/Atom.app/Contents/Resources/app.asar/spec/test.org\n"+
+      "  :ARCHIVE_FILE: /Applications/Atom.app/Contents/Resources/app/spec/test.org\n"+
       "  :END:\n"+
       "  * Two\n"
 
@@ -66,7 +66,7 @@ describe "Running archiveSubtree", ->
       "* One\n"+
       "  :PROPERTIES:\n"+
       "  :ARCHIVE_TIME: #{time}\n"+
-      "  :ARCHIVE_FILE: /Applications/Atom.app/Contents/Resources/app.asar/spec/test.org\n"+
+      "  :ARCHIVE_FILE: /Applications/Atom.app/Contents/Resources/app/spec/test.org\n"+
       "  :END:\n"+
       "\t* Two\n"
 
@@ -88,7 +88,7 @@ describe "Running archiveSubtree", ->
       "* One\n"+
       "  :PROPERTIES:\n"+
       "  :ARCHIVE_TIME: #{time}\n"+
-      "  :ARCHIVE_FILE: /Applications/Atom.app/Contents/Resources/app.asar/spec/test.org\n"+
+      "  :ARCHIVE_FILE: /Applications/Atom.app/Contents/Resources/app/spec/test.org\n"+
       "  :END:\n"+
       "** Two\n"
 
@@ -110,7 +110,7 @@ describe "Running archiveSubtree", ->
       "- One\n"+
       "  :PROPERTIES:\n"+
       "  :ARCHIVE_TIME: #{time}\n"+
-      "  :ARCHIVE_FILE: /Applications/Atom.app/Contents/Resources/app.asar/spec/test.org\n"+
+      "  :ARCHIVE_FILE: /Applications/Atom.app/Contents/Resources/app/spec/test.org\n"+
       "  :END:\n"+
       "  - Two\n"
 
@@ -135,13 +135,13 @@ describe "Running archiveSubtree", ->
       "* One\n"+
       "  :PROPERTIES:\n"+
       "  :ARCHIVE_TIME: #{time}\n"+
-      "  :ARCHIVE_FILE: /Applications/Atom.app/Contents/Resources/app.asar/spec/test.org\n"+
+      "  :ARCHIVE_FILE: /Applications/Atom.app/Contents/Resources/app/spec/test.org\n"+
       "  :END:\n"+
       "  * Two\n"+
       "* Three\n"+
       "  :PROPERTIES:\n"+
       "  :ARCHIVE_TIME: #{time}\n"+
-      "  :ARCHIVE_FILE: /Applications/Atom.app/Contents/Resources/app.asar/spec/test.org\n"+
+      "  :ARCHIVE_FILE: /Applications/Atom.app/Contents/Resources/app/spec/test.org\n"+
       "  :END:\n"+
       "  * Four\n"
 

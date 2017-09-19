@@ -1,8 +1,7 @@
-TextSearch = require('rx-text-search')
 fs = require('fs')
-moment = require 'moment'
 path = require('path')
-
+{ Trie } = require './trie'
+{ findInDirectory, findInFile } = require './item-finder'
 
 class AgendaItem
   file: null
@@ -34,13 +33,31 @@ class Todo
     @priority = priority
 
 
-findInDirectories: (directories = atom.project.getPaths(), onComplete) ->
+findInDirectories = (directories = atom.project.getPaths(), onComplete) ->
   skipFiles = atom.config.get('organized.searchSkipFiles')
   skipFiles = skipFiles.concat(['.git', '.atom'])
   skipFiles = (skipFile for skipFile in skipFiles when skipFile.trim() isnt '')
 
-  console.log("Project paths: #{directories}")
-  _findInDirectories directories, skipFiles, [], [], onComplete
+  # Eliminate duplicate directories, but do it in a stable way.
+  # Additionally, and perhaps more importantly, if you have two directories and one is a
+  # subdirectory of another one, eliminate the subdirectory so we don't visit the subdirectory
+  # twice.  While we're at it, normalize the path so no ../ or ./ trickery will work.
+  trie = new Trie()
+  for directory in directories
+    directory = path.normalize(directory)
+    # End with a slash.  By doing this, we prevent matches between things like /home and /homely
+    directoryWithSlash = if directory.endsWith(path.sep) then directory else directory + path.sep
+    trie.add(directoryWithSlash)
+
+  noDupesDirectory = []
+  for directory in directories
+    directory = path.normalize(directory)
+    directoryWithSlash = if directory.endsWith(path.sep) then directory else directory + path.sep
+    if not trie.hasPrefix(directoryWithSlash) and noDupesDirectory.indexOf(directory) is -1
+      noDupesDirectory.push(directory)
+
+  console.log("Finding in directories: #{noDupesDirectory}")
+  _findInDirectories noDupesDirectory, skipFiles, [], [], onComplete
 
 _findInDirectories = (directories, skipFiles, todos, agendas, onComplete) ->
   if directories.length is 0
@@ -52,33 +69,38 @@ _findInDirectories = (directories, skipFiles, todos, agendas, onComplete) ->
     else
       searchPath = directories.pop()
 
+      search = searchPath.trim()
+      if searchPath.length is 0
+        if directories.length > 0
+          _findInDirectories(directories, skipFiles, todos, agendas, onComplete)
+        else
+          onComplete(todos, agendas)
+
+    todoCB = (filename, line, column, todoText, priority) =>
+      # console.log("#{filename}[#{line}:#{column}] -> #{todoText}")
+      todoText = _cleanupSideitemTitles(todoText)
+      todos.push(new Todo(filename, line, column, todoText, priority))
+
+    agendaCB = (filename, line, column, agendaText, time) =>
+      # console.log("#{filename}[#{line}:#{column}] -> #{agendaText} @ #{time}")
+      agendaText = _cleanupSideitemTitles(agendaText)
+      agendas.push(new AgendaItem(filename, line, column, time, agendaText))
+
+    errorCB = (filename, error) =>
+      error = "Error finding todos in  " + searchPath + ".  Please check that directory exists and is writable."
+      # atom.notifications.addError(error)
+      _findInDirectories(directories, skipFiles, todos, agendas, onComplete)
+
+    finishCB = () =>
+      _findInDirectories(directories, skipFiles, todos, agendas, onComplete)
+
     fs.lstat searchPath, (err, pathStat) =>
       if err
-        error = "Error finding todos in  " + searchPath + ".  Please check that directory exists and is writable."
-        atom.notifications.addError(error)
-        _findInDirectories(directories, skipFiles, todos, agendas, onComplete)
+        errorCB(searchPath, err)
       else if pathStat.isDirectory()
-        console.log("Finding TODO's in #{searchPath}")
-        TextSearch.findAsPromise(["(\\[TODO\\].*)$", "((SCHEDULED|DEADLINE): <[^>]+>)"], "**/*.org", {cwd: searchPath, matchBase: true})
-          .then (results) =>
-            _processFile(searchPath, results, todos, agendas, skipFiles)
-            _findInDirectories(directories, skipFiles, todos, agendas, onComplete)
+        findInDirectory searchPath, skipFiles, todoCB, agendaCB, errorCB, finishCB
       else if pathStat.isFile()
-        console.log("Finding TODO's in file #{searchPath}")
-        TextSearch.findAsPromise(["(\\[TODO\\].*)$", "((SCHEDULED|DEADLINE): <[^>]+>)"], searchPath, {matchBase: true})
-          .then (results) =>
-            _processFile(searchPath, results, todos, agendas, skipFiles)
-            _findInDirectories(directories, skipFiles, todos, agendas, onComplete)
-
-dateFormats = ['YYYY-MM-DD ddd HH:mm:ss', 'YYYY-MM-DD ddd HH:mm', 'YYYY-MM-DD ddd', moment.ISO_8601]
-
-findInDirectories = (directories = atom.project.getPaths(), onComplete) ->
-  skipFiles = atom.config.get('organized.searchSkipFiles')
-  skipFiles = skipFiles.concat(['.git', '.atom'])
-  skipFiles = (skipFile for skipFile in skipFiles when skipFile.trim() isnt '')
-
-  console.log("Project paths: #{directories}")
-  _findInDirectories directories, skipFiles, [], [], onComplete
+        findInFile searchPath, skipFiles, todoCB, agendaCB, errorCB, finishCB
 
 _cleanupSideitemTitles = (title) ->
   if match = /\[([^\]]+?)\]\(([^)]+?)\)/g.exec(title)
@@ -93,52 +115,5 @@ _cleanupSideitemTitles = (title) ->
     title = title.replace("/_[^_]+?_/", "<u>" + match[1] + "</u>")
 
   return title
-
-_getFileLine = (filename, line, onFind) ->
-  fileContents = fs.readFileSync filename
-  lines = fileContents.toString().split('\n')
-
-  if lines.length-1 < line
-    return null
-  else
-    return lines[line]
-
-_processFile = (searchPath, results, todos, agendas, skipFiles) ->
-  for result in results
-    skip = false
-    for partial in skipFiles
-      if result.file.indexOf(partial) > -1
-        skip = true
-        break;
-    if skip
-      continue
-
-    text = result.text
-    referencedFile = result.file
-    if not path.isAbsolute(result.file)
-      referencedFile = path.join(searchPath, result.file)
-
-    if match = /(\[TODO\])\s+(\[#([A-E])\]\s+)?(.*)$/.exec(result.text)
-        priority = if match[3] then match[3] else "C"
-        text = match[4]
-        column = match.index
-        todoText = _cleanupSideitemTitles(text)
-        todos.push(new Todo(referencedFile, result.line, column, todoText, priority))
-    else if match = /(SCHEDULED|DEADLINE): <([^>]+)>/.exec(result.text)
-        date = match[2]
-        parsedDate = moment(date, dateFormats)
-        if not parsedDate.isValid()
-          parsedDate = null
-        column = match.index
-        # This part is painful.  We're going to need to write our own search function to make this
-        # suck less
-        item = ""
-        if starline = _getFileLine(referencedFile, result.line-2)
-          if match = starline.match(/^(\s*)([\*\-\+]+|(\d+)\.)([ ]|$)(\[TODO\] |\[(COMPLETED|DONE)\] )?(.*)/)
-            item = match[7]
-
-        agendaText = _cleanupSideitemTitles(item)
-        agendas.push(new AgendaItem(referencedFile, result.line, column, parsedDate, agendaText))
-
 
 module.exports = { Todo, findInDirectories }

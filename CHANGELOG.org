@@ -1,3 +1,12 @@
+* 0.6.8 (Released 2017-09-18)
+  * Re-write of code that finds agendas and todo items.  This should fix several problems:
+    * Files should not longer be open multiple times per scan
+    * Soft-linked files, permissions errors, or other problems relating to opening files should be eliminated
+  * Fixed bug that duplicates agenda and todo items if you have specified a predefined directory and you have
+    that directory open as a project.
+  * Try to eliminate duplicates which arise if you have a predefined search directory and you open it's parent
+    directory as a project.
+
 * 0.6.7 (Released 2017-05-09)
   * Fixed bug that caused sidebar to be refreshed several times during startup.  This
     slowed down startup and caused duplicates to show up in the agenda and todo items.

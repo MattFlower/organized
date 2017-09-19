@@ -25,7 +25,6 @@
     "google-auth-library": ">=0.10.0",
     "googleapis": ">=18.0.0",
     "moment": ">=2.17.1",
-    "rx-text-search": ">=1.0.0",
     "space-pen": "^5.1.2",
     "tmp": ">=0.0.28"
   },
