@@ -1,3 +1,10 @@
+* 0.6.9 (Released 2017-09-20)
+  * Close Issue #17: TODO tags without brackets not shown in sidebar
+  * Close Issue #20: Uncaught TypeError: Cannot read property 'size' of undefined
+  * If agenda item items are all day, show them as "ALL DAY" in the agenda rather than "12:00 AM"
+  * Single letters (upper or lowercase) can be used as a "star"
+  * Got rid of excessive "files" logging message
+
 * 0.6.8 (Released 2017-09-18)
   * Re-write of code that finds agendas and todo items.  This should fix several problems:
     * Files should not longer be open multiple times per scan

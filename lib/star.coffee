@@ -1,12 +1,14 @@
+Constants = require './constants'
 {shell} = require 'electron'
 moment = require 'moment'
+
 
 #
 # Centralize all the information about a star into one place so don't repeatedly
 # search for the start of star in the editor.
 #
 class Star
-  @_dateFormats = ['YYYY-MM-DD ddd HH:mm:ss', 'YYYY-MM-DD ddd HH:mm', 'YYYY-MM-DD ddd', moment.ISO_8601]
+  @_dateFormats = Constants.dateFormats
   startRow: -1
   endRow: -1
   starCol: -1
@@ -19,6 +21,9 @@ class Star
   defaultIndentType: null
   currentNumber: 0
   nextNumber: 0
+  currentLetter: undefined
+  nextLetter: undefined
+  progress: null
   priority: "C"
   priorityPresent: false
 
@@ -31,8 +36,6 @@ class Star
   editor: null
 
   constructor: (currentRow, indentSpaces, defaultIndentType, editor = atom.workspace.getActiveTextEditor()) ->
-    @_dateFormats = ['YYYY-MM-DD ddd hh:mm:ss', 'YYYY-MM-DD ddd hh:mm', 'YYYY-MM-DD ddd', moment.ISO_8601]
-
     @latestRowSeen = currentRow
     @indentSpaces = indentSpaces
 
@@ -48,26 +51,32 @@ class Star
     @starCol = @_starIndexOf(line)
 
     #console.log("Found star on row #{@startRow} and col #{@starCol}")
-    match = line.match(/^(\s*)([\*\-\+]+|(\d+)\.)([ ]|$)(\[?TODO\]?\s+|\[?(COMPLETED|DONE)\]?\s+)?(\[#([A-E])\]\s+)?/)
+    match = line.match(Constants.starWithBulletRex)
+    ColNums = Constants.starWithBulletGroups
 
     if match
-      @whitespaceCol = @starCol + match[2].length
+      @whitespaceCol = @starCol + match[ColNums.Star].length
       @startTodoCol = @whitespaceCol + 1
-      if match[5]
-        @startTextCol = @startTodoCol + match[5].length
+      if match[ColNums.ProgressWithWhitespace]
+        @startTextCol = @startTodoCol + match[ColNums.ProgressWithWhitespace].length
       else
         @startTextCol = @startTodoCol
 
+      if match[ColNums.Progress]
+        @progress = match[ColNums.Progress].replace(/(\[|\])/g, '')
+
       # Grab the priority
-      if match[8]
-        @priority = match[8]
+      if match[ColNums.Priority]
+        @priority = match[ColNums.Priority]
         @priorityPresent = true
 
       # Compute indent level
       levelCount = 0
-      stars = match[2]
+      stars = match[ColNums.Star]
       starsAreNumbers = stars.match(/\d+\./)
-      if not starsAreNumbers and stars.length > 1
+      starsAreLetters = stars.match(/[A-z]\./)
+
+      if not starsAreNumbers and not starsAreLetters and stars.length > 1
         # console.log("Stacked")
         @indentType = "stacked"
         @starType = stars[0]
@@ -112,8 +121,17 @@ class Star
         # Star type
         if starsAreNumbers
           @starType = "numbers"
-          @currentNumber = parseInt(match[3], 10)
+          @currentNumber = parseInt(match[ColNums.StarNum], 10)
           @nextNumber = @currentNumber + 1
+        else if starsAreLetters
+          @starType = "letters"
+          @currentLetter = match[ColNums.StarLetter]
+          if @currentLetter is 'Z'
+            @nextLetter is 'AA'
+          else if @currentLetter is 'z'
+            @nextLetter is 'ZZ'
+          else
+            @nextLetter = String.fromCharCode(@currentLetter.charCodeAt(0)+1)
         else
           @starType = stars
 
@@ -127,7 +145,7 @@ class Star
     row = @latestRowSeen
     line = @editor.lineTextForBufferRow(row)
     #console.log("Row: #{row}, Line: #{line}")
-    while !line.match(/^\s*([\*\-\+]+|\d+\.)([ ]|$)/)
+    while !line.match(/^\s*([\*\-\+]+|\d+\.|[A-z]\.)([ ]|$)/)
       # console.log("No star on #{row}")
       row -= 1
       if row < 0 or line.match(/^(#|$)/)
@@ -156,7 +174,7 @@ class Star
       #console.log("Row: #{@latestRowSeen}, Last: #{@editor.getLastBufferRow()}")
       row = Math.max(@latestRowSeen, @startRow + 1)
       line = @editor.lineTextForBufferRow(row)
-      while row <= @editor.getLastBufferRow() and !line.match(/(^$)|(^\s*([\*\-\+\#]|\d+\.))/)
+      while row <= @editor.getLastBufferRow() and !line.match(Constants.emptyLineOrStarLineRex)
         #console.log("checked: '#{line}'")
         row += 1
         line = @editor.lineTextForBufferRow(row)
@@ -165,7 +183,7 @@ class Star
       @latestRowSeen = row
 
   _starIndexOf: (line) ->
-    match = /^(\s*)([\*\-\+]|\d+\.)/.exec(line)
+    match = Constants.starWithBulletNoMarkersRex.exec(line)
     # No match, ignore
     return 0 if match.length < 1
     # count the spaces
@@ -219,6 +237,9 @@ class Star
       editor.setTextInBufferRange([[@startRow, match.index+2], [@startRow, match.index+3]], newPriority)
     else
       editor.setTextInBufferRange([[@startRow, @startTextCol], [@startRow, @startTextCol]], "[##{newPriority}] ")
+
+  isDone: () ->
+    return @progress and (@progress is "DONE" or @progress is 'COMPLETED')
 
   newStarLine: (indentLevel = @indentLevel) ->
     if @indentType isnt "mixed"

@@ -1,18 +1,16 @@
+Constants = require('./constants')
 fs = require('fs')
 g = require('glob')
 moment = require 'moment'
 path = require('path')
 
-dateFormats = ['YYYY-MM-DD ddd HH:mm:ss', 'YYYY-MM-DD ddd HH:mm', 'YYYY-MM-DD ddd', moment.ISO_8601]
-todoRex = /(\[TODO\])\s+(\[#([A-E])\]\s+)?(.*)$/
-agendaTargetRex = /^(\s*)([\*\-\+]+|(\d+)\.)([ ]|$)(\[TODO\] |\[(COMPLETED|DONE)\] )?(.*)/
+agendaTargetRex = /^(\s*)([\*\-\+]+|(\d+)\.)([ ]|$)(\[?TODO\]? |\[(COMPLETED|DONE)\] )?(.*)/
 agendaRex = /(SCHEDULED|DEADLINE): <([^>]+)>/
 
 findInDirectory = (searchDir, skipFiles, todoCallback, agendaCallback, errorCB, finishCB) ->
   glob = path.join(searchDir, "/**/*.org")
 
   p = g glob, (error, files) =>
-    console.log("Files: #{files}")
     if error
       console.log("Found error while traversing directory -> #{error}")
     else
@@ -43,13 +41,13 @@ findInFile = (file, skipFiles, todoCallback, agendaCallback, errorCB, finishCB) 
       for i in [0..lines.length]
         line = lines[i]
         lineNo++
-        if result = todoRex.exec(line)
+        if result = Constants.todoPriorityAndTextRex.exec(line)
           todoText = result[4]
           priority = if result[3] then result[3] else "C"
           todoCallback(file, lineNo, result.index, todoText, priority)
         if result = agendaRex.exec(line)
           date = result[2]
-          parsedDate = moment(date, dateFormats)
+          parsedDate = moment(date, Constants.dateFormats)
           if not parsedDate.isValid()
             parsedDate = null
           if agendaTarget = agendaTargetRex.exec(lines[i-1])

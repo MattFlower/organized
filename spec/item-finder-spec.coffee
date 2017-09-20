@@ -68,7 +68,7 @@ describe "It can find items", ->
         expect(todoText).toBe("Todo1")
 
   xit "skips files with permission problems", ->
-    # Disabled most of the time because it's hard to check out a file you don't own.  
+    # Disabled most of the time because it's hard to check out a file you don't own.
 
     # If this test fails, make sure you have:
     # sudo chown root spec-resources/item-finder-spec/no-permissions.org && \
@@ -124,3 +124,25 @@ describe "It can find items", ->
         expect(todoCount).toBe(0)
         expect(agendaCount).toBe(0)
         expect(errorCount).toBe(1)
+
+  it "finds todos that don't have brackets", ->
+    todoCount = 0
+    errorCount = 0
+
+    todoCB = () ->
+      todoCount++
+    agendaCB = ( -> )
+
+    waitsForPromise ->
+      new Promise (resolve, reject) =>
+        errorCB = (filename, error) =>
+          errorCount++
+          resolve()
+
+        finishCB = () =>
+          resolve()
+
+        findInFile(path.join(altResourceDir, "todo-without-brackets.org"), [], todoCB, agendaCB, errorCB, finishCB)
+      .then () =>
+        expect(todoCount).toBe(1)
+        expect(errorCount).toBe(0)

@@ -52,6 +52,12 @@ us get better.
 
 # What's New?
 
+* 0.6.9 (Released 2017-09-20)
+  * Close Issue #17: TODO tags without brackets not shown in sidebar
+  * Close Issue #20: Uncaught TypeError: Cannot read property 'size' of undefined
+  * If agenda item items are all day, show them as "ALL DAY" in the agenda rather than "12:00 AM"
+  * Single letters (upper or lowercase) can be used as a "star"
+  * Got rid of excessive "files" logging message
 * 0.6.8 (Released 2017-09-18)
   * Re-write of code that finds agendas and todo items.  This should fix several problems:
     * Files should not longer be open multiple times per scan
@@ -65,16 +71,6 @@ us get better.
   * Fixed bug that caused sidebar to be refreshed several times during startup.  This
     slowed down startup and caused duplicates to show up in the agenda and todo items.
   * Removed command that was accidentally included and not yet implemented.
-* 0.6.3-0.6.6 (Release 2017-03-23)
-  * Implemented syntax coloring for todo priorities
-  * Todo Items are now sorted according to priority.  (Default priority is "C", range is A-E)
-  * Added keystrokes option-shift-up and option-shift-down to change priority of current item.  These should be
-    alt-shift-up and alt-shift-down on windows.
-  * Priority items in todo items
-  * Added syntax highlighting for deadlines
-  * Added keystrokes (ctrl-i d) to add a deadline.  Existing "insert date" functionality has been remapped to
-    (ctrl-i /)
-  * Deadlines are treated like schedule items (for now) in agendas
 
 Please see the [CHANGELOG.org](https://raw.githubusercontent.com/MattFlower/organized/master/CHANGELOG.org)
 for full details of recent changes.

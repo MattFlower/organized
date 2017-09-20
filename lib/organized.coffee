@@ -333,7 +333,7 @@ module.exports =
       # treat it like an unindent.  It seems awkward to add another empty one.
       oldPosition = editor.getCursorBufferPosition()
       line = editor.lineTextForBufferRow(oldPosition.row)
-      if line.match(/([\*\-\+]|\d+\.) $/)
+      if line.match(/([\*\-\+]|\d+\.|[A-z]\.) $/)
         @unindent()
         return
 
@@ -529,10 +529,10 @@ module.exports =
             visited[i] = true
 
           line = editor.lineTextForBufferRow(star.startRow)
-          if match = line.match(/\s*([\-\+\*]+|\d+.) (\[(TODO)\]|\wTODO\w) /)
+          if match = line.match(/\s*([\-\+\*]+|\d+\.|[A-z]\.) (\[(TODO)\]|\wTODO\w) /)
             replacement = if match[2].includes('[') then " [DONE] " else " DONE "
             editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.startTextCol]], replacement)
-          else if (line.match(/\s*([\-\+\*]+|\d+.) ((\[(COMPLETED|DONE)\])|\w(COMPLETED|DONE)\w) /))
+          else if (line.match(/\s*([\-\+\*]+|\d+.|[A-z]\.) ((\[(COMPLETED|DONE)\])|\w(COMPLETED|DONE)\w) /))
             editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.startTextCol]], " ")
           else
             replacement = if @useBracketsAroundTodoTags then " [TODO] " else " TODO "
@@ -585,7 +585,7 @@ module.exports =
                   editor.setTextInBufferRange([[row, 0], [row, 2]], "")
                 else if line.match("^\\t")
                   editor.setTextInBufferRange([[row, 0], [row, 1]], "")
-                else if match = line.match(/^([\*\-\+]|\d+\.) /)
+                else if match = line.match(/^([\*\-\+]|\d+\.|[A-z]\.) /)
                   editor.setTextInBufferRange([[row, 0], [row, match[0].length]], "")
                 else if line.match(/^[\*\-\+]/)
                   #Stacked
@@ -616,6 +616,19 @@ module.exports =
               newText = "\n" + " ".repeat(star.startTodoCol) + "#{dateType}: <#{@_getISO8601Date(d)} #{dow}>"
               col = editor.lineTextForBufferRow(star.startRow).length
               editor.setTextInBufferRange([[star.startRow, col+1], [star.startRow, col+1]], newText)
+
+  _archiveFinishedInSubtree: (outputToString) ->
+    if editor = atom.workspace.getActiveTextEditor()
+      visited = {}
+      linesToArchive = []
+
+      if not star = @_starInfo(editor, position)
+        return
+
+      startIndentLevel = star.indentLevel
+      currentLine = star.lineTextForBufferRow()
+
+
 
   _archiveSubtree: (outputToString) ->
     if editor = atom.workspace.getActiveTextEditor()
@@ -708,8 +721,11 @@ module.exports =
                 return
 
             fs.stat archiveFilename, (err, stat) ->
-              if err == fs.ENOENT or stat.size == 0
+              if err == fs.ENOENT or (not err and stat.size == 0)
                 textToInsertIntoArchiveFile = textToInsertIntoArchiveFile.trimLeft()
+              else if err
+                atom.notifications.addError("Unable to archive content due to error: " + err, options)
+
               fs.appendFile archiveFilename, textToInsertIntoArchiveFile, (err) ->
                 if err
                   atom.notifications.addError("Unable to archive content due to error: " + err)

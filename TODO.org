@@ -1,7 +1,7 @@
 * [TODO] Get to 1.0
   SCHEDULED: <2018-06-01 Fri>
 * Outlining
-  * [TODO] Support lettered indents
+  * [DONE] Support lettered indents
   * [TODO] Support roman numeral indenting
   * [TODO] Number indents need a new type of numbering on indent (7. becomes a. or 7.1 or something)
   * [TODO] If you have unindented and that unindent level has a different star type, adopt that star type
@@ -12,6 +12,7 @@
 * Visibility cycling
   * [TODO] Add folding to menus to raise visibility
   * [TODO] Start supporting folding for '**' style stars (space-indented ones already work)
+  * [TODO] [#E] Add key command to "cycle" visibility
 * Improve return key Support
   * [TODO] Figure out why I can't bind shift-enter correctly.
     * This might be due to peculiarity in chromium css specificity.
@@ -70,7 +71,7 @@
     changes in an organized file
   * [DONE] Render []() style links into hyperlinks inside agenda items
   * [DONE] Render bold or underlined text in agenda and todo views
-  * [TODO] If agendas are "all day", show them as a dot instead of at 12:00 AM
+  * [DONE] If agendas are "all day", show them as 'ALL DAY' instead of at 12:00 AM
   * [TODO] Add an "import today from gmail" feature
     * We'd need to figure out authentication and where to store a user's info
     * Safe storage of Organized client info
@@ -127,8 +128,7 @@
   * [TODO] Add ability to encrypt notes
 * Code structure / Technical debt
   * [TODO] Break up main parsing function in star.coffee into separate methods
-  * [TODO] Introduce static method (are there static methods in coffeescript?) to ask if a line
-    has a star.
+  * [TODO] Introduce static method to ask if a line has a star.
   * [TODO] Add some comments
 * Tests
   * [TODO] Write unit tests for grammar
@@ -143,8 +143,8 @@
   * [TODO] Improve button to create a new table with X rows and Y columns
   * [TODO] Button to strikethrough
 * Compatibility
-  * [TODO] Test running atom + organized on Linux
-  * [TODO] Test running atom + organized on Windows
+  * [DONE] Test running atom + organized on Linux
+  * [DONE] Test running atom + organized on Windows
 * [TODO] Migration System
   * [TODO] Migration from OneNote
     * http://www.howtogeek.com/howto/22679/beginner-save-your-onenote-2010-docs-to-different-file-formats/

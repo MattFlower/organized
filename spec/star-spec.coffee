@@ -274,3 +274,40 @@ describe "When stars are parsed", ->
 
     star = new Star(0, 2)
     expect(star.getEndOfSubtree()).toBe(0)
+
+  it "returns the correct progress when there are brackets on the progress", ->
+    editor = atom.workspace.getActiveTextEditor()
+    editor.setText("* [TODO] Test")
+    editor.setCursorBufferPosition([0, 0])
+
+    star = new Star(0, 2)
+    expect(star.progress).toBe("TODO")
+    expect(star.isDone()).toBe(true)
+
+  it "can parse priority from a star", ->
+    editor = atom.workspace.getActiveTextEditor()
+    editor.setText("* [TODO] [#A] Test")
+    editor.setCursorBufferPosition([0, 0])
+
+    star = new Star(0, 2)
+    expect(star.priority).toBe("A")
+
+  it "can recognize letters as stars", ->
+    editor = atom.workspace.getActiveTextEditor()
+    editor.setText("A. Test")
+    editor.setCursorBufferPosition([0, 0])
+
+    star = new Star(0, 2)
+    expect(star.currentLetter).toBe("A")
+    expect(star.nextLetter).toBe("B")
+    expect(star.starType).toBe("letters")
+
+  it "can handle second level letter", ->
+    editor = atom.workspace.getActiveTextEditor()
+    editor.setText("* Test 1\n  D. Test 2")
+    editor.setCursorBufferPosition([0, 0])
+
+    star = new Star(1, 4)
+    expect(star.currentLetter).toBe("D")
+    expect(star.nextLetter).toBe("E")
+    expect(star.starType).toBe("letters")

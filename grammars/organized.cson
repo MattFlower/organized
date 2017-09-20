@@ -27,7 +27,7 @@ repository:
         #This pattern includes the entire star line
         name: 'meta.starline.organized'
         #match: '^(\\s*)([-+\\*]+ .*)$'
-        match: '^(\\s*)([\\-\\+\\*]+|\\d+\\.)( .*)$'
+        match: '^(\\s*)([\\-\\+\\*]+|\\d+\\.|[A-z]\.)( .*)$'
         captures: {
           1:
               name: 'whitespace.starline.organized'

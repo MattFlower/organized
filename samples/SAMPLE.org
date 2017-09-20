@@ -60,6 +60,15 @@ This page contains a variety of outline types to use for manual testing
     +-------+
     | table |
 
+# Lots of types
+* Star
+  1. Number
+    a. Letter
+      - Dash
+  3. Number
+    A. Number
+
+
 ## Links
 * [Organized Github Account](https://github.com/MattFlower/organized)
 * abc
