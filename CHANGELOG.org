@@ -1,4 +1,4 @@
-* 0.6.9 (Released 2017-09-20)
+* 0.7.0 (Released 2017-09-20)
   * Close Issue #17: TODO tags without brackets not shown in sidebar
   * Close Issue #20: Uncaught TypeError: Cannot read property 'size' of undefined
   * If agenda item items are all day, show them as "ALL DAY" in the agenda rather than "12:00 AM"
