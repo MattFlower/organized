@@ -1,3 +1,6 @@
+* 0.7.1 (Released 2017-09-21)
+  * Add missing package
+
 * 0.7.0 (Released 2017-09-20)
   * Close Issue #17: TODO tags without brackets not shown in sidebar
   * Close Issue #20: Uncaught TypeError: Cannot read property 'size' of undefined
