@@ -275,13 +275,58 @@ describe "When stars are parsed", ->
     star = new Star(0, 2)
     expect(star.getEndOfSubtree()).toBe(0)
 
-  it "returns the correct progress when there are brackets on the progress", ->
+  fit "returns the correct progress when there are brackets on the progress", ->
     editor = atom.workspace.getActiveTextEditor()
     editor.setText("* [TODO] Test")
     editor.setCursorBufferPosition([0, 0])
 
     star = new Star(0, 2)
     expect(star.progress).toBe("TODO")
+    expect(star.isDone()).toBe(false)
+
+  it "returns the correct progress when there are brackets on the progress and its done", ->
+    editor = atom.workspace.getActiveTextEditor()
+    editor.setText("* [DONE] Test")
+    editor.setCursorBufferPosition([0, 0])
+
+    star = new Star(0, 2)
+    expect(star.progress).toBe("DONE")
+    expect(star.isDone()).toBe(true)
+
+  it "returns the correct progress when there are brackets on the progress and its done", ->
+    editor = atom.workspace.getActiveTextEditor()
+    editor.setText("* [COMPLETED] Test")
+    editor.setCursorBufferPosition([0, 0])
+
+    star = new Star(0, 2)
+    expect(star.progress).toBe("COMPLETED")
+    expect(star.isDone()).toBe(true)
+
+  it "returns the correct progress when there are brackets on the progress", ->
+    editor = atom.workspace.getActiveTextEditor()
+    editor.setText("* TODO Test")
+    editor.setCursorBufferPosition([0, 0])
+
+    star = new Star(0, 2)
+    expect(star.progress).toBe("TODO")
+    expect(star.isDone()).toBe(false)
+
+  it "returns the correct progress when there are brackets on the progress and its done", ->
+    editor = atom.workspace.getActiveTextEditor()
+    editor.setText("* DONE Test")
+    editor.setCursorBufferPosition([0, 0])
+
+    star = new Star(0, 2)
+    expect(star.progress).toBe("DONE")
+    expect(star.isDone()).toBe(true)
+
+  it "returns the correct progress when there are brackets on the progress and its done", ->
+    editor = atom.workspace.getActiveTextEditor()
+    editor.setText("* COMPLETED Test")
+    editor.setCursorBufferPosition([0, 0])
+
+    star = new Star(0, 2)
+    expect(star.progress).toBe("COMPLETED")
     expect(star.isDone()).toBe(true)
 
   it "can parse priority from a star", ->

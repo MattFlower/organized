@@ -1,5 +1,13 @@
-* 0.7.1 (Released 2017-09-21)
-  * Add missing package
+* 0.7.2 (Release 2017-09-21)
+  * Fixed issue #2 which was preventing the toolbar plugin from being installed when it wasn't already installed.
+  * Newline on a letter was emitting the wrong behavior
+  * Icons on the sidebar all appears as squares if you didn't choose to install the tool-bar.  Now they do regardless
+    of whether the toolbar is enabled
+  * Fix error in grammar resulting in all two letter works at the beginning of a line appearing as a star (grammar
+    requires double slash to escape)
+
+* 0.7.1 (Released 2017-09-20)
+  * Add missing package (glob) which was causing load to fail for users that don't already have it installed.
 
 * 0.7.0 (Released 2017-09-20)
   * Close Issue #17: TODO tags without brackets not shown in sidebar

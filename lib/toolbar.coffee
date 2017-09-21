@@ -31,7 +31,8 @@ class OrganizedToolbar
   # This is necessary because the tool-bar package is global -- if you don't dynamically add
   # and remove the buttons, they'll stay around even when organized isn't loaded.
   addToolbar: () ->
-    if not atom.packages.getLoadedPackage('tool-bar') and item?.getGrammar?()?.name is 'Organized' and @enabled
+    grammarName = atom.workspace.getActiveTextEditor() && atom.workspace.getActiveTextEditor().getGrammar().name
+    if not atom.packages.getLoadedPackage('tool-bar') and grammarName is 'Organized' and @enabled
       # This has a promise that will call addToolbar if it can be installed correctly, so we'll return for now.
       @installToolbarPlugin()
       return
@@ -146,6 +147,7 @@ class OrganizedToolbar
       @toolBarHasItems = false
 
   setEnabled: (enabled) ->
+    console.log("Enabled is now #{enabled}")
     @enabled = enabled
 
     if @enabled
@@ -159,15 +161,21 @@ class OrganizedToolbar
       message: "tool-bar package is not installed, it is required to see the organized toolbar.  Would you like to install it?"
       buttons:
         Yes: =>
-          deps.install()
-            .then () =>
-              atom.config.set('organized.enableToolbarSupport', true)
-              @addToolbar
-            .catch (e) =>
+          deps.install('organized').then ->
+            # Unfortunately, deps swallows errors, so we need to check again
+            if not atom.packages.getLoadedPackage('tool-bar')
+              console.log("Caught error")
+              atom.config.set('organized.enableToolbarSupport', false)
               atom.notifications.addError("Unable to turn on organizedToolbar - encountered error while installing tool-bar package")
               atom.notifications.addError(e)
+            else
+              console.log("Install success")
+              atom.config.set('organized.enableToolbarSupport', true)
         No: =>
           atom.notifications.addWarning("Unable to turn on organizedToolbar - tool-bar package is not installed")
+          atom.config.set('organized.enableToolbarSupport', false)
+        Never: =>
+          atom.config.set('organized.enableToolbarSupport', false)
     return
 
   setSidebar: (sidebar)  ->
@@ -191,7 +199,7 @@ class OrganizedToolbar
   # plugin.
   toggleToolbar: () ->
     if atom.workspace.getActiveTextEditor().getGrammar().name isnt 'Organized'
-      atom.notifications.addInfo("Organized toolbar won't appear on this page because this isn't an Organized file.")
+      atom.notifications.addInfo("Organized toolbar won't appear on this page because this isn't an Organized file.  Please try again when viewing a '.org' file.")
       atom.config.set('organized.enableToolbarSupport', true)
     else
       atom.config.set('organized.enableToolbarSupport', not @enabled)

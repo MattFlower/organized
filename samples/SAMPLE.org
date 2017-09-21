@@ -65,7 +65,7 @@ This page contains a variety of outline types to use for manual testing
   1. Number
     a. Letter
       - Dash
-  3. Number
+  2. Number
     A. Number
 
 

@@ -26,6 +26,9 @@
   * Ignore lines that have both
   * If sample size is too low, use more lines.
 * [TODO] Auto-tab to correct level on paste
+  * Currently, when you paste it will automatically paste at the same star level as the line above your
+    line.  It should actually look at the line above and below yours.  It should take the deeper star
+    level of the two.
 * [TODO] Command to transform existing indent as all tabs or all spaces.
 * Links
   * [TODO] Link following for Urls
@@ -88,6 +91,7 @@
 * Archiving
   * [DONE] Archive selection
   * [TODO] Fix archive for regions that aren't starred
+  * [TODO] Archive everything that is done in the current tree
 * Embedded Content
   * [TODO] Embedded Equation
   * [TODO] Embedded UML Diagrams

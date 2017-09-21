@@ -179,7 +179,9 @@ module.exports =
 
   # Callback from tool-bar to create a toolbar
   consumeToolBar: (toolBar) ->
+    console.log("consumeToolbar called")
     if not @organizedToolbar
+      console.log("Creating organizedToolbar")
       @organizedToolbar = new OrganizedToolbar()
       @organizedToolbar.activate(@subscriptions)
       @organizedToolbar.setSidebar(@sidebar)
@@ -391,6 +393,21 @@ module.exports =
               editor.setTextInBufferRange([[nextStar.startRow, nextStar.starCol],
                                           [nextStar.startRow, nextStar.starCol+(""+nextStar.currentNumber).length]],
                                           "" + nextStar.nextNumber)
+              position = new Point(nextStar.endRow+1, 0)
+          else if star.starType is 'letters'
+            # Make sure we use a reference to the old star here so we get the
+            editor.setTextInBufferRange([[newPosition.row, 0], [newPosition.row, Infinity]], oldStar.newStarLine())
+
+            position = new Point(newPosition.row+1, 0)
+            #console.log("newPosition+1: #{position}, last buffer row: #{editor.getLastBufferRow()}")
+            while position.row <= editor.getLastBufferRow() and nextStar = @_starInfo(editor, position)
+              if nextStar.starType isnt 'letters' or nextStar.indentLevel isnt star.indentLevel
+                break
+              #console.log("Position: #{position}, nextStar.startRow: #{nextStar.startRow}, nextStar.endRow: #{nextStar.endRow}")
+              #console.log("Replacing #{nextStar.currentNumber} with #{nextStar.nextNumber}")
+              editor.setTextInBufferRange([[nextStar.startRow, nextStar.starCol],
+                                          [nextStar.startRow, nextStar.starCol+(""+nextStar.currentLetter).length]],
+                                          "" + nextStar.nextLetter)
               position = new Point(nextStar.endRow+1, 0)
           else
             indent = star.newStarLine()

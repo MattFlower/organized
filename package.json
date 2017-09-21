@@ -21,7 +21,7 @@
     "atom-package-deps": ">=4.3.1",
     "atom-space-pen-views": "^2.2.0",
     "event-kit": "^1.5.0",
-    "font-awesome": ">=4.7.0",
+    "font-awesome": "4.7.0",
     "glob": ">=7.1.2",
     "google-auth-library": ">=0.10.0",
     "googleapis": ">=18.0.0",
@@ -32,7 +32,7 @@
   "consumedServices": {
     "tool-bar": {
       "versions": {
-        ">0.3.2": "consumeToolBar"
+        "^0 || ^1": "consumeToolBar"
       }
     }
   },

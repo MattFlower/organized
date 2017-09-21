@@ -259,6 +259,8 @@ class Star
 
       if @starType is "numbers"
         indent += @nextNumber + '. '
+      else if @starType is "letters"
+        indent += @nextLetter + '. '
       else
         indent += @starType + " "
 

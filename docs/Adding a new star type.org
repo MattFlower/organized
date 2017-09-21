@@ -1,0 +1,7 @@
+What do I need to change when I add a new startype ?  This seems to involve changing many moving parts:
+
+1. Modify the grammar to recognize the new type so it can be colored.
+2. Modify the regexes in Constant.coffee to recognize the new type
+3. Modify star.newStarLine to construct the correct "next" line
+4. Modify star._processLine to correctly emit the correct starType
+5. 
