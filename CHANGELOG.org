@@ -1,3 +1,13 @@
+* 0.8.0 (Release 2017-10-27)
+  * Fixed toggling of TODO tags if you don't use brackets.
+  * Fixed indenting if you used stacked star types
+  * Added new key command (ctrl-i v) to cycle visibility of the current subtree.
+  * Added new key command (ctrl-shift-i v) to cycle visibility of the whole file
+  * Add setting to control visibility when you first load a file.  Default is to hide nothing.
+  * Added the ability to automatically add the CLOSED property when closing a TODO
+  * Don't show TODO or DONE in agenda items
+  * Always show the contents of the current file in the sidebar if the current file is an organized file.
+
 * 0.7.2 (Release 2017-09-21)
   * Fixed issue #2 which was preventing the toolbar plugin from being installed when it wasn't already installed.
   * Newline on a letter was emitting the wrong behavior

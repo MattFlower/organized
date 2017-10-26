@@ -15,12 +15,19 @@ us get better.
   * Write more text for the same star on a new line if you press shift-enter
   * "*", "-", and "+" characters supported for outlining
   * Support numbered bullets
+* Visibility cycling
+  * Ctrl-i v will cycle between:
+    1. Hiding all indented content for the current star
+    2. Only showing the top level items under the current star, their children will be hidden
+    3. Showing all content
+  * Ctrl-Shift-i v will do the same cycling described above, except it will do it for all content
 * Support todo items
   * Highlighting of [TODO]/[DONE] tags
   * Ctrl-Shift-T for toggling todo items from [TODO] to [DONE] to blank.
   * Todo items can be marked with a priority of A to E.  This will impact their sorting in the sidebar. (The default
     level is C if the items aren't marked.)
   * Highlighting for CLOSED, DEADLINE, and SCHEDULED tags.  DEADLINE and SCHEDULED items will show up in the sidebar.
+  * When transitioning from TODO to DONE, automatically add a property recording when the TODO was closed
 * Code blocks
   * Syntax highlighting for code blocks in c, coffeescript, c++, css, golang, html, java,
     javascript, less, objective c, objective c++, python, php, r, ruby, shell scripts (generic), and sql.
@@ -49,9 +56,47 @@ us get better.
 * Highlighting of org-mode style Metadata headers, SCHEDULED properties, links, and
   Org-mode-style tags (:tagname:)
 
+# How to Use Organized?
+
+Most of the instructions on how to use org-mode consist of two things:
+
+1. This document - it has descriptions for all the features and a list of keystrokes
+2. Sample files - This will show you how org mode looks in action.  See:
+  * [Code Blocks]([CHANGELOG.org](https://raw.githubusercontent.com/MattFlower/organized/master/samples/Code.org)),
+  * [Sample Editing](https://raw.githubusercontent.com/MattFlower/organized/master/samples/SAMPLE.org)
+  * [Tables](https://raw.githubusercontent.com/MattFlower/organized/master/samples/Code.org)
+
+I'll eventualy get to writing a proper manual, time permitting
+
+# Current Keystrokes
+Here are the keystrokes I have mapped as of today:
+
+| Keystroke      | What it does                                                        |
+| ---------------| ------------------------------------------------------------------- |
+| ctrl-shift-t   | Toggles a special identifier at the beginning of a line that will mark that line as a TODO.  This will make it show up in the sidebar |
+| ctrl-enter     | If you are on a star line, move to the next line without creating a star |
+| ctrl-i a       | Remove the current subtree from your file and put it into a file named {current-filename}.org_archive.  These files are still in org mode, but aren't indexed so they won't show up in the sidebar.|
+| ctrl-i t       | Insert the current date/time in ISO-8601 format                     |
+| ctrl-i /       | Insert the current date in ISO-8601 format                          |
+| ctrl-i l       | Make a link.  If there is no selection, we'll insert []().  If there is a selection, I'll try to intelligently decide whether you are selecting a url or text and put it in the brackets or parentheses as appropriate.|
+| ctrl-i s       | Add a schedule tag for a star.  This defaults to today, there is no mechanism to choose the date other than editing it yourself.  If you want to add a time, you can use ISO-8601 time <2016-01-01T14:00:00>  or org-mode style time <2016-01-01 Fri 14:00:00>.  Either one should work. |
+| ctrl-i v       | Cycle visibility between only showing the next level stars below the current star, showing the next two levels, or showing everything.|
+| ctrl-shift-i v | Cycle global visibility.  Like the above except that it applies to everything in the whole file. |
+| ctrl-` x       | Execute the current code block                                      |
+| alt-shift-up   | Increase the priority of the current block.  A is the highest priority, E is the lowest.  This will show up in the todos as some arrows. |
+| alt-shift-down | Decrease priority.                                                  |
 
 # What's New?
 
+* 0.8.0 (Release 2017-10-26)
+  * Fixed toggling of TODO tags if you don't use brackets.
+  * Fixed indenting if you used stacked star types
+  * Added new key command (ctrl-i v) to cycle visibility of the current subtree.
+  * Added new key command (ctrl-shift-i v) to cycle visibility of the whole file
+  * Add setting to control visibility when you first load a file.  Default is to hide nothing.
+  * Added the ability to automatically add the CLOSED property when closing a TODO
+  * Don't show TODO or DONE in agenda items
+  * Always show the contents of the current file in the sidebar if the current file is an organized file.
 * 0.7.2 (Release 2017-09-21)
   * Fixed issue #2 which was preventing the toolbar plugin from being installed when it wasn't already installed.
   * Newline on a letter was emitting the wrong behavior
@@ -65,19 +110,6 @@ us get better.
   * If agenda item items are all day, show them as "ALL DAY" in the agenda rather than "12:00 AM"
   * Single letters (upper or lowercase) can be used as a "star"
   * Got rid of excessive "files" logging message
-* 0.6.8 (Released 2017-09-18)
-  * Re-write of code that finds agendas and todo items.  This should fix several problems:
-    * Files should not longer be open multiple times per scan
-    * Soft-linked files, permissions errors, or other problems relating to opening files should be eliminated
-    * Close Issue #4 - Sidebar not working
-  * Fixed bug that duplicates agenda and todo items if you have specified a predefined directory and you have
-    that directory open as a project.
-  * Try to eliminate duplicates which arise if you have a predefined search directory and you open it's parent
-    directory as a project.
-* 0.6.7 (Released 2017-05-09)
-  * Fixed bug that caused sidebar to be refreshed several times during startup.  This
-    slowed down startup and caused duplicates to show up in the agenda and todo items.
-  * Removed command that was accidentally included and not yet implemented.
 
 Please see the [CHANGELOG.org](https://raw.githubusercontent.com/MattFlower/organized/master/CHANGELOG.org)
 for full details of recent changes.

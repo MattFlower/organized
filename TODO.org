@@ -10,9 +10,8 @@
   * [TODO] Up to next highest level
   * [TODO] Move current bullet up / down
 * Visibility cycling
-  * [TODO] Add folding to menus to raise visibility
-  * [TODO] Start supporting folding for '**' style stars (space-indented ones already work)
-  * [TODO] [#E] Add key command to "cycle" visibility
+  * [DONE] Start supporting folding for '**' style stars (space-indented ones already work)
+  * [DONE] [#E] Add key command to "cycle" visibility
 * Improve return key Support
   * [TODO] Figure out why I can't bind shift-enter correctly.
     * This might be due to peculiarity in chromium css specificity.
@@ -34,7 +33,7 @@
   * [TODO] Link following for Urls
   * [TODO] Support org-mode style links
 * Todos
-  * [TODO] Option to mark closed todo's with current time
+  * [DONE] Option to mark closed todo's with current time
   * [DONE] Priorities for TODO items
   * [DONE] Key-command to increase / decrease priority of items
   * [TODO] Command to remove completed todos from current file
@@ -65,7 +64,7 @@
   * [TODO] Handle enter key inside of a table column
 * Agendas
   * Deadlines
-    * [DONE] Syntax highlighting for deadlines
+    * Syntax highlighting for deadlines
   * [DONE] Create agenda view to show what's coming up
     * Maybe this should be accordian style with both todos and agenda on a
       single page

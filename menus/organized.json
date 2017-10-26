@@ -13,6 +13,22 @@
             {
               "label": "Toggle Organized Sidebar",
               "command": "organized:toggleSidebar"
+            },
+            {
+              "label": "Cycle Visibility of SubItems",
+              "command": "organized:cycleVisibility"
+            },
+            {
+              "label": "Global Cycle Visibility of SubItems",
+              "command": "organized:cycleGlobalVisibility"
+            },
+            {
+              "label": "Create Code Block",
+              "command": "organized:makeCodeBlock"
+            },
+            {
+              "label": "Execute Code Block",
+              "command": "organized:executeCodeBlock"
             }
           ]
         }

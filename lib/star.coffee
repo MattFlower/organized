@@ -46,7 +46,24 @@ class Star
     @editor = editor
     @_processStar()
 
+  _deepSearchForStacked: () ->
+    currentRow = @endRow + 1
+    while currentRow < @editor.getLineCount()
+      currentLine = @editor.lineTextForBufferRow(currentRow)
+      if not currentLine.match(Constants.starWithTextRex)
+        currentRow += 1
+      else if star = new Star(currentRow, @indentSpaces, @defaultIndentType, @editor)
+        if star.indentType == 'stacked'
+          return true
+        currentRow = star.endRow+1
+      else
+        currentRow += 1
+    return false
+
   _processLine: (line) ->
+    if not line
+      return false
+
     # Find info about star
     @starCol = @_starIndexOf(line)
 
@@ -81,7 +98,7 @@ class Star
         @indentType = "stacked"
         @starType = stars[0]
 
-        levelCount = 1
+        levelCount = 0
         #console.log("Stars.length: #{stars.length}")
         i = 1
         while i < stars.length
@@ -145,7 +162,7 @@ class Star
     row = @latestRowSeen
     line = @editor.lineTextForBufferRow(row)
     #console.log("Row: #{row}, Line: #{line}")
-    while !line.match(/^\s*([\*\-\+]+|\d+\.|[A-z]\.)([ ]|$)/)
+    while line isnt null and !line.match(/^\s*([\*\-\+]+|\d+\.|[A-z]\.)([ ]|$)/)
       # console.log("No star on #{row}")
       row -= 1
       if row < 0 or line.match(/^(#|$)/)
@@ -182,12 +199,19 @@ class Star
       @endRow = Math.max(0, row-1)
       @latestRowSeen = row
 
+      # Try one more idea to figure out if we are actually stacked
+      # We can't do this until now because we needed the endRow
+      if @indentType is 'none' and @_deepSearchForStacked()
+          @indentType = "stacked"
+
   _starIndexOf: (line) ->
-    match = Constants.starWithBulletNoMarkersRex.exec(line)
-    # No match, ignore
-    return 0 if match.length < 1
-    # count the spaces
-    return match[1].length
+    if match = Constants.starWithBulletNoMarkersRex.exec(line)
+      # No match, ignore
+      return 0 if match.length < 1
+      # count the spaces
+      return match[1].length
+    else
+      return 0
 
   decreasePriority: (editor) ->
     if not @priorityPresent
@@ -248,7 +272,7 @@ class Star
       indentStyle = @defaultIndentType
 
     if indentStyle is "stacked"
-      indent = @starType.repeat(@indentLevel) + " "
+      indent = @starType.repeat(@indentLevel+1) + " "
     else
       if indentStyle is "spaces"
         indent = " ".repeat(@indentSpaces*@indentLevel)

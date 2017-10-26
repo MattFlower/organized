@@ -1,7 +1,7 @@
 fs = require('fs')
 path = require('path')
 { Trie } = require './trie'
-{ findInDirectory, findInFile } = require './item-finder'
+{ findInDirectory, findInFile, findInFileContents } = require './item-finder'
 
 class AgendaItem
   file: null
@@ -33,7 +33,7 @@ class Todo
     @priority = priority
 
 
-findInDirectories = (directories = atom.project.getPaths(), onComplete) ->
+findInDirectories = (directories = atom.project.getPaths(), onComplete, readCurrentBuffer = true) ->
   skipFiles = atom.config.get('organized.searchSkipFiles')
   skipFiles = skipFiles.concat(['.git', '.atom'])
   skipFiles = (skipFile for skipFile in skipFiles when skipFile.trim() isnt '')
@@ -57,24 +57,23 @@ findInDirectories = (directories = atom.project.getPaths(), onComplete) ->
       noDupesDirectory.push(directory)
 
   console.log("Finding in directories: #{noDupesDirectory}")
-  _findInDirectories noDupesDirectory, skipFiles, [], [], onComplete
+  _findInDirectories noDupesDirectory, skipFiles, [], [], onComplete, readCurrentBuffer
 
-_findInDirectories = (directories, skipFiles, todos, agendas, onComplete) ->
+_findInDirectories = (directories, skipFiles, todos, agendas, onComplete, readCurrentBuffer, filesVisited = new Set()) ->
   if directories.length is 0
     onComplete(todos, agendas)
   else
-    if typeof directories is 'string'
-      searchPath = directories
-      directories = []
-    else
-      searchPath = directories.pop()
+    skipFileCB = (filename) =>
+      skip = false
+      if filesVisited.has(filename)
+        skip = true
+      else if skipFiles.indexOf(path.basename(filename)) > -1
+        skip = true
+      else
+        skip = false
+      filesVisited.add(filename)
 
-      search = searchPath.trim()
-      if searchPath.length is 0
-        if directories.length > 0
-          _findInDirectories(directories, skipFiles, todos, agendas, onComplete)
-        else
-          onComplete(todos, agendas)
+      return skip
 
     todoCB = (filename, line, column, todoText, priority) =>
       # console.log("#{filename}[#{line}:#{column}] -> #{todoText}")
@@ -89,18 +88,38 @@ _findInDirectories = (directories, skipFiles, todos, agendas, onComplete) ->
     errorCB = (filename, error) =>
       error = "Error finding todos in  " + searchPath + ".  Please check that directory exists and is writable."
       # atom.notifications.addError(error)
-      _findInDirectories(directories, skipFiles, todos, agendas, onComplete)
+      _findInDirectories(directories, skipFiles, todos, agendas, onComplete, readCurrentBuffer, filesVisited)
 
     finishCB = () =>
-      _findInDirectories(directories, skipFiles, todos, agendas, onComplete)
+      _findInDirectories(directories, skipFiles, todos, agendas, onComplete, readCurrentBuffer, filesVisited)
+
+    editor = atom.workspace.getActiveTextEditor()
+    if readCurrentBuffer and editor.getGrammar().name is 'Organized'
+      filename = editor.getPath()
+      if not skipFileCB(filename)
+        lines = editor.getText().split('\n')
+        findInFileContents(filename, lines, todoCB, agendaCB)
+
+    if typeof directories is 'string'
+      searchPath = directories
+      directories = []
+    else
+      searchPath = directories.pop()
+
+      search = searchPath.trim()
+      if searchPath.length is 0
+        if directories.length > 0
+          _findInDirectories(directories, skipFiles, todos, agendas, onComplete, readCurrentBuffer, filesVisited)
+        else
+          onComplete(todos, agendas)
 
     fs.lstat searchPath, (err, pathStat) =>
       if err
         errorCB(searchPath, err)
       else if pathStat.isDirectory()
-        findInDirectory searchPath, skipFiles, todoCB, agendaCB, errorCB, finishCB
+        findInDirectory searchPath, skipFileCB, todoCB, agendaCB, errorCB, finishCB
       else if pathStat.isFile()
-        findInFile searchPath, skipFiles, todoCB, agendaCB, errorCB, finishCB
+        findInFile searchPath, skipFileCB, todoCB, agendaCB, errorCB, finishCB
 
 _cleanupSideitemTitles = (title) ->
   if match = /\[([^\]]+?)\]\(([^)]+?)\)/g.exec(title)
@@ -113,6 +132,12 @@ _cleanupSideitemTitles = (title) ->
 
   if match = /_([^_]+)_/g.exec(title)
     title = title.replace("/_[^_]+?_/", "<u>" + match[1] + "</u>")
+
+  if match = /^\[?TODO\]? /.exec(title)
+    title = title.replace(/\[?TODO\]? /, "")
+
+  if match = /^\[?DONE\]? /.exec(title)
+    title = title.replace(/\[?DONE\]? /, "")
 
   return title
 

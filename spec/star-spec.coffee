@@ -275,7 +275,7 @@ describe "When stars are parsed", ->
     star = new Star(0, 2)
     expect(star.getEndOfSubtree()).toBe(0)
 
-  fit "returns the correct progress when there are brackets on the progress", ->
+  it "returns the correct progress when there are brackets on the progress", ->
     editor = atom.workspace.getActiveTextEditor()
     editor.setText("* [TODO] Test")
     editor.setCursorBufferPosition([0, 0])

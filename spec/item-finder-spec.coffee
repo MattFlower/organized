@@ -23,7 +23,9 @@ describe "It can find items", ->
       new Promise (resolve, reject) =>
         finishCB = () =>
           resolve()
-        findInDirectory(resourceDir, [], todoCB, agendaCB, errorCB, finishCB)
+        neverSkip = (filename) =>
+          return false;
+        findInDirectory(resourceDir, neverSkip, todoCB, agendaCB, errorCB, finishCB)
       .then () =>
         expect(todoCount).toBe(3) # One from test1.org, one from softlink, one from file with space
         expect(agendaCount).toBe(1)
@@ -57,7 +59,9 @@ describe "It can find items", ->
       new Promise (resolve, reject) =>
         finishCB = () =>
           resolve()
-        findInFile(path.join(resourceDir, 'test1.org'), [], todoCB, agendaCB, errorCB, finishCB)
+        neverSkip = (filename) =>
+          return false;
+        findInFile(path.join(resourceDir, 'test1.org'), neverSkip, todoCB, agendaCB, errorCB, finishCB)
       .then () =>
         expect(todoCount).toBe(1)
         expect(agendaCount).toBe(1)
@@ -93,7 +97,10 @@ describe "It can find items", ->
         finishCB = () =>
           resolve()
 
-        findInFile(path.join(altResourceDir, 'no-permissions.org'), [], todoCB, agendaCB, errorCB, finishCB)
+        neverSkip = (filename) =>
+          return false;
+
+        findInFile(path.join(altResourceDir, 'no-permissions.org'), neverSkip, todoCB, agendaCB, errorCB, finishCB)
       .then () =>
         expect(todoCount).toBe(0)
         expect(agendaCount).toBe(0)
@@ -119,7 +126,10 @@ describe "It can find items", ->
         finishCB = () =>
           resolve()
 
-        findInFile(path.join(altResourceDir, 'not-a-real-file.org'), [], todoCB, agendaCB, errorCB, finishCB)
+        neverSkip = (filename) =>
+          return false;
+
+        findInFile(path.join(altResourceDir, 'not-a-real-file.org'), neverSkip, todoCB, agendaCB, errorCB, finishCB)
       .then () =>
         expect(todoCount).toBe(0)
         expect(agendaCount).toBe(0)
@@ -142,7 +152,10 @@ describe "It can find items", ->
         finishCB = () =>
           resolve()
 
-        findInFile(path.join(altResourceDir, "todo-without-brackets.org"), [], todoCB, agendaCB, errorCB, finishCB)
+        neverSkip = (filename) =>
+          return false;
+
+        findInFile(path.join(altResourceDir, "todo-without-brackets.org"), neverSkip, todoCB, agendaCB, errorCB, finishCB)
       .then () =>
         expect(todoCount).toBe(1)
         expect(errorCount).toBe(0)

@@ -42,6 +42,7 @@ class SidebarView extends View
       @sidebarVisible = atom.config.get('organized.sidebarVisible')
       @searchDirectories = atom.config.get('organized.searchDirectories')
       @searchSkipFiles = atom.config.get('organized.searchSkipFiles')
+      @searchOpenFile = atom.config.get('organized.searchOpenFile')
 
       subscriptions.add atom.config.observe 'organized.includeProjectPathsInSearchDirectories', (newValue) =>
         refresh = @includeProjectPaths != newValue
@@ -65,6 +66,13 @@ class SidebarView extends View
           value.trim() isnt ""
         refresh = @searchSkipFiles.length isnt newValue.length or @searchSkipFiles.some (e, i) => e isnt newValue[i]
         @searchSkipFiles = newValue
+        if refresh
+          @clearAll()
+          @refreshAll()
+
+      subscriptions.add atom.config.observe 'organized.searchOpenFile', (newValue) =>
+        refresh = @searchOpenFile isnt newValue
+        @searchOpenFile = newValue
         if refresh
           @clearAll()
           @refreshAll()

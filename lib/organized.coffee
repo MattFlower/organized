@@ -22,6 +22,8 @@ module.exports =
   autoSizeTables: true
   organizedToolbar: null
   useBracketsAroundTodoTags: true
+  trackCloseTimeOfTodos: true
+  defaultVisibilityCycle: 'hide-none'
 
   config:
     levelStyle:
@@ -42,6 +44,22 @@ module.exports =
       type: 'boolean'
       default: true
       description: "When created TODO or DONE tags, prefer [TODO] over TODO and [DONE] over DONE"
+
+    trackCloseTimeOfTodos:
+      type: 'boolean'
+      default: true
+      description: "When transitioning from TODO to DONE record a CLOSED time"
+
+    defaultVisibilityCycle:
+      title: 'Default Org-File Visibility'
+      description: 'Which part of the file will be visible on load'
+      type: 'string'
+      default: 'hide-none'
+      enum: [
+        {value: 'hide-all', description: 'Only show the top-level bullets in a file'}
+        {value: 'hide-bottom', description: 'Show first and second leve bullets in a file'}
+        {value: 'hide-none', description: 'Show all information in the file'}
+      ]
 
     autoSizeTables:
       type: 'boolean'
@@ -136,11 +154,16 @@ module.exports =
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:increasePriority': (event) => @increasePriority(event) }))
     @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:decreasePriority': (event) => @decreasePriority(event) }))
 
+    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:cycleVisibility': (event) => @cycleVisibility(event) }))
+    @subscriptions.add(atom.commands.add('atom-text-editor', { 'organized:cycleGlobalVisibility': (event) => @cycleGlobalVisibility(event) }))
+
     @subscriptions.add atom.config.observe 'organized.autoCreateStarsOnEnter', (newValue) => @createStarsOnEnter = newValue
     @subscriptions.add atom.config.observe 'organized.levelStyle', (newValue) => @levelStyle = newValue
     @subscriptions.add atom.config.observe 'organized.autoSizeTables', (newValue) => @autoSizeTables = newValue
     @subscriptions.add atom.config.observe 'editor.tabLength', (newValue) => @indentSpaces = newValue
     @subscriptions.add atom.config.observe 'organized.useBracketsAroundTodoTags', (newValue) => @useBracketsAroundTodoTags = newValue
+    @subscriptions.add atom.config.observe 'organized.trackCloseTimeOfTodos', (newValue) => @trackCloseTimeOfTodos = newValue
+    @subscriptions.add atom.config.observe 'organized.defaultVisibilityCycle', (newValue) => @defaultVisibilityCycle = newValue
 
     @sidebar = new SidebarView()
     @sidebar.activate(@subscriptions)
@@ -149,6 +172,15 @@ module.exports =
       @organizedToolbar = new OrganizedToolbar()
       @organizedToolbar.activate(@subscriptions)
       @organizedToolbar.setSidebar(@sidebar)
+
+    editor = atom.workspace.getActiveTextEditor()
+    if editor and editor.getGrammar().name is 'Organized'
+     if @defaultVisibilityCycle is 'hide-all'
+       @cycleGlobalVisibility(null)
+     else if @defaultVisibilityCycle is 'hide-bottom'
+       # Doing this twice is messy.  We should fix this later
+       @cycleGlobalVisibility(null)
+       @cycleGlobalVisibility(null)
 
   archiveSubtree: (event) ->
     @_archiveSubtree(false)
@@ -179,9 +211,7 @@ module.exports =
 
   # Callback from tool-bar to create a toolbar
   consumeToolBar: (toolBar) ->
-    console.log("consumeToolbar called")
     if not @organizedToolbar
-      console.log("Creating organizedToolbar")
       @organizedToolbar = new OrganizedToolbar()
       @organizedToolbar.activate(@subscriptions)
       @organizedToolbar.setSidebar(@sidebar)
@@ -202,6 +232,18 @@ module.exports =
         editor.insertNewline()
         editor.insertText("+----+")
         editor.setCursorBufferPosition(position)
+
+  cycleGlobalVisibility: (event) ->
+    if editor = atom.workspace.getActiveTextEditor()
+      @_cycleVisibility(editor, 0, editor.getLastBufferRow())
+
+  cycleVisibility: (event) ->
+    if editor = atom.workspace.getActiveTextEditor()
+      position = editor.getCursorBufferPosition()
+      startRow = position.row
+      if startStar = @_starInfo(editor, position)
+        lastRow = startStar.getEndOfSubtree()
+        @_cycleVisibility(editor, startRow, lastRow)
 
   deactivate: () ->
     @organizedToolbar.deactivate()
@@ -546,11 +588,32 @@ module.exports =
             visited[i] = true
 
           line = editor.lineTextForBufferRow(star.startRow)
-          if match = line.match(/\s*([\-\+\*]+|\d+\.|[A-z]\.) (\[(TODO)\]|\wTODO\w) /)
+          if match = line.match(/\s*([\-\+\*]+|\d+\.|[A-z]\.) (\[(TODO)\]|TODO) /)
             replacement = if match[2].includes('[') then " [DONE] " else " DONE "
-            editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.startTextCol]], replacement)
-          else if (line.match(/\s*([\-\+\*]+|\d+.|[A-z]\.) ((\[(COMPLETED|DONE)\])|\w(COMPLETED|DONE)\w) /))
-            editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.startTextCol]], " ")
+            editor.transact 1000, () =>
+              editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.startTextCol]], replacement)
+
+              if @trackCloseTimeOfTodos
+                d = new Date()
+                closeText = "CLOSED: [#{@_getISO8601DateTime(d)}]"
+                line = editor.lineTextForBufferRow(star.startRow+1)
+                if line and line.indexOf("SCHEDULED: <") > -1
+                  editor.setTextInBufferRange([[star.startRow+1, star.startTodoCol], [star.startRow+1, star.startTodoCol]], closeText + " ")
+                else
+                  spaceCount = star.startTodoCol - star.starCol
+                  indent = @_levelWhitespace(star, editor).repeat(star.indentLevel) + " ".repeat(spaceCount)
+                  closeText = "\n" + indent + closeText + "\n"
+                  editor.setTextInBufferRange([[star.startRow, Infinity],[star.startRow+1, 0]], closeText)
+          else if (line.match(/\s*([\-\+\*]+|\d+.|[A-z]\.) ((\[(COMPLETED|DONE)\])|(COMPLETED|DONE)) /))
+            editor.transact 1000, () =>
+              editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.startTextCol]], " ")
+              line = editor.lineTextForBufferRow(star.startRow+1)
+              if line
+                if match = line.match(/^\s*CLOSED: \[[^\]]+\]\s*$/)
+                  editor.setTextInBufferRange([[star.startRow, Infinity], [star.startRow+1, Infinity]], "")
+                else
+                  line = line.replace(/CLOSED: \[[^\]]+\]\s*/, "")
+                  editor.setTextInBufferRange([[star.startRow+1, 0], [star.startRow+1, Infinity]], line)
           else
             replacement = if @useBracketsAroundTodoTags then " [TODO] " else " TODO "
             editor.setTextInBufferRange([[star.startRow, star.whitespaceCol], [star.startRow, star.startTextCol]], replacement)
@@ -766,12 +829,57 @@ module.exports =
             else
               star.decreasePriority(editor)
 
+  _cycleVisibility: (editor, globalStartRow, globalEndRow) ->
+    currentRow = globalStartRow
+    while currentRow < globalEndRow
+      startStar = @_starInfo(editor, new Point(currentRow, 3))
+      if not startStar
+        currentRow += 1
+        continue
+
+      startRow = currentRow
+      lastRow = startStar.getEndOfSubtree()
+
+      if editor.isFoldedAtBufferRow(startRow)
+        # We are folded at the global level, unfold this level and fold all the children
+        for i in [startStar.startRow..lastRow]
+          editor.unfoldBufferRow(i)
+
+        # Now fold all the rows at indentLevel+1
+        currentStar = @_starInfo(editor, new Point(startStar.endRow+1, startStar.starCol))
+        while currentStar != null and currentStar.endRow < editor.getLastBufferRow() and currentStar.endRow <= lastRow
+          if currentStar.indentLevel == startStar.indentLevel+1
+            currentStarLastRow = currentStar.getEndOfSubtree()
+            if currentStarLastRow > currentStar.startRow
+              editor.foldBufferRange([[currentStar.startRow, Infinity],[currentStarLastRow, Infinity]])
+          currentStar = @_starInfo(editor, new Point(currentStar.endRow+1, currentStar.starCol))
+      else
+        # Check to see if there is any Folding
+        anyFolded = false
+        for i in [startStar.startRow..lastRow]
+          if editor.isFoldedAtBufferRow(i)
+            anyFolded = true
+            break
+
+        if anyFolded
+          # Unfold all
+          for i in [startStar.startRow..lastRow]
+            editor.unfoldBufferRow(i)
+        else
+          firstEnd = editor.lineTextForBufferRow(startStar.startRow).length
+          editor.foldBufferRange([[startStar.startRow, firstEnd], [lastRow, Infinity]])
+
+      currentRow = lastRow + 1
+
   _getISO8601Date: (date) ->
     year = ("0000" + date.getFullYear()).substr(-4, 4)
     month = ("00" + (date.getMonth() + 1)).substr(-2, 2)
     date = ("00" + date.getDate()).substr(-2, 2)
 
     "" + year + "-" + month + "-" + date
+
+  _getISO8601DateTime: (date) ->
+    return @_getISO8601Date(date) + "T" + @_getISO8601Time(date)
 
   _getISO8601Time: (date) ->
     offset = date.getTimezoneOffset()

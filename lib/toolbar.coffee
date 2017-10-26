@@ -147,7 +147,6 @@ class OrganizedToolbar
       @toolBarHasItems = false
 
   setEnabled: (enabled) ->
-    console.log("Enabled is now #{enabled}")
     @enabled = enabled
 
     if @enabled

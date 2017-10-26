@@ -7,6 +7,8 @@ describe "when organized:toggleTodo is used", ->
     waitsForPromise ->
       atom.packages.activatePackage('organized')
 
+    atom.config.set("organized.trackCloseTimeOfTodos", false)
+
   parameterized = (cursorPos, before, after) ->
     describe "string", ->
 

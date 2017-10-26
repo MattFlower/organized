@@ -14,6 +14,8 @@
   'ctrl-i l': 'organized:makeLink'
   'ctrl-i d': 'organized:deadlineItem'
   'ctrl-i s': 'organized:scheduleItem'
+  'ctrl-i v': 'organized:cycleVisibility'
+  'ctrl-shift-i v': 'organized:cycleGlobalVisibility'
   # Keystrokes starting with ctrl-- refer to tables
   'ctrl-- c': 'organized:closeTable'
   'ctrl-- o': 'organized:openTable'
