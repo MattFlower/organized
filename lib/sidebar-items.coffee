@@ -94,7 +94,7 @@ _findInDirectories = (directories, skipFiles, todos, agendas, onComplete, readCu
       _findInDirectories(directories, skipFiles, todos, agendas, onComplete, readCurrentBuffer, filesVisited)
 
     editor = atom.workspace.getActiveTextEditor()
-    if readCurrentBuffer and editor.getGrammar().name is 'Organized'
+    if readCurrentBuffer and editor and editor.getGrammar().name is 'Organized'
       filename = editor.getPath()
       if not skipFileCB(filename)
         lines = editor.getText().split('\n')

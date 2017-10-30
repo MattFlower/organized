@@ -3,7 +3,7 @@ describe "organized:indent", ->
     console.log("-".repeat(40))
 
     waitsForPromise ->
-      atom.workspace.open('test.org')
+      atom.workspace.open('/test.org')
 
     waitsForPromise ->
       atom.packages.activatePackage('organized')

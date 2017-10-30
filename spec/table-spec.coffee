@@ -4,7 +4,7 @@ describe "the table class", ->
   beforeEach ->
     console.log("-".repeat(40))
     waitsForPromise ->
-      atom.workspace.open('test.org')
+      atom.workspace.open('/test.org')
     waitsForPromise ->
       atom.packages.activatePackage("organized")
 
@@ -92,7 +92,7 @@ describe "When using grammar to parse a table row", ->
   beforeEach ->
     console.log("-".repeat(40))
     waitsForPromise ->
-      atom.workspace.open('test.org')
+      atom.workspace.open('/test.org')
     waitsForPromise ->
       atom.packages.activatePackage("organized")
 

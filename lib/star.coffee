@@ -53,11 +53,15 @@ class Star
       if not currentLine.match(Constants.starWithTextRex)
         currentRow += 1
       else if star = new Star(currentRow, @indentSpaces, @defaultIndentType, @editor)
-        if star.indentType == 'stacked'
-          return true
-        currentRow = star.endRow+1
-      else
-        currentRow += 1
+        if star.startRow > 0
+          if star.indentType == 'stacked'
+            return true
+          else if star.indentLevel > 0
+            return false
+
+          currentRow = star.endRow+1
+        else
+          currentRow += 1
     return false
 
   _processLine: (line) ->
@@ -231,11 +235,15 @@ class Star
   getEndOfSubtree: () ->
     currentLine = @endRow + 1
     while currentLine < @editor.getLineCount()
+      lineText = @editor.lineTextForBufferRow(currentLine).trim()
+      if lineText.length == 0
+        return currentLine-1
       if star = new Star(currentLine, @indentSpaces, @defaultIndentType, @editor)
         if star.indentLevel <= @indentLevel
           return currentLine-1
         else
           currentLine = star.endRow+1
+
     # We weren't able to find another star at the same level
     if currentLine >= @editor.getLineCount()
       currentLine = @editor.getLineCount()-1

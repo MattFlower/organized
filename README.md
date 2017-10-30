@@ -88,7 +88,10 @@ Here are the keystrokes I have mapped as of today:
 
 # What's New?
 
-* 0.8.0 (Release 2017-10-26)
+* 0.8.1 (Released 2017-10-30)
+  * Fixed some bugs released to having organized in "Only show top level stars" mode when opening new files.
+  * Closes issues #26, #27, and #28.
+* 0.8.0 (Release 2017-10-27)
   * Fixed toggling of TODO tags if you don't use brackets.
   * Fixed indenting if you used stacked star types
   * Added new key command (ctrl-i v) to cycle visibility of the current subtree.

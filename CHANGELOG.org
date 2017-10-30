@@ -1,3 +1,9 @@
+* 0.8.1 (Release 2017-10-30)
+  * Fixed endless loop for stars that had pound signs in the text on following lines.
+  * Stop looking for the end of a subtree if we have already found a blank line -- we're already on a different tree.
+  * Fixed spec tests -- for some reason atom.workspace.open() now cares whether a directory exists.
+  * Closes issues #26 and #27.
+
 * 0.8.0 (Release 2017-10-27)
   * Fixed toggling of TODO tags if you don't use brackets.
   * Fixed indenting if you used stacked star types

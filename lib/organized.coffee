@@ -175,12 +175,12 @@ module.exports =
 
     editor = atom.workspace.getActiveTextEditor()
     if editor and editor.getGrammar().name is 'Organized'
-     if @defaultVisibilityCycle is 'hide-all'
-       @cycleGlobalVisibility(null)
-     else if @defaultVisibilityCycle is 'hide-bottom'
-       # Doing this twice is messy.  We should fix this later
-       @cycleGlobalVisibility(null)
-       @cycleGlobalVisibility(null)
+      if @defaultVisibilityCycle is 'hide-all'
+        @cycleGlobalVisibility(null)
+      else if @defaultVisibilityCycle is 'hide-bottom'
+        # Doing this twice is messy.  We should fix this later
+        @cycleGlobalVisibility(null)
+        @cycleGlobalVisibility(null)
 
   archiveSubtree: (event) ->
     @_archiveSubtree(false)
