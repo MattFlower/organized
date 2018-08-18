@@ -36,6 +36,9 @@ class Star
   editor: null
 
   constructor: (currentRow, indentSpaces, defaultIndentType, editor = atom.workspace.getActiveTextEditor()) ->
+    line = editor.lineTextForBufferRow(currentRow)
+    while currentRow > 0 and editor.lineTextForBufferRow(currentRow) is ""
+      currentRow -= 1
     @latestRowSeen = currentRow
     @indentSpaces = indentSpaces
 
@@ -195,7 +198,7 @@ class Star
       #console.log("Row: #{@latestRowSeen}, Last: #{@editor.getLastBufferRow()}")
       row = Math.max(@latestRowSeen, @startRow + 1)
       line = @editor.lineTextForBufferRow(row)
-      while row <= @editor.getLastBufferRow() and !line.match(Constants.emptyLineOrStarLineRex)
+      while row <= @editor.getLastBufferRow() and !line.match(Constants.starLineRex)
         #console.log("checked: '#{line}'")
         row += 1
         line = @editor.lineTextForBufferRow(row)
