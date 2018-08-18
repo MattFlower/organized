@@ -4,6 +4,7 @@ class Constants
   @dateFormats: ['YYYY-MM-DD ddd HH:mm:ss', 'YYYY-MM-DD ddd HH:mm', 'YYYY-MM-DD ddd', moment.ISO_8601]
 
   @emptyLineOrStarLineRex:       /(^$)|(^\#)|(^\s*([\*\-\+]+|\d+\.|[A-z]\.))/
+  @starLineRex:                  /(^\#)|(^\s*([\*\-\+]+|\d+\.|[A-z]\.))/
   @starWithBulletNoMarkersRex:   /^(\s*)([\*\-\+]+|\d+\.|[A-z]\.)/
   @starWithBulletRex:            /^(\s*)([\*\-\+]+|(\d+)\.|([A-z])\.)([ ]|$)((\[?TODO\]?|\[?(COMPLETED|DONE)\]?)(?:\s+))?(\[#([A-E])\]\s+)?/
   @starWithTextRex:              /^(\s*)([\*\-\+]+|(\d+)\.|[A-z]\.)([ ]|$)((\[?TODO\]?|\[?(COMPLETED|DONE)\]?)(?:\s+))?(\[#([A-E])\]\s+)?(.*)/
