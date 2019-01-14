@@ -31,7 +31,7 @@ us get better.
 * Code blocks
   * Syntax highlighting for code blocks in c, coffeescript, c++, css, golang, html, java,
     javascript, less, objective c, objective c++, python, php, r, ruby, shell scripts (generic), and sql.
-  * Execution for c, c++, coffeescript, golang, java, javascript, objective-c, perl, php, python, r, and shell
+  * Execution for c, c++, coffeescript, golang, java, javascript, objective-c, perl, php, python, r, Ruby, PSQL, and shell
     scripts.  Put your cursor in your code block and press [Ctrl-` x] to execute code.  Output from
     code will appear in a notification by default, or create resultblock:
 
@@ -44,7 +44,27 @@ us get better.
   * Early support for code execution in C, C++, Java, Golang, R, and Objective-C.  You cannot set any libraries in
     those languages yet, which may reduce their effectively a bit.
   * Results can be displayed as an information popup or as a separate section in
-    your notes for future reference.
+  * about PSQL.
+    Psql needs a host, user, and password.  This is automatically discovered from a comment put anywhere in the file before the code block.  The block will use the closest configuration, so you can have more than one.  The format of the comment should be exactly (database is optional):
+
+    ```
+    [comment]: # psql:<host>:<user>:<database>
+    ```
+
+    So, if you were using the Docker postgres image, it would look like this:
+
+    ```
+    [comment]: # psql:localhost:postgres:example:my_database
+    ```
+
+
+    ** Note: you also need a .pgpass file in your home directory, or disable passwords altogether to make this work.  This is a standard postgres way to handle passwords.  [PG docs](https://www.postgresql.org/docs/9.3/libpq-pgpass.html).  Mine looks like this to continue the docker example:
+
+    ```bash
+    #hostname:port:database:username:password
+    *:*:*:postgres:example
+    ```
+
 * Sidebar
   * New sidebar shows all the todo files across the .org files in the open projects.  Settings allow you
     to always check additional projects.  Todos can be closed on jumped to with a single click

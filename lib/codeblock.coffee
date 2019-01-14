@@ -1,4 +1,5 @@
 spawn = require('child_process').spawn
+exec = require('child_process').exec
 spawnSync = require('child_process').spawnSync
 tmp = require('tmp')
 fs = require('fs')
@@ -13,9 +14,12 @@ class CodeBlock
   @language: null
   @editor: null
   @found: true
+  @psqlConfig: null
 
   constructor: (currentRow, editor = atom.workspace.getActiveTextEditor()) ->
     @editor = editor
+    @psqlConfig = @psqlSetup(currentRow)
+    console.log("CONFIG", @psqlConfig)
 
     #Work backward to find start
     row = currentRow
@@ -44,6 +48,22 @@ class CodeBlock
       return
 
     @found = true
+
+  psqlSetup: (currentRow)->
+    row = currentRow
+    password = user = host = null
+    while row > 0
+      row -= 1
+      line = @editor.lineTextForBufferRow(row)
+      if line.match(/\[comment\]: # psql:/)
+        parts = line.split(':')
+        database = parts[4]
+        user = parts[3]
+        host = parts[2]
+        break
+    return {database, user, host}
+
+
 
   execute: (resultBlock) ->
     if not @found
@@ -78,6 +98,8 @@ class CodeBlock
       filename = tmp.tmpNameSync({dir: dirname}) + ".go"
     else if @language is 'objc'
       filename = tmp.tmpNameSync({dir: dirname}) + ".m"
+    else if @language is 'psql'
+      filename = tmp.tmpNameSync({dir: dirname}) + ".sql"
     else
       filename = tmp.tmpNameSync({dir: dirname})
     removeCallback = () =>
@@ -110,15 +132,24 @@ class CodeBlock
     # piping multiple lines to some execution engines
 
   executionEngine: () ->
+
     filePath = atom.workspace.getActiveTextEditor()?.getPath()
     directory = path.dirname(filePath)
-    console.log "THIW IS DSFSDFSDFFD"
 
     switch @language
       when 'bash' then return (pathToFile, resultBlock) ->
         return spawn('bash', [pathToFile], {cwd: directory})
-      when 'psql' then return (pathToFile, resultBlock) ->
-        return spawn('psql', [pathToFile], {cwd: directory})
+      when 'psql' then return ((pathToFile, resultBlock) ->
+        commandParts = [
+          "psql",
+          "-w",
+        ]
+        commandParts.push "-h #{@psqlConfig.host}" if @psqlConfig.host
+        commandParts.push "-U #{@psqlConfig.user}" if @psqlConfig.user
+        commandParts.push "-d #{@psqlConfig.database}" if @psqlConfig.database
+        commandParts.push "-f #{pathToFile}"
+        return exec(commandParts.join(' '))
+      ).bind(this)
 
       when 'c' then return (pathToFile, resultBlock) ->
         if match = pathToFile.match(/^(.*)\/[^/]+$/)
