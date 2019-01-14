@@ -218,6 +218,9 @@ module.exports =
 
     @organizedToolbar.consumeToolBar(toolBar)
 
+  consumeAutoreload: (reloader) ->
+    reloader(pkg:"organized",files:["package.json"],folders:["lib/"])
+
   # Create a skeleton of a table ready for a user to start typing in it.
   createTable: (event) ->
     if editor = atom.workspace.getActiveTextEditor()

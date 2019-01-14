@@ -34,6 +34,11 @@
       "versions": {
         "^0 || ^1": "consumeToolBar"
       }
+    },
+    "autoreload": {
+      "versions": {
+        "^0.0.1": "consumeAutoreload"
+      }
     }
   },
   "extensions": {

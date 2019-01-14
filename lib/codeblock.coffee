@@ -63,7 +63,6 @@ class CodeBlock
     # Java files need a particular name, extract that
     tmpDir = tmp.dirSync()
     dirname = tmpDir.name
-    console.log("Dir: #{dirname}")
     if @language is 'java'
       if match = code.match(/public\s+class\s+(\S+)/)
         filename = dirname + "/" + match[1] + ".java"
@@ -81,7 +80,6 @@ class CodeBlock
       filename = tmp.tmpNameSync({dir: dirname}) + ".m"
     else
       filename = tmp.tmpNameSync({dir: dirname})
-    console.log("Filename: #{filename}")
     removeCallback = () =>
       #spawn("rm", ['-r', dirname])
 
@@ -114,10 +112,13 @@ class CodeBlock
   executionEngine: () ->
     filePath = atom.workspace.getActiveTextEditor()?.getPath()
     directory = path.dirname(filePath)
+    console.log "THIW IS DSFSDFSDFFD"
 
     switch @language
       when 'bash' then return (pathToFile, resultBlock) ->
         return spawn('bash', [pathToFile], {cwd: directory})
+      when 'psql' then return (pathToFile, resultBlock) ->
+        return spawn('psql', [pathToFile], {cwd: directory})
 
       when 'c' then return (pathToFile, resultBlock) ->
         if match = pathToFile.match(/^(.*)\/[^/]+$/)
@@ -271,7 +272,7 @@ class ResultBlock
       row += 1
 
     if lastRow >= 0
-      console.log("Clearing from #{@resultRow+1} to #{lastRow}")
+      console.log("Clearing it out from #{@resultRow+1} to #{lastRow}")
       @editor.setTextInBufferRange([[@resultRow+1, 0],[lastRow+1, 0]], "")
 
 module.exports = CodeBlock
